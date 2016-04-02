@@ -1,0 +1,6 @@
+.gradle/
+.idea/
+build/
+gradlew.bat
+
+reakt.iml
