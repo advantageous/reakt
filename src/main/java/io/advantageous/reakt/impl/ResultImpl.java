@@ -45,7 +45,7 @@ public class ResultImpl<T> implements Result<T> {
 
 
     @Override
-    public boolean completed() {
+    public boolean complete() {
         return true;
     }
 

@@ -41,7 +41,7 @@ public interface Value<T> {
      * @return an {@code ValueImpl} with the value present
      * @throws NullPointerException if value is null
      */
-    static <T> Value of(T value) {
+    static <T> Value<T> of(T value) {
         return new ValueImpl<>(value);
     }
 
@@ -54,7 +54,7 @@ public interface Value<T> {
      * @return an {@code ValueImpl} with a present value if the specified value
      * is non-null, otherwise an empty {@code Optional}
      */
-    static <T> Value ofNullable(T value) {
+    static <T> Value<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
 
@@ -115,9 +115,9 @@ public interface Value<T> {
      * empty {@code ValueImpl}.
      *
      * @param predicate a predicate to apply to the value, if present
-     * @return an {@code ValueImpl} the value {@code ValueImpl}
+     * @return an {@code ValueImpl} the value {@code Value}
      * if present and the value matches the predicate,
-     * otherwise an empty {@code ValueImpl}
+     * otherwise an empty {@code Value}
      * @throws NullPointerException if the predicate is null
      */
     Value<T> filter(Predicate<? super T> predicate);
@@ -134,7 +134,7 @@ public interface Value<T> {
      * function applied to {@code Value} value if present or an empty value.
      * @throws NullPointerException if the mapper is null
      */
-    <U> Value map(Function<? super T, ? extends U> mapper);
+    <U> Value<U> map(Function<? super T, ? extends U> mapper);
 
 
     /**

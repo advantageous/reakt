@@ -124,7 +124,7 @@ public class ValueImpl<T> implements Value<T> {
      * @throws NullPointerException if the mapper is null
      */
     @Override
-    public <U> Value map(Function<? super T, ? extends U> mapper) {
+    public <U> Value<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
             return Value.empty();

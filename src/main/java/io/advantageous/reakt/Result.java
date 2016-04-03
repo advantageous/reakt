@@ -4,9 +4,8 @@ import java.util.function.Consumer;
 
 /**
  * The result of an async operation.
- * Returns a Value which
  *
- * @param <T>
+ * @param <T> type of value expected in the result.
  */
 public interface Result<T> {
 
@@ -48,7 +47,7 @@ public interface Result<T> {
     /**
      * @return true if result is sent and this is the last result.
      */
-    boolean completed();
+    boolean complete();
 
 
     /**
