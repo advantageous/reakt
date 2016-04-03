@@ -32,7 +32,7 @@ public class ResultImpl<T> implements Result<T> {
 
 
     @Override
-    public Result<T> rejected(Consumer<Throwable> handler) {
+    public Result<T> catchError(Consumer<Throwable> handler) {
         if (failure()) {
             handler.accept(cause());
         }

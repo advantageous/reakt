@@ -8,6 +8,10 @@ package io.advantageous.reakt;
  */
 public interface AsyncSupplier<T> {
 
+    /**
+     * Supply an item when you can.
+     * @param callback callback with supplied item as a result.
+     */
     void get(Callback<T> callback);
 
 }

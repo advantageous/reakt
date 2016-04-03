@@ -37,7 +37,7 @@ public interface Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Result<T> rejected(Consumer<Throwable> consumer);
+    Result<T> catchError(Consumer<Throwable> consumer);
 
     /**
      * @return true if result is sent successfully.
