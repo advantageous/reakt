@@ -79,7 +79,7 @@ public interface Result<T> {
 
     /**
      * Raw value of the result.
-     * You should not use this if the result coulb be null, use getValue instead.
+     * You should not use this if the result could be null, use getValue instead.
      *
      * @return raw value associated with the result.
      */

@@ -1,6 +1,10 @@
 package io.advantageous.reakt.promise;
 
-
+/**
+ * Replay promise ensures that the event handler callbacks (then, catchError) happen on the calling thread.
+ *
+ * @param <T> T value of the result.
+ */
 public interface ReplayPromise<T> extends Promise<T> {
 
     /**
