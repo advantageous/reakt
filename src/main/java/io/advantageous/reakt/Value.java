@@ -92,6 +92,14 @@ public interface Value<T> {
 
 
     /**
+     * Return {@code true} if there is not a value present, otherwise {@code false}.
+     *
+     * @return {@code true} if there is not a value present, otherwise {@code false}
+     */
+    boolean isEmpty();
+
+
+    /**
      * If a value is present, invoke the consumer with the value.
      *
      * @param consumer executed if a value is present
@@ -106,7 +114,7 @@ public interface Value<T> {
      *
      * @param runnable executed if a value is not present
      */
-    Value<T> isEmpty(Runnable runnable);
+    Value<T> ifEmpty(Runnable runnable);
 
 
     /**

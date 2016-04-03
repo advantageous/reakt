@@ -64,6 +64,17 @@ public class ValueImpl<T> implements Value<T> {
         return value != null;
     }
 
+
+    /**
+     * Return {@code true} if there is not a value present, otherwise {@code false}.
+     *
+     * @return {@code true} if there is not a value present, otherwise {@code false}
+     */
+    @Override
+    public boolean isEmpty() {
+        return value == null;
+    }
+
     /**
      * If a value is present, invoke the consumer with the value.
      *
@@ -85,7 +96,7 @@ public class ValueImpl<T> implements Value<T> {
      * @param runnable executed if a value is not present
      */
     @Override
-    public Value isEmpty(Runnable runnable) {
+    public Value ifEmpty(Runnable runnable) {
         if (value == null)
             runnable.run();
         return this;
