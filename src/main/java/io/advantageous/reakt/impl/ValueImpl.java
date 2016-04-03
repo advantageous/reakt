@@ -96,7 +96,7 @@ public class ValueImpl<T> implements Value<T> {
      * @param runnable executed if a value is not present
      */
     @Override
-    public Value ifEmpty(Runnable runnable) {
+    public Value<T> ifEmpty(Runnable runnable) {
         if (value == null)
             runnable.run();
         return this;
@@ -126,7 +126,7 @@ public class ValueImpl<T> implements Value<T> {
     /**
      * If a value present, use the mapping function to it,
      * and if the result is present, return an {@code ValueImpl} with the result.
-     * Otherwise retun an empty value {@code ValueImpl}.
+     * Otherwise return an empty value {@code ValueImpl}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper a mapper to apply to the value, if present

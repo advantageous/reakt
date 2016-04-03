@@ -9,7 +9,14 @@ import io.advantageous.reakt.promise.impl.PromiseImpl;
 import java.time.Duration;
 
 /**
- * Deferred Value.
+ * A promise is like a non-blocking {@code Future}({@link java.util.concurrent.Future}).
+ * You get notified of changes instead of having to call {@code get}.
+ *
+ * A promise is both a {@code Callback} ({@link io.advantageous.reakt.Callback}),
+ * and a {@code Result} {@link io.advantageous.reakt.Result}.
+ *
+ *
+ * A promise is a sort of deferred value.
  * @param <T> value of result.
  */
 public interface Promise<T> extends Callback<T>, Result<T> {

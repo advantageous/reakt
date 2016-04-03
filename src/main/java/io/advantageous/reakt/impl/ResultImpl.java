@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class ResultImpl<T> implements Result<T> {
 
-    final Object object;
+    private final Object object;
 
     public ResultImpl(Object object) {
         this.object = object;

@@ -7,16 +7,19 @@ import io.advantageous.reakt.impl.ResultImpl;
  * <p>
  * This is like an async future or promise.
  *
+ * This was modeled after QBit's callback, and JavaScripts callbacks.
+ * The {@link Result} result represents the result or error from an async operation.
+ *
  * @param <T> type of result returned from callback
  */
 public interface Callback<T> {
 
     /**
      * (Client view)
-     * A result was returned so so handle it.
+     * A result was returned so handle it.
      * <p>
      * This is registered from the callers (or event receivers perspective).
-     * A client of a service would override onResult.
+     * A client of a service would override {@code onResult}.
      *
      * @param result to handle
      */

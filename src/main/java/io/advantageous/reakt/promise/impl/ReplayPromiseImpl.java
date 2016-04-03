@@ -57,7 +57,7 @@ public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromis
         timeoutHandler.ifPresent(Runnable::run);
         result.set(new ResultImpl<>(
                 new TimeoutException(String.format("Operation timed out start time %d timeout " +
-                                "duration ms %d time %d elapsed time",
+                                "duration ms %d time %d elapsed time %d",
                         startTime, timeoutDuration.toMillis(), time, time - startTime))));
     }
 

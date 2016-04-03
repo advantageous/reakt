@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 /**
  * The result of an async operation.
  *
+ * This was modeled after Vert.x AsyncResult and after the types of results one would deal with in JavaScript.
+ *
  * @param <T> type of value expected in the result.
  */
 public interface Result<T> {

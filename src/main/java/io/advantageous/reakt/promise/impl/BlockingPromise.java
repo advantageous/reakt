@@ -6,7 +6,7 @@ import io.advantageous.reakt.Value;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * This is very much like Java Future. It is blocking.
+ * This is very much like a Java Future. It is blocking.
  * This is useful for testing and for legacy integration.
  *
  * @param <T> value of result.

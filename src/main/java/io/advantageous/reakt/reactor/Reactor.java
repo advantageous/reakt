@@ -1,4 +1,4 @@
-package io.advantageous.reakt;
+package io.advantageous.reakt.reactor;
 
 import io.advantageous.reakt.promise.ReplayPromise;
 

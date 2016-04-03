@@ -27,13 +27,13 @@ public class PromiseImpl<T> implements Promise<T> {
     }
 
 
-    public synchronized Promise then(final Consumer<T> consumer) {
+    public synchronized Promise<T> then(final Consumer<T> consumer) {
         thenConsumer = Value.of(consumer);
         return this;
     }
 
     @Override
-    public synchronized Promise thenValue(Consumer<Value<T>> consumer) {
+    public synchronized Promise<T> thenValue(Consumer<Value<T>> consumer) {
         thenValueConsumer = Value.of(consumer);
         return this;
     }
@@ -101,7 +101,7 @@ public class PromiseImpl<T> implements Promise<T> {
 
     /**
      * Raw value of the result.
-     * You should not use this if the result coulb be null, use getValue instead.
+     * You should not use this if the result could be null, use getValue instead.
      *
      * @return raw value associated with the result.
      */
