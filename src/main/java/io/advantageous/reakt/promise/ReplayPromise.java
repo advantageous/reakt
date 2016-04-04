@@ -1,5 +1,7 @@
 package io.advantageous.reakt.promise;
 
+import java.util.function.Consumer;
+
 /**
  * Replay promise ensures that the event handler callbacks (then, catchError) happen on the calling thread.
  *
@@ -9,6 +11,7 @@ public interface ReplayPromise<T> extends Promise<T> {
 
     /**
      * Return true if done.
+     * Gets called periodically to move data from foreign thread to this one.
      *
      * @param time current time
      * @return true if done
@@ -18,6 +21,15 @@ public interface ReplayPromise<T> extends Promise<T> {
     /**
      * @param handler handle timeout.
      * @throws NullPointerException if result is present and {@code handler} is null
+     * @return this fluent
      */
     ReplayPromise<T> onTimeout(Runnable handler);
+
+    /**
+     * Handler after the async result has been processed and data copied to this thread.
+     * @param handler handler
+     * @return this fluent
+     */
+    ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler);
+
 }

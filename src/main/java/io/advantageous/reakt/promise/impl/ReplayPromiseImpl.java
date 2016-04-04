@@ -6,12 +6,14 @@ import io.advantageous.reakt.Result;
 import io.advantageous.reakt.Value;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromise<T> {
 
     private final Duration timeoutDuration;
     private final long startTime;
     private Value<Runnable> timeoutHandler;
+    private Value<Consumer<ReplayPromise>> afterResultProcessedHandler;
 
     public ReplayPromiseImpl(final Duration timeout, final long startTime) {
 
@@ -51,6 +53,7 @@ public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromis
         } else {
             doFail(theResult.cause());
         }
+        afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
     }
 
     private void handleTimeout(long time) {
@@ -65,5 +68,11 @@ public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromis
     public synchronized ReplayPromise<T> onTimeout(final Runnable handler) {
         timeoutHandler = Value.of(handler);
         return this;
+    }
+
+    @Override
+    public synchronized ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler) {
+        afterResultProcessedHandler = Value.of(handler);
+        return null;
     }
 }
