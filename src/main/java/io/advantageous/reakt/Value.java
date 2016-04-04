@@ -72,7 +72,7 @@ public interface Value<T> {
      * @return an {@code ValueImpl} with a present value if the specified value
      * is not empty, otherwise an empty {@code Optional}
      */
-    static <T> Value ofOptional(Optional<T> value) {
+    static <T> Value<T> ofOptional(Optional<T> value) {
         return !value.isPresent() ? empty() : of(value.get());
     }
 
