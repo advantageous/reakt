@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
 

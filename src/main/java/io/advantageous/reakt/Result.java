@@ -1,5 +1,7 @@
 package io.advantageous.reakt;
 
+import io.advantageous.reakt.impl.ResultImpl;
+
 import java.util.function.Consumer;
 
 /**
@@ -10,6 +12,26 @@ import java.util.function.Consumer;
  * @param <T> type of value expected in the result.
  */
 public interface Result<T> {
+
+    /**
+     * Create a result
+     * @param value value
+     * @param <T> T
+     * @return result
+     */
+    static <T>  Result<T> result(T value) {
+        return new ResultImpl<>(value);
+    }
+
+    /**
+     * Create a result
+     * @param error error
+     * @param <T> T
+     * @return result
+     */
+    static <T>  Result<T> error(Throwable error) {
+        return new ResultImpl<>(error);
+    }
 
 
     /**
