@@ -1,9 +1,9 @@
 package io.advantageous.reakt.promise.impl;
 
 
-import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.Value;
+import io.advantageous.reakt.promise.Promise;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,7 +14,7 @@ public class PromiseImpl<T> implements Promise<T> {
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Value<Consumer<T>> thenConsumer = Value.empty();
     protected Value<Consumer<Throwable>> catchConsumer = Value.empty();
-    protected Value<Consumer<Value<T>>> thenValueConsumer;
+    protected Value<Consumer<Value<T>>> thenValueConsumer = Value.empty();
 
 
     protected void doFail(Throwable cause) {
@@ -95,7 +95,9 @@ public class PromiseImpl<T> implements Promise<T> {
         if (result.get() == null) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
-
+        if (failure()) {
+            throw new IllegalStateException(cause());
+        }
         return result.get().getValue();
     }
 
@@ -109,6 +111,9 @@ public class PromiseImpl<T> implements Promise<T> {
 
         if (result.get() == null) {
             throw new NoSuchElementException("No value present, result not returned.");
+        }
+        if (failure()) {
+            throw new IllegalStateException(cause());
         }
         return result.get().get();
     }

@@ -2,7 +2,6 @@ package io.advantageous.reakt;
 
 import org.junit.Test;
 
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -11,41 +10,8 @@ import static org.junit.Assert.*;
 
 public class ValueTest {
 
-    static class Employee {
-        private final String id;
-
-        Employee(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Employee employee = (Employee) o;
-
-            return id != null ? id.equals(employee.id) : employee.id == null;
-
-        }
-
-        @Override
-        public int hashCode() {
-            return id != null ? id.hashCode() : 0;
-        }
-    }
-
-    static class Sheep {
-        private final String id;
-
-        Sheep(String id) {
-            this.id = id;
-        }
-    }
-
-
     @Test
-    public void testEmpty(){
+    public void testEmpty() {
 
         final Value<Employee> empty = Value.empty();
         emptyTest(empty);
@@ -53,7 +19,7 @@ public class ValueTest {
     }
 
     @Test
-    public void testEmptyFromNull(){
+    public void testEmptyFromNull() {
 
         final Value<Employee> empty = Value.ofNullable(null);
         emptyTest(empty);
@@ -67,6 +33,7 @@ public class ValueTest {
         notEmptyTest(rick);
 
     }
+
     @Test
     public void testNotEmpty() {
 
@@ -85,7 +52,7 @@ public class ValueTest {
 
 
     private void emptyTest(Value<Employee> empty) {
-        final boolean [] flag = new boolean[1];
+        final boolean[] flag = new boolean[1];
 
         assertTrue(empty.isEmpty());
         assertFalse(empty.isPresent());
@@ -115,9 +82,8 @@ public class ValueTest {
     }
 
 
-
     private void notEmptyTest(Value<Employee> rick) {
-        final boolean [] flag = new boolean[1];
+        final boolean[] flag = new boolean[1];
 
         assertFalse(rick.isEmpty());
         assertTrue(rick.isPresent());
@@ -148,4 +114,38 @@ public class ValueTest {
         rick.hashCode();
         rick.toString();
     }
+
+    static class Employee {
+        private final String id;
+
+        Employee(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Employee employee = (Employee) o;
+
+            return id != null ? id.equals(employee.id) : employee.id == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return id != null ? id.hashCode() : 0;
+        }
+    }
+
+
+    static class Sheep {
+        private final String id;
+
+        Sheep(String id) {
+            this.id = id;
+        }
+    }
+
 }

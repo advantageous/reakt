@@ -20,13 +20,14 @@ public interface ReplayPromise<T> extends Promise<T> {
 
     /**
      * @param handler handle timeout.
-     * @throws NullPointerException if result is present and {@code handler} is null
      * @return this fluent
+     * @throws NullPointerException if result is present and {@code handler} is null
      */
     ReplayPromise<T> onTimeout(Runnable handler);
 
     /**
      * Handler after the async result has been processed and data copied to this thread.
+     *
      * @param handler handler
      * @return this fluent
      */

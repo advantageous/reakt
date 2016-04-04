@@ -10,13 +10,12 @@ import java.util.function.Predicate;
 
 
 /**
- *
  * Contains an value object which may not be set. This is like {@code Optional} but could be the value from an async operation
  * which sent a null.
- *
+ * <p>
  * If a value is present, {@code isPresent()} will return {@code true} and
  * {@code get()} will return the value.
- *
+ * <p>
  * This is heavily modeled after {@link java.util.Optional} optional.
  */
 public interface Value<T> {

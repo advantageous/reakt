@@ -11,37 +11,6 @@ package io.advantageous.reakt;
 public interface Observer<T> {
 
     /**
-     * Notifies the Observer that the an Observable has finished sending push-based notifications.
-     * <p>
-     * The Observable will not call this method if it calls {@link #onError}.
-     */
-    void onCompleted();
-
-    /**
-     * Notifies the Observer that the Observable has hit an error condition.
-     * <p>
-     * If the Observable calls this method, it will not thereafter call {@link #onNext} or
-     * {@link #onCompleted}.
-     *
-     * @param e the exception encountered by the Observable
-     */
-    void onError(Throwable e);
-
-    /**
-     * Provides the Observer with a new item to observe.
-     * <p>
-     * The Observable may call this method 0 or more times. In the case of a scalar call {@link Callback#onResult(Result)}
-     * it will get called once. In the case of {@link Stream#onResult(Result)} the stream will get called many times.
-     * <p>
-     * The {@code Observable} will not call this method again after it calls either {@link #onCompleted} or
-     * {@link #onError}.
-     *
-     * @param t the item emitted by the Observable
-     */
-    void onNext(T t);
-
-
-    /**
      * Adapts an observer to callback.
      *
      * @param observer observer that you want to turn into a callback.
@@ -78,6 +47,36 @@ public interface Observer<T> {
             }
         };
     }
+
+    /**
+     * Notifies the Observer that the an Observable has finished sending push-based notifications.
+     * <p>
+     * The Observable will not call this method if it calls {@link #onError}.
+     */
+    void onCompleted();
+
+    /**
+     * Notifies the Observer that the Observable has hit an error condition.
+     * <p>
+     * If the Observable calls this method, it will not thereafter call {@link #onNext} or
+     * {@link #onCompleted}.
+     *
+     * @param e the exception encountered by the Observable
+     */
+    void onError(Throwable e);
+
+    /**
+     * Provides the Observer with a new item to observe.
+     * <p>
+     * The Observable may call this method 0 or more times. In the case of a scalar call {@link Callback#onResult(Result)}
+     * it will get called once. In the case of {@link Stream#onResult(Result)} the stream will get called many times.
+     * <p>
+     * The {@code Observable} will not call this method again after it calls either {@link #onCompleted} or
+     * {@link #onError}.
+     *
+     * @param t the item emitted by the Observable
+     */
+    void onNext(T t);
 
 }
 

@@ -1,9 +1,10 @@
 package io.advantageous.reakt.promise.impl;
 
-import io.advantageous.reakt.impl.ResultImpl;
-import io.advantageous.reakt.promise.ReplayPromise;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.Value;
+import io.advantageous.reakt.impl.ResultImpl;
+import io.advantageous.reakt.promise.ReplayPromise;
+
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -30,9 +31,8 @@ public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromis
     public boolean check(final long time) {
 
 
-
-        if (result.get()==null) {
-            if ((time - startTime) > timeoutDuration.toMillis()){
+        if (result.get() == null) {
+            if ((time - startTime) > timeoutDuration.toMillis()) {
                 handleTimeout(time);
             }
         }

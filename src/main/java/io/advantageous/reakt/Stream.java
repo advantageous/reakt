@@ -5,7 +5,7 @@ import io.advantageous.reakt.impl.StreamResult;
 
 /**
  * A generic event handler for N results, i.e., a stream of results.
- *
+ * <p>
  * This is a type of {@link Callback} for streaming results.
  * While {@code Callback} can be considered for scalar results, a
  * {@code Stream} is more appropriate for non-scalar results, i.e., {@code Result#onResult}

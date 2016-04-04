@@ -6,7 +6,7 @@ import io.advantageous.reakt.impl.ResultImpl;
  * A generic event handler which can be thought of as a callback handler.
  * <p>
  * This is like an async future or promise.
- *
+ * <p>
  * This was modeled after QBit's callback, and JavaScripts callbacks.
  * The {@link Result} result represents the result or error from an async operation.
  *

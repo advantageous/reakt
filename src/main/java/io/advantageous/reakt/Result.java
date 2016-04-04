@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 /**
  * The result of an async operation.
- *
+ * <p>
  * This was modeled after Vert.x AsyncResult and after the types of results one would deal with in JavaScript.
  *
  * @param <T> type of value expected in the result.
@@ -15,21 +15,23 @@ public interface Result<T> {
 
     /**
      * Create a result
+     *
      * @param value value
-     * @param <T> T
+     * @param <T>   T
      * @return result
      */
-    static <T>  Result<T> result(T value) {
+    static <T> Result<T> result(T value) {
         return new ResultImpl<>(value);
     }
 
     /**
      * Create a result
+     *
      * @param error error
-     * @param <T> T
+     * @param <T>   T
      * @return result
      */
-    static <T>  Result<T> error(Throwable error) {
+    static <T> Result<T> error(Throwable error) {
         return new ResultImpl<>(error);
     }
 

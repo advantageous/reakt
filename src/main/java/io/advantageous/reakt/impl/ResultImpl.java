@@ -65,11 +65,17 @@ public class ResultImpl<T> implements Result<T> {
     }
 
     public Value<T> getValue() {
+        if (failure()) {
+            throw new IllegalStateException(cause());
+        }
         return Value.ofNullable((T) object);
     }
 
 
     public T get() {
+        if (failure()) {
+            throw new IllegalStateException(cause());
+        }
         return (T) object;
     }
 }
