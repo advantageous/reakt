@@ -69,7 +69,7 @@ public interface Observer<T> {
      * Provides the Observer with a new item to observe.
      * <p>
      * The Observable may call this method 0 or more times. In the case of a scalar call {@link Callback#onResult(Result)}
-     * it will get called once. In the case of {@link Stream#onResult(Result)} the stream will get called many times.
+     * it will get called once. In the case of {@link Stream#onNext(StreamResult)} the stream will get called many times.
      * <p>
      * The {@code Observable} will not call this method again after it calls either {@link #onCompleted} or
      * {@link #onError}.

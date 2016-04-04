@@ -1,6 +1,6 @@
 package io.advantageous.reakt;
 
-import io.advantageous.reakt.impl.ValueImpl;
+import io.advantageous.reakt.impl.RefImpl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,6 +10,14 @@ import java.util.function.Predicate;
 
 
 /**
+ * Same concept as Optional in Java JDK and Option in Scala.
+ * We added a new concept because this one is expected to come through callbacks and
+ * is used in places where Optional does not make sense.
+ * <p>
+ * Also we want to use interfaces for all core concepts.
+ * <p>
+ * In addition we wanted callback for ifPresent and ifEmpty.
+ * <p>
  * Contains an value object which may not be set. This is like {@code Optional} but could be the value from an async operation
  * which sent a null.
  * <p>
@@ -18,71 +26,71 @@ import java.util.function.Predicate;
  * <p>
  * This is heavily modeled after {@link java.util.Optional} optional.
  */
-public interface Value<T> {
+public interface Ref<T> {
     /**
      * Common instance for {@code empty()}.
      */
-    Value EMPTY = new ValueImpl<>();
+    Ref EMPTY = new RefImpl<>();
 
     /**
-     * Returns an empty {@code ValueImpl} instance.  No value is present for this
+     * Returns an empty {@code RefImpl} instance.  No value is present for this
      * value.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code ValueImpl}
+     * @return an empty {@code RefImpl}
      */
-    static <T> Value<T> empty() {
+    static <T> Ref<T> empty() {
         @SuppressWarnings("unchecked")
-        Value<T> t = EMPTY;
+        Ref<T> t = EMPTY;
         return t;
     }
 
     /**
-     * Returns an {@code ValueImpl} using the specified present value, which must not be null.
+     * Returns an {@code RefImpl} using the specified present value, which must not be null.
      *
      * @param <T>   the class of the value
      * @param value the value to be present. Must be non-null
-     * @return an {@code ValueImpl} with the value present
+     * @return an {@code RefImpl} with the value present
      * @throws NullPointerException if value is null
      */
-    static <T> Value<T> of(T value) {
-        return new ValueImpl<>(value);
+    static <T> Ref<T> of(T value) {
+        return new RefImpl<>(value);
     }
 
     /**
-     * Returns an {@code ValueImpl} describing the specified value, if non-null,
-     * otherwise returns an empty {@code ValueImpl}.
+     * Returns an {@code RefImpl} describing the specified value, if non-null,
+     * otherwise returns an empty {@code RefImpl}.
      *
      * @param <T>   the class of the value
      * @param value the possibly non-existent value
-     * @return an {@code ValueImpl} with a present value if the specified value
+     * @return an {@code RefImpl} with a present value if the specified value
      * is non-null, otherwise an empty {@code Optional}
      */
-    static <T> Value<T> ofNullable(T value) {
+    static <T> Ref<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
 
     /**
-     * Returns an {@code ValueImpl} describing the specified value, if non-null,
-     * otherwise returns an empty {@code ValueImpl}.
+     * Returns an {@code RefImpl} describing the specified value, if non-null,
+     * otherwise returns an empty {@code RefImpl}.
      *
      * @param <T>   the class of the value
      * @param value the possibly non-existent value
-     * @return an {@code ValueImpl} with a present value if the specified value
+     * @return an {@code RefImpl} with a present value if the specified value
      * is not empty, otherwise an empty {@code Optional}
      */
-    static <T> Value<T> ofOptional(Optional<T> value) {
+    static <T> Ref<T> ofOptional(Optional<T> value) {
         return !value.isPresent() ? empty() : of(value.get());
     }
 
 
     /**
-     * If a value is present in this {@code Value}, returns the value,
+     * If a value is present in this {@code Ref}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
      *
-     * @return the value held by this {@code Value}
+     * @return the value held by this {@code Ref}
      * @throws NoSuchElementException if there is no value present
-     * @see Value#isPresent()
+     * @see Ref#isPresent()
      */
     T get();
 
@@ -110,7 +118,7 @@ public interface Value<T> {
      * @throws NullPointerException if value is present and {@code consumer} is
      *                              null
      */
-    Value<T> ifPresent(Consumer<? super T> consumer);
+    Ref<T> ifPresent(Consumer<? super T> consumer);
 
 
     /**
@@ -118,35 +126,35 @@ public interface Value<T> {
      *
      * @param runnable executed if a value is not present
      */
-    Value<T> ifEmpty(Runnable runnable);
+    Ref<T> ifEmpty(Runnable runnable);
 
 
     /**
      * If a value is present, and the value matches the given predicate,
-     * return an {@code ValueImpl} describing the value, otherwise return an
-     * empty {@code ValueImpl}.
+     * return an {@code RefImpl} describing the value, otherwise return an
+     * empty {@code RefImpl}.
      *
      * @param predicate a predicate to apply to the value, if present
-     * @return an {@code ValueImpl} the value {@code Value}
+     * @return an {@code RefImpl} the value {@code Ref}
      * if present and the value matches the predicate,
-     * otherwise an empty {@code Value}
+     * otherwise an empty {@code Ref}
      * @throws NullPointerException if the predicate is null
      */
-    Value<T> filter(Predicate<? super T> predicate);
+    Ref<T> filter(Predicate<? super T> predicate);
 
 
     /**
      * If a value present, use the mapping function to it,
-     * and if the result is present, return an {@code ValueImpl} with the result.
-     * Otherwise return an empty value {@code Value}.
+     * and if the result is present, return an {@code RefImpl} with the result.
+     * Otherwise return an empty value {@code Ref}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper a mapper to apply to the value, if present
-     * @return a value {@code Value} which is the result of the mapper
-     * function applied to {@code Value} value if present or an empty value.
+     * @return a value {@code Ref} which is the result of the mapper
+     * function applied to {@code Ref} value if present or an empty value.
      * @throws NullPointerException if the mapper is null
      */
-    <U> Value<U> map(Function<? super T, ? extends U> mapper);
+    <U> Ref<U> map(Function<? super T, ? extends U> mapper);
 
 
     /**

@@ -1,6 +1,6 @@
 package io.advantageous.reakt.impl;
 
-import io.advantageous.reakt.Value;
+import io.advantageous.reakt.Ref;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  * If a value is present, {@code isPresent()} will return {@code true} and
  * {@code get()} will return the value.
  */
-public class ValueImpl<T> implements Value<T> {
+public class RefImpl<T> implements Ref<T> {
 
     /**
      * If non-null, the value; if null, indicates no value is present
@@ -23,7 +23,7 @@ public class ValueImpl<T> implements Value<T> {
     /**
      * Constructs an empty instance of value.
      */
-    public ValueImpl() {
+    public RefImpl() {
         this.value = null;
     }
 
@@ -33,18 +33,18 @@ public class ValueImpl<T> implements Value<T> {
      * @param value the non-null value to be present
      * @throws NullPointerException if value is null
      */
-    public ValueImpl(T value) {
+    public RefImpl(T value) {
         this.value = Objects.requireNonNull(value);
     }
 
 
     /**
-     * If a value is present in this {@code Value}, returns the value,
+     * If a value is present in this {@code Ref}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
      *
-     * @return the value held by this {@code Value}
+     * @return the value held by this {@code Ref}
      * @throws NoSuchElementException if there is no value present
-     * @see ValueImpl#isPresent()
+     * @see RefImpl#isPresent()
      */
     @Override
     public T get() {
@@ -83,7 +83,7 @@ public class ValueImpl<T> implements Value<T> {
      *                              null
      */
     @Override
-    public Value<T> ifPresent(Consumer<? super T> consumer) {
+    public Ref<T> ifPresent(Consumer<? super T> consumer) {
         if (value != null)
             consumer.accept(value);
 
@@ -96,7 +96,7 @@ public class ValueImpl<T> implements Value<T> {
      * @param runnable executed if a value is not present
      */
     @Override
-    public Value<T> ifEmpty(Runnable runnable) {
+    public Ref<T> ifEmpty(Runnable runnable) {
         if (value == null)
             runnable.run();
         return this;
@@ -105,42 +105,42 @@ public class ValueImpl<T> implements Value<T> {
 
     /**
      * If a value is present, and the value matches the given predicate,
-     * return an {@code ValueImpl} describing the value, otherwise return an
-     * empty {@code ValueImpl}.
+     * return an {@code RefImpl} describing the value, otherwise return an
+     * empty {@code RefImpl}.
      *
      * @param predicate a predicate to apply to the value, if present
-     * @return an {@code ValueImpl} the value {@code ValueImpl}
+     * @return an {@code RefImpl} the value {@code RefImpl}
      * if present and the value matches the predicate,
-     * otherwise an empty {@code ValueImpl}
+     * otherwise an empty {@code RefImpl}
      * @throws NullPointerException if the predicate is null
      */
     @Override
-    public Value<T> filter(Predicate<? super T> predicate) {
+    public Ref<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (!isPresent())
             return this;
         else
-            return predicate.test(value) ? this : Value.empty();
+            return predicate.test(value) ? this : Ref.empty();
     }
 
     /**
      * If a value present, use the mapping function to it,
-     * and if the result is present, return an {@code ValueImpl} with the result.
-     * Otherwise return an empty value {@code ValueImpl}.
+     * and if the result is present, return an {@code RefImpl} with the result.
+     * Otherwise return an empty value {@code RefImpl}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper a mapper to apply to the value, if present
-     * @return a value {@code ValueImpl} which is the result of the mapper
-     * function applied to {@code ValueImpl} value if present or an empty value.
+     * @return a value {@code RefImpl} which is the result of the mapper
+     * function applied to {@code RefImpl} value if present or an empty value.
      * @throws NullPointerException if the mapper is null
      */
     @Override
-    public <U> Value<U> map(Function<? super T, ? extends U> mapper) {
+    public <U> Ref<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
-            return Value.empty();
+            return Ref.empty();
         else {
-            return Value.ofNullable(mapper.apply(value));
+            return Ref.ofNullable(mapper.apply(value));
         }
     }
 
@@ -160,7 +160,7 @@ public class ValueImpl<T> implements Value<T> {
      * Indicates whether some other object is "equal to" the value.
      * The other value is equal if:
      * <ul>
-     * <li>it is also an {@code ValueImpl} and;
+     * <li>it is also an {@code RefImpl} and;
      * <li>both instances have no value present or;
      * <li>the present values are "equal to" to the other value.
      * </ul>
@@ -175,11 +175,11 @@ public class ValueImpl<T> implements Value<T> {
             return true;
         }
 
-        if (!(other instanceof Value)) {
+        if (!(other instanceof Ref)) {
             return false;
         }
 
-        ValueImpl<?> otherValue = (ValueImpl<?>) other;
+        RefImpl<?> otherValue = (RefImpl<?>) other;
         return Objects.equals(value, otherValue.value);
     }
 
@@ -204,7 +204,7 @@ public class ValueImpl<T> implements Value<T> {
     }
 
     /**
-     * Returns a non-empty string representation of this Value suitable for
+     * Returns a non-empty string representation of this Ref suitable for
      * debugging. The exact presentation format is unspecified and may vary
      * between implementations and versions.
      *
@@ -212,6 +212,6 @@ public class ValueImpl<T> implements Value<T> {
      */
     @Override
     public String toString() {
-        return "Value{" + "value=" + value + '}';
+        return "Ref{" + "value=" + value + '}';
     }
 }

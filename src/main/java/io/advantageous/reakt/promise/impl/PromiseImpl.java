@@ -1,8 +1,8 @@
 package io.advantageous.reakt.promise.impl;
 
 
+import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
-import io.advantageous.reakt.Value;
 import io.advantageous.reakt.promise.Promise;
 
 import java.util.NoSuchElementException;
@@ -12,9 +12,9 @@ import java.util.function.Consumer;
 public class PromiseImpl<T> implements Promise<T> {
 
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
-    protected Value<Consumer<T>> thenConsumer = Value.empty();
-    protected Value<Consumer<Throwable>> catchConsumer = Value.empty();
-    protected Value<Consumer<Value<T>>> thenValueConsumer = Value.empty();
+    protected Ref<Consumer<T>> thenConsumer = Ref.empty();
+    protected Ref<Consumer<Throwable>> catchConsumer = Ref.empty();
+    protected Ref<Consumer<Ref<T>>> thenValueConsumer = Ref.empty();
 
 
     protected void doFail(Throwable cause) {
@@ -28,19 +28,19 @@ public class PromiseImpl<T> implements Promise<T> {
 
 
     public synchronized Promise<T> then(final Consumer<T> consumer) {
-        thenConsumer = Value.of(consumer);
+        thenConsumer = Ref.of(consumer);
         return this;
     }
 
     @Override
-    public synchronized Promise<T> thenValue(Consumer<Value<T>> consumer) {
-        thenValueConsumer = Value.of(consumer);
+    public synchronized Promise<T> thenValue(Consumer<Ref<T>> consumer) {
+        thenValueConsumer = Ref.of(consumer);
         return this;
     }
 
     @Override
     public Result<T> catchError(Consumer<Throwable> consumer) {
-        catchConsumer = Value.of(consumer);
+        catchConsumer = Ref.of(consumer);
         return this;
     }
 
@@ -75,35 +75,25 @@ public class PromiseImpl<T> implements Promise<T> {
         return result.get().cause();
     }
 
-    @Override
-    public void cancel() {
-
-        if (result.get() == null) {
-            throw new NoSuchElementException("No value present, result not returned.");
-        }
-        result.get().cancel();
-
-    }
-
 
     /**
-     * If the value of the promise can be null, it is better to use Value which is like Optional.
+     * If the value of the promise can be null, it is better to use Ref which is like Optional.
      *
      * @return value associated with a successful result.
      */
-    public Value<T> getValue() {
+    public Ref<T> getRef() {
         if (result.get() == null) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (failure()) {
             throw new IllegalStateException(cause());
         }
-        return result.get().getValue();
+        return result.get().getRef();
     }
 
     /**
      * Raw value of the result.
-     * You should not use this if the result could be null, use getValue instead.
+     * You should not use this if the result could be null, use getRef instead.
      *
      * @return raw value associated with the result.
      */
@@ -131,6 +121,6 @@ public class PromiseImpl<T> implements Promise<T> {
     }
 
     protected void doThenValue(final Result<T> result) {
-        this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getValue()));
+        this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getRef()));
     }
 }

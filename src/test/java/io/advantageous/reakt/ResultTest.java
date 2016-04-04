@@ -2,7 +2,6 @@ package io.advantageous.reakt;
 
 import org.junit.Test;
 
-import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +14,7 @@ public class ResultTest {
         Employee[] employee = new Employee[1];
         rick.then(e -> employee[0] = e);
         assertNotNull(employee[0]);
-        Value<Employee>[] employeeValue = new Value[1];
+        Ref<Employee>[] employeeValue = new Ref[1];
 
         rick.thenValue(ev -> employeeValue[0] = ev);
         assertNotNull(employeeValue[0]);
@@ -24,7 +23,6 @@ public class ResultTest {
         assertTrue(rick.complete());
         assertFalse(rick.failure());
         assertTrue(rick.success());
-        rick.cancel();
 
     }
 
@@ -35,7 +33,7 @@ public class ResultTest {
         Employee[] employee = new Employee[1];
         rick.then(e -> employee[0] = e);
         assertNull(employee[0]);
-        Value<Employee>[] employeeValue = new Value[1];
+        Ref<Employee>[] employeeValue = new Ref[1];
 
         rick.thenValue(ev -> employeeValue[0] = ev);
         assertNull(employeeValue[0]);
@@ -43,18 +41,25 @@ public class ResultTest {
         assertTrue(rick.complete());
         assertTrue(rick.failure());
         assertFalse(rick.success());
-        rick.cancel();
 
         boolean[] flag = new boolean[1];
 
-        rick.catchError(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
+        rick.catchError(throwable -> flag[0] = true);
 
-                flag[0] = true;
-            }
-        });
+        try {
+            rick.get();
+            fail();
+        }catch (Exception e) {
 
+        }
+
+
+        try {
+            rick.getRef();
+            fail();
+        }catch (Exception e) {
+
+        }
         assertTrue(flag[0]);
 
 

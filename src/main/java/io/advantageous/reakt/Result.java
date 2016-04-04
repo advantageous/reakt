@@ -53,7 +53,7 @@ public interface Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Result<T> thenValue(Consumer<Value<T>> consumer);
+    Result<T> thenValue(Consumer<Ref<T>> consumer);
 
 
     /**
@@ -90,22 +90,17 @@ public interface Result<T> {
      */
     Throwable cause();
 
-    /**
-     * Cancel any more results being sent, this is used with streams not a scalar result.
-     * A stream is a source that can return more than one result.
-     */
-    void cancel();
 
     /**
-     * If the value of the result can be null, it is better to use Value which is like Optional.
+     * If the value of the result can be null, it is better to use Ref which is like Optional.
      *
      * @return value associated with a successful result.
      */
-    Value<T> getValue();
+    Ref<T> getRef();
 
     /**
      * Raw value of the result.
-     * You should not use this if the result could be null, use getValue instead.
+     * You should not use this if the result could be null, use getRef instead.
      *
      * @return raw value associated with the result.
      */

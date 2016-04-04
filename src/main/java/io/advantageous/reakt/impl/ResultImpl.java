@@ -1,7 +1,7 @@
 package io.advantageous.reakt.impl;
 
+import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
-import io.advantageous.reakt.Value;
 
 import java.util.function.Consumer;
 
@@ -14,9 +14,9 @@ public class ResultImpl<T> implements Result<T> {
     }
 
     @Override
-    public Result<T> thenValue(Consumer<Value<T>> consumer) {
+    public Result<T> thenValue(Consumer<Ref<T>> consumer) {
         if (success()) {
-            consumer.accept(getValue());
+            consumer.accept(getRef());
         }
         return this;
     }
@@ -59,16 +59,12 @@ public class ResultImpl<T> implements Result<T> {
         return object instanceof Throwable ? (Throwable) object : null;
     }
 
-    @Override
-    public void cancel() {
 
-    }
-
-    public Value<T> getValue() {
+    public Ref<T> getRef() {
         if (failure()) {
             throw new IllegalStateException(cause());
         }
-        return Value.ofNullable((T) object);
+        return Ref.ofNullable((T) object);
     }
 
 

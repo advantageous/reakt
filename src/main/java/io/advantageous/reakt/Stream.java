@@ -1,6 +1,8 @@
 package io.advantageous.reakt;
 
-import io.advantageous.reakt.impl.StreamResult;
+import io.advantageous.reakt.impl.StreamResultImpl;
+
+import java.util.function.Consumer;
 
 
 /**
@@ -17,7 +19,19 @@ import io.advantageous.reakt.impl.StreamResult;
  *
  * @param <T> type of result returned from callback
  */
-public interface Stream<T> extends Callback<T> {
+public interface Stream<T> {
+
+
+    /**
+     * (Client view)
+     * A result was returned so handle it.
+     * <p>
+     * This is registered from the callers (or event receivers perspective).
+     * A client of a service would override {@code onResult}.
+     *
+     * @param result to handle
+     */
+    void onNext(StreamResult<T> result);
 
 
     /**
@@ -29,7 +43,7 @@ public interface Stream<T> extends Callback<T> {
      * @param result result value to send.
      */
     default void complete(final T result) {
-        onResult(new StreamResult<>(result, true));
+        onNext(new StreamResultImpl<>(result, true, Ref.empty(), Ref.empty()));
     }
 
     /**
@@ -41,7 +55,8 @@ public interface Stream<T> extends Callback<T> {
      * @param result result value to send.
      */
     default void reply(final T result) {
-        onResult(new StreamResult<>(result, false));
+        onNext(new StreamResultImpl<>(result, false,
+                Ref.empty(), Ref.empty()));
     }
 
 
@@ -56,6 +71,68 @@ public interface Stream<T> extends Callback<T> {
      * @param done   if true signifies that that this is the last result.
      */
     default void reply(final T result, final boolean done) {
-        onResult(new StreamResult<>(result, done));
+        onNext(new StreamResultImpl<>(result, done, Ref.empty(),
+                Ref.empty()));
     }
+
+
+    /**
+     * (Service view)
+     * This allows services to send back a next result easily to the client/handler
+     * and pass done flag to denote completeness.
+     * <p>
+     * This is a helper methods for producers (services that produce results) to send a result.
+     *
+     * @param result result value to send.
+     * @param done   if true signifies that that this is the last result.
+     */
+    default void reply(final T result, final boolean done, final Runnable cancelHandler) {
+        onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),
+                Ref.empty()));
+    }
+
+
+    /**
+     * (Service view)
+     * This allows services to send back a next result easily to the client/handler
+     * and pass done flag to denote completeness.
+     * <p>
+     * This is a helper methods for producers (services that produce results) to send a result.
+     *
+     * @param result result value to send.
+     * @param done   if true signifies that that this is the last result.
+     */
+    default void reply(final T result, final boolean done, final Runnable cancelHandler, final Consumer<Long> wantsMore) {
+        onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),
+                Ref.of(wantsMore)));
+    }
+
+    /**
+     * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * <p>
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param error error
+     */
+    default void fail(final Throwable error) {
+
+        onNext(new StreamResultImpl<>(error, true, Ref.empty(), Ref.empty()));
+    }
+
+
+    /**
+     * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * <p>
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param errorMessage error message
+     */
+    default void fail(final String errorMessage) {
+        onNext(new StreamResultImpl<>(new IllegalStateException(errorMessage),
+                true, Ref.empty(), Ref.empty()));
+
+    }
+
 }

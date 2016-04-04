@@ -1,7 +1,7 @@
 package io.advantageous.reakt.promise.impl;
 
+import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
-import io.advantageous.reakt.Value;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -17,27 +17,46 @@ public class BlockingPromise<T> extends PromiseImpl<T> {
 
     @Override
     public void onResult(Result<T> result) {
-        countDownLatch.countDown();
         super.onResult(result);
+        countDownLatch.countDown();
     }
 
     @Override
-    public Value<T> getValue() {
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
-        return super.getValue();
+    public Ref<T> getRef() {
+        await();
+        return super.getRef();
     }
 
     @Override
     public T get() {
+        await();
+        return super.get();
+    }
+
+    @Override
+    public Throwable cause() {
+        await();
+        return super.cause();
+    }
+
+    @Override
+    public boolean failure() {
+        await();
+        return super.failure();
+    }
+
+    @Override
+    public boolean success() {
+        await();
+        return super.success();
+    }
+
+    private void await() {
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
-        return super.get();
     }
+
 }
