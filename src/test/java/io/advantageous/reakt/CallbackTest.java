@@ -14,7 +14,9 @@ public class CallbackTest {
         Employee[] employee = new Employee[1];
         testService.simple(result -> {
             results[0] = result;
-            result.then(e -> employee[0] = e);
+            result.then(e -> employee[0] = e).catchError(error -> {
+                System.err.println(error.getMessage());
+            });
         });
 
         assertTrue(results[0].complete());
