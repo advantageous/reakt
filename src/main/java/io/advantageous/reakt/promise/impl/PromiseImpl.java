@@ -33,7 +33,7 @@ public class PromiseImpl<T> implements Promise<T> {
     }
 
     @Override
-    public synchronized Promise<T> thenValue(Consumer<Ref<T>> consumer) {
+    public synchronized Promise<T> thenRef(Consumer<Ref<T>> consumer) {
         thenValueConsumer = Ref.of(consumer);
         return this;
     }

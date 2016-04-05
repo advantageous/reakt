@@ -16,7 +16,7 @@ public class ResultTest {
         assertNotNull(employee[0]);
         Ref<Employee>[] employeeValue = new Ref[1];
 
-        rick.thenValue(ev -> employeeValue[0] = ev);
+        rick.thenRef(ev -> employeeValue[0] = ev);
         assertNotNull(employeeValue[0]);
         assertTrue(employeeValue[0].isPresent());
 
@@ -35,7 +35,7 @@ public class ResultTest {
         assertNull(employee[0]);
         Ref<Employee>[] employeeValue = new Ref[1];
 
-        rick.thenValue(ev -> employeeValue[0] = ev);
+        rick.thenRef(ev -> employeeValue[0] = ev);
         assertNull(employeeValue[0]);
 
         assertTrue(rick.complete());

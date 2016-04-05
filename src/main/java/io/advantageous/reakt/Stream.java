@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 /**
  * A generic event handler for N results, i.e., a stream of results.
  * <p>
- * This is a type of {@link Callback} for streaming results.
+ * This is a like a type of {@link Callback} for streaming results.
  * While {@code Callback} can be considered for scalar results, a
- * {@code Stream} is more appropriate for non-scalar results, i.e., {@code Result#onResult}
+ * {@code Stream} is more appropriate for non-scalar results, i.e., {@code Stream#onNext}
  * will get called many times.
  * <p>
  * which can be thought of as a callback handler.

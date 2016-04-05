@@ -53,7 +53,7 @@ public interface Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Result<T> thenValue(Consumer<Ref<T>> consumer);
+    Result<T> thenRef(Consumer<Ref<T>> consumer);
 
 
     /**

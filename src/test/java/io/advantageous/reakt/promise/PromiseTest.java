@@ -23,7 +23,7 @@ public class PromiseTest {
         Promise<Employee> promise = Promise.promise();
 
         promise.then(e -> employee[0] = e);
-        promise.thenValue(employeeValue -> value[0] = employeeValue);
+        promise.thenRef(employeeValue -> value[0] = employeeValue);
 
 
         testService.simple(promise);
@@ -49,7 +49,7 @@ public class PromiseTest {
         Promise<Employee> promise = Promise.blockingPromise();
 
         promise.then(e -> employee[0] = e);
-        promise.thenValue(employeeValue -> value[0] = employeeValue);
+        promise.thenRef(employeeValue -> value[0] = employeeValue);
 
 
         testService.async(promise);
@@ -96,7 +96,7 @@ public class PromiseTest {
 
 
         promise.then(employee::set);
-        promise.thenValue(ref::set);
+        promise.thenRef(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
 
 
@@ -134,7 +134,7 @@ public class PromiseTest {
         ReplayPromise<Employee> promise = Promise.replayPromise(Duration.ofMillis(1));
 
         promise.then(employee::set);
-        promise.thenValue(ref::set);
+        promise.thenRef(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
         promise.onTimeout(() -> timeoutCalled.set(true));
 

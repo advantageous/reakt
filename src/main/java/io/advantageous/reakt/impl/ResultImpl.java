@@ -14,7 +14,7 @@ public class ResultImpl<T> implements Result<T> {
     }
 
     @Override
-    public Result<T> thenValue(Consumer<Ref<T>> consumer) {
+    public Result<T> thenRef(Consumer<Ref<T>> consumer) {
         if (success()) {
             consumer.accept(getRef());
         }
