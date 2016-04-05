@@ -42,6 +42,7 @@ public interface Result<T> {
      * @param consumer executed if result has no error.
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
+     * @return this, fluent API
      */
     Result<T> then(Consumer<T> consumer);
 
@@ -52,6 +53,7 @@ public interface Result<T> {
      * @param consumer executed if result has no error.
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
+     * @return this, fluent API
      */
     Result<T> thenRef(Consumer<Ref<T>> consumer);
 
@@ -62,6 +64,7 @@ public interface Result<T> {
      * @param consumer executed if result has error.
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
+     * @return this, fluent API
      */
     Result<T> catchError(Consumer<Throwable> consumer);
 

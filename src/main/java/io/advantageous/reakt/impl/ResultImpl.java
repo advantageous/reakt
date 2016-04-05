@@ -60,6 +60,8 @@ public class ResultImpl<T> implements Result<T> {
     }
 
 
+
+    @SuppressWarnings("unchecked")
     public Ref<T> getRef() {
         if (failure()) {
             throw new IllegalStateException(cause());
@@ -68,6 +70,7 @@ public class ResultImpl<T> implements Result<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     public T get() {
         if (failure()) {
             throw new IllegalStateException(cause());

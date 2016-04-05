@@ -85,6 +85,7 @@ public interface Stream<T> {
      *
      * @param result result value to send.
      * @param done   if true signifies that that this is the last result.
+     * @param cancelHandler cancel handler if you support canceling.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler) {
         onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),
@@ -101,6 +102,8 @@ public interface Stream<T> {
      *
      * @param result result value to send.
      * @param done   if true signifies that that this is the last result.
+     * @param cancelHandler cancel handler if you support canceling the stream
+     * @param wantsMore handler so client can request more items if this is supported.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler, final Consumer<Long> wantsMore) {
         onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),

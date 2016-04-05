@@ -3,15 +3,91 @@ version '0.1'
 
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'idea'
 
-sourceCompatibility = 1.8
+
+test.onlyIf { !Boolean.getBoolean('skip.tests') }
+
 
 repositories {
     mavenCentral()
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    required false
+    sign configurations.archives
+}
+
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                try {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                } catch (MissingPropertyException ignore) {
+                }
+            }
+
+            pom.project {
+                packaging 'jar'
+
+                url 'https://github.com/advantageous/reakt'
+
+                scm {
+                    url 'scm:git@github.com:advantageous/reakt.git'
+                    connection 'scm:git@github.com:advantageous/reakt.git'
+                    developerConnection 'scm:git@github.com:advantageous/reakt.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'richardHightower'
+                        name 'Richard Hightower'
+                    }
+                    developer {
+                        id 'sailorgeoffrey'
+                        name 'Geoffrey Chandler'
+                    }
+                }
+            }
+        }
+    }
 }
 
 

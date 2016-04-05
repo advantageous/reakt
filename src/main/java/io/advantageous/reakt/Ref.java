@@ -117,6 +117,7 @@ public interface Ref<T> {
      * @param consumer executed if a value is present
      * @throws NullPointerException if value is present and {@code consumer} is
      *                              null
+     * @return this, fluent API
      */
     Ref<T> ifPresent(Consumer<? super T> consumer);
 
@@ -125,6 +126,7 @@ public interface Ref<T> {
      * If a value is not present, invoke the runnable.
      *
      * @param runnable executed if a value is not present
+     * @return this, fluent API
      */
     Ref<T> ifEmpty(Runnable runnable);
 
@@ -169,6 +171,9 @@ public interface Ref<T> {
     /**
      * Indicates whether some other object is "equal to" the value.
      * The other value is equal if Object.equals(value, other) returns true.
+     *
+     * @param value checks for equality of inner value which is contained in reference
+     * @return true if equal
      */
     boolean equalsValue(Object value);
 

@@ -14,8 +14,8 @@ import java.time.Duration;
  * <p>
  * A promise is both a {@code Callback} ({@link io.advantageous.reakt.Callback}),
  * and a {@code Result} {@link io.advantageous.reakt.Result}.
- * <p>
- * <p>
+ * </p>
+ *
  * A promise is a sort of deferred value.
  *
  * @param <T> value of result.
