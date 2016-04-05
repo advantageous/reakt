@@ -66,6 +66,8 @@ In both of these examples, lookupService would look like:
 See [QBit](https://github.com/advantageous/qbit) micorservies lib 
 for more details.
 
+See our wiki for more details on [Reakt](https://github.com/advantageous/reakt/wiki).
+
 
 ## Further reading
 
