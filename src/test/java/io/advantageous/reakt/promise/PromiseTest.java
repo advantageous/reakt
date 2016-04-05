@@ -139,13 +139,13 @@ public class PromiseTest {
         promise.onTimeout(() -> timeoutCalled.set(true));
 
 
-        testService.async(promise);
+        testService.asyncTimeout(promise);
 
         for (int index=0; index < 100; index++) {
             if (promise.check(System.currentTimeMillis())) {
                 break;
             }
-            Thread.sleep(1);
+            Thread.sleep(10);
 
         }
 
@@ -304,6 +304,18 @@ public class PromiseTest {
             }).start();
         }
 
+
+        public void asyncTimeout(final Callback<Employee> callback) {
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(10_000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                callback.reply(new Employee("Rick"));
+            }).start();
+        }
 
         public void asyncError(final Callback<Employee> callback) {
             new Thread(() -> {
