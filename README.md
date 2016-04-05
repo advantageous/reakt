@@ -1,7 +1,7 @@
 # reakt
 Reactive interfaces for Java.
 
-Reactive interfaces for Java: 
+Reakt is reactive interfaces for Java: 
  * Promises, 
  * Streams, 
  * Callbacks, 
@@ -10,6 +10,8 @@ Reactive interfaces for Java:
 The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.
 
+
+Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, Guava Async Futures, etc.
 
 #### Fluent Promise API
 ```java
