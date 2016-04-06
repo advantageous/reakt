@@ -114,3 +114,5 @@ The Java microservice lib. QBit is a reactive programming lib for building micro
 [QBit is mentioned in the Restlet blog](http://restlet.com/blog/2015/09/04/this-week-in-api-land-20/)
 
 [All code is written using JetBrains Idea - the best IDE ever!](https://www.jetbrains.com/idea/)
+
+Added travis support.
