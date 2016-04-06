@@ -1,4 +1,5 @@
-# reakt
+# reakt [![Build Status](https://travis-ci.org/advantageous/qbit.svg)](https://travis-ci.org/advantageous/qbit) [![Join the chat at https://gitter.im/advantageous/qbit](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/advantageous/qbit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Reactive interfaces for Java.
 
 Reakt is reactive interfaces for Java: 
@@ -63,7 +64,7 @@ In both of these examples, lookupService would look like:
 
 
 ***QBit version 2*** is going to use ***Reakt***.
-***Communikate***, a slimmed down fork of Vert.x, will also use ***Reakt***. 
+***Connekt***, a slimmed down fork of Vert.x, will also use ***Reakt***. 
 
 See [QBit](https://github.com/advantageous/qbit) micorservies lib 
 for more details.
