@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Reakt by advantageous</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Reakt</h1>
+      <h2 class="project-tagline">Reactive interfaces. Promises, Streams, Callbacks, Async results, interfaces for Java that are lambda expression friendly and fluent.</h2>
+      <a href="https://github.com/advantageous/reakt" class="btn">View on GitHub</a>
+      <a href="https://github.com/advantageous/reakt/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/advantageous/reakt/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="reakt--" class="anchor" href="#reakt--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>reakt <a href="https://travis-ci.org/advantageous/reakt"><img src="https://travis-ci.org/advantageous/reakt.svg" alt="Build Status"></a> <a href="https://gitter.im/advantageous/reakt?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/advantageous/reakt"></a>
+</h1>
+
+<p>Reactive interfaces for Java.</p>
+
+<p>Reakt is reactive interfaces for Java: </p>
+
+<ul>
+<li>Promises, </li>
+<li>Streams, </li>
+<li>Callbacks, </li>
+<li>Async results</li>
+</ul>
+
+<p>The emphasis is on defining interfaces that enable lambda expressions, 
+and fluent APIs for asynchronous programming for Java.</p>
+
+<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, Guava Async Futures, etc.</p>
+
+<h4>
+<a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
+
+<div class="highlight highlight-source-java"><pre>
+  <span class="pl-k">Promise&lt;<span class="pl-smi">Employee</span>&gt;</span> promise <span class="pl-k">=</span> promise()
+                .then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
+                .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
+                     logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup employee<span class="pl-pds">"</span></span>, error));
+
+  employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, promise);</pre></div>
+
+<p>Or you can handle it in one line. </p>
+
+<h4>
+<a id="fluent-promise-api-example-2" class="anchor" href="#fluent-promise-api-example-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API example 2</h4>
+
+<div class="highlight highlight-source-java"><pre>
+
+  employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, 
+        promise()<span class="pl-k">.</span>then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
+                 .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(
+                                           <span class="pl-s"><span class="pl-pds">"</span>Unable to lookup <span class="pl-pds">"</span></span>, error))
+        );</pre></div>
+
+<p>Promises are both a callback and a Result; however, you can work
+with Callbacks directly. </p>
+
+<h4>
+<a id="using-result-and-callback-directly" class="anchor" href="#using-result-and-callback-directly" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Result and callback directly</h4>
+
+<div class="highlight highlight-source-java"><pre>        employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, result <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+            result<span class="pl-k">.</span>then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
+                  .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+                    logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup<span class="pl-pds">"</span></span>, error);
+            });
+        });</pre></div>
+
+<p>In both of these examples, lookupService would look like:</p>
+
+<h4>
+<a id="using-result-and-callback-directly-1" class="anchor" href="#using-result-and-callback-directly-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Result and callback directly</h4>
+
+<div class="highlight highlight-source-java"><pre>
+   <span class="pl-k">public</span> <span class="pl-k">void</span> lookup(<span class="pl-k">long</span> employeeId, <span class="pl-k">Callback&lt;<span class="pl-smi">Employee</span>&gt;</span> callback){<span class="pl-c1">...</span>}
+</pre></div>
+
+<p><strong><em>QBit version 2</em></strong> is going to use <strong><em>Reakt</em></strong>.
+<strong><em>Connekt</em></strong>, a slimmed down fork of Vert.x, will also use <strong><em>Reakt</em></strong>. </p>
+
+<p>See <a href="https://github.com/advantageous/qbit">QBit</a> micorservies lib 
+for more details.</p>
+
+<p>See our wiki for more details on <a href="https://github.com/advantageous/reakt/wiki">Reakt</a>.</p>
+
+<h2>
+<a id="further-reading" class="anchor" href="#further-reading" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further reading</h2>
+
+<p><a href="http://www.mammatustech.com/microservices-architecture">What is Microservices Architecture?</a></p>
+
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki">QBit Java Micorservices lib tutorials</a></p>
+
+<p>The Java microservice lib. QBit is a reactive programming lib for building microservices - JSON, HTTP, WebSocket, and REST. QBit uses reactive programming to build elastic REST, and WebSockets based cloud friendly, web services. SOA evolved for mobile and cloud. ServiceDiscovery, Health, reactive StatService, events, Java idiomatic reactive programming for Microservices.</p>
+
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki">Find more tutorial on QBit</a>.</p>
+
+<p><a href="http://rick-hightower.blogspot.com/2015/03/reactive-programming-service-discovery.html">Reactive Programming</a>, <a href="http://rick-hightower.blogspot.com/2015/03/java-microservices-architecture.html">Java Microservices</a>, <a href="http://www.linkedin.com/in/rickhigh">Rick Hightower</a></p>
+
+<p><a href="http://www.mammatustech.com/">High-speed microservices consulting firm and authors of QBit with lots of experience with Vertx - Mammatus Technology</a></p>
+
+<p><a href="http://www.aboutobjects.com/">Highly recommended consulting and training firm who specializes in microservices architecture and mobile development that are already very familiar with QBit and Vertx as well as iOS and Android - About Objects</a></p>
+
+<p><a href="http://www.mammatustech.com/java-microservices-architecture">Java Microservices Architecture</a></p>
+
+<p><a href="http://www.mammatustech.com/Microservice-Service-Discovery-with-Consul">Microservice Service Discovery with Consul</a></p>
+
+<p><a href="http://www.mammatustech.com/consul-service-discovery-and-health-for-microservices-architecture-tutorial">Microservices Service Discovery Tutorial with Consul</a></p>
+
+<p><a href="http://www.mammatustech.com/reactive-microservices">Reactive Microservices</a></p>
+
+<p><a href="http://www.mammatustech.com/high-speed-microservices">High Speed Microservices</a></p>
+
+<p><a href="http://www.mammatustech.com/java-microservices-consulting">Java Microservices Consulting</a></p>
+
+<p><a href="http://www.mammatustech.com/java-reactive-microservice-training">Microservices Training</a></p>
+
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki/Reactor-tutorial--%7C-reactively-handling-async-calls-with-QBit-Reactive-Microservices">Reactive Microservices Tutorial, using the Reactor</a></p>
+
+<p><a href="http://restlet.com/blog/2015/09/04/this-week-in-api-land-20/">QBit is mentioned in the Restlet blog</a></p>
+
+<p><a href="https://www.jetbrains.com/idea/">All code is written using JetBrains Idea - the best IDE ever!</a></p>
+
+<p>Added travis support.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
