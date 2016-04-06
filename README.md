@@ -68,7 +68,7 @@ In both of these examples, lookupService would look like:
 ***QBit version 2*** is going to use ***Reakt***.
 ***Connekt***, a slimmed down fork of Vert.x, will also use ***Reakt***. 
 
-See [QBit](https://github.com/advantageous/qbit) micorservies lib 
+See [QBit](https://github.com/advantageous/qbit) microservices lib 
 for more details.
 
 See our wiki for more details on [Reakt](https://github.com/advantageous/reakt/wiki).
