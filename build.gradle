@@ -1,11 +1,16 @@
 group 'io.advantageous'
-version '0.1'
+version '0.1.0-RC1'
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'idea'
 
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}
 
 test.onlyIf { !Boolean.getBoolean('skip.tests') }
 
@@ -48,7 +53,6 @@ uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                 try {
                     authentication(userName: sonatypeUsername, password: sonatypePassword)
@@ -58,6 +62,8 @@ uploadArchives {
 
             pom.project {
                 packaging 'jar'
+                name project.name
+                description "Reactive interfaces. Promises, Streams, Callbacks, Async results, interfaces for Java  that are lambda expression friendly and fluent."
 
                 url 'https://github.com/advantageous/reakt'
 
