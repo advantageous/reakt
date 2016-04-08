@@ -60,7 +60,6 @@ public class ResultImpl<T> implements Result<T> {
     }
 
 
-
     @SuppressWarnings("unchecked")
     public Ref<T> getRef() {
         if (failure()) {

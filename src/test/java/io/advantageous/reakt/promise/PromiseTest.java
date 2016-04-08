@@ -14,6 +14,99 @@ import static org.junit.Assert.*;
 public class PromiseTest {
 
     @Test
+    public void testAllBlocking() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promise.promise();
+        Promise<Employee> promise2 = Promise.promise();
+
+        final Promise<Void> promise = Promise.allBlocking(promise1, promise2);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise1);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise2);
+
+        assertTrue(promise.success());
+
+    }
+
+
+    @Test
+    public void testAll() throws Exception {
+
+        /** Test service. */
+        TestService testService = new TestService();
+
+        /* Promise that expects an employee. */
+        Promise<Employee> promise1 = Promise.promise();
+        Promise<Employee> promise2 = Promise.promise();
+
+
+        /* Promise that returns when all employees are returned. */
+        final Promise<Void> promise = Promise.all(promise1, promise2);
+
+
+        promise.then(nil -> System.out.println("DONE!"));
+
+        assertFalse("Not done yet", promise.complete());
+
+        /** Call service. */
+        testService.simple(promise1);
+
+        /** Still not done because only one service has been called. */
+        assertFalse(promise.complete());
+
+        /** Ok now second service is called. */
+        testService.simple(promise2);
+
+        /** Wait some time. */
+        //...
+
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+    }
+
+
+    @Test
+    public void testAllReplay() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promise.promise();
+        Promise<Employee> promise2 = Promise.promise();
+
+        final ReplayPromise<Void> promise = Promise.allReplay(Duration.ofMillis(1000),
+                promise1, promise2);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise1);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise2);
+
+
+        for (int index = 0; index < 10; index++) {
+            promise.check(System.currentTimeMillis());
+            if (promise.complete()) break;
+            Thread.sleep(10);
+
+        }
+
+
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+    }
+
+    @Test
     public void test() throws Exception {
 
         TestService testService = new TestService();
@@ -84,6 +177,38 @@ public class PromiseTest {
 
     }
 
+    @Test
+    public void testAsyncWithBlockingPromiseWithDuration() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Ref[] value = new Ref[1];
+
+        AtomicBoolean completedCalled = new AtomicBoolean();
+
+        /* Note this is only for legacy integration and testing. */
+        Promise<Employee> promise = Promise.blockingPromise(Duration.ofMillis(1000));
+
+        promise.then(e -> employee[0] = e);
+        promise.thenRef(employeeValue -> value[0] = employeeValue)
+                .whenComplete(() -> completedCalled.set(true));
+
+
+        testService.async(promise);
+
+        assertNotNull(promise.get());
+
+        assertTrue(completedCalled.get());
+        assertNotNull(promise.getRef());
+        assertTrue(promise.complete());
+        assertFalse(promise.failure());
+        assertTrue(promise.success());
+        assertNull(promise.cause());
+        assertNotNull(employee[0]);
+
+        assertNotNull(value[0]);
+
+    }
 
     @Test
     public void testAsyncWithReplayPromise() throws Exception {
@@ -120,7 +245,7 @@ public class PromiseTest {
 
         testService.async(promise);
 
-        for (int index=0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             if (promise.check(System.currentTimeMillis())) {
                 break;
             }
@@ -159,7 +284,7 @@ public class PromiseTest {
 
         testService.asyncTimeout(promise);
 
-        for (int index=0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             if (promise.check(System.currentTimeMillis())) {
                 break;
             }
@@ -281,7 +406,8 @@ public class PromiseTest {
 
 
         try {
-            promise.thenRef(e -> {});
+            promise.thenRef(e -> {
+            });
             fail();
         } catch (UnsupportedOperationException oe) {
 
@@ -290,7 +416,7 @@ public class PromiseTest {
         try {
             promise.catchError(throwable -> error[0] = true);
             fail();
-        }catch (UnsupportedOperationException oe) {
+        } catch (UnsupportedOperationException oe) {
 
         }
 
@@ -309,6 +435,7 @@ public class PromiseTest {
         testPrematureAccessWithPromise(promise);
 
     }
+
     private void testPrematureAccessWithPromise(Promise<Employee> promise) {
         try {
             promise.get();
@@ -406,7 +533,6 @@ public class PromiseTest {
                 callback.fail("Rick");
             }).start();
         }
-
 
 
         public void error(Callback<Employee> callback) {

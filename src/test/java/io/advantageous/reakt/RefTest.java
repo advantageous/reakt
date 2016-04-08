@@ -60,7 +60,7 @@ public class RefTest {
         /* Test ifEmpty and ifPresent. */
         empty.ifEmpty(() -> flag[0] = true);
         assertTrue(flag[0]);
-        empty.ifPresent( employee -> flag[0] = false);
+        empty.ifPresent(employee -> flag[0] = false);
         assertTrue(flag[0]);
 
         final Employee bob = empty.orElse(new Employee("bob"));

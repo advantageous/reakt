@@ -2,7 +2,6 @@ package io.advantageous.reakt;
 
 import org.junit.Test;
 
-
 import static org.junit.Assert.*;
 
 public class ResultTest {
@@ -49,7 +48,7 @@ public class ResultTest {
         try {
             rick.get();
             fail();
-        }catch (Exception e) {
+        } catch (Exception e) {
 
         }
 
@@ -57,7 +56,7 @@ public class ResultTest {
         try {
             rick.getRef();
             fail();
-        }catch (Exception e) {
+        } catch (Exception e) {
 
         }
         assertTrue(flag[0]);

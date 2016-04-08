@@ -3,7 +3,11 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
 
+import java.time.Duration;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * This is very much like a Java Future. It is blocking.
@@ -14,6 +18,16 @@ import java.util.concurrent.CountDownLatch;
 public class BlockingPromise<T> extends BasePromise<T> {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
+    private final Ref<Duration> duration;
+
+    public BlockingPromise() {
+        this.duration = Ref.empty();
+    }
+
+
+    public BlockingPromise(final Duration duration) {
+        this.duration = Ref.of(duration);
+    }
 
     @Override
     public void onResult(Result<T> result) {
@@ -51,12 +65,27 @@ public class BlockingPromise<T> extends BasePromise<T> {
         return super.success();
     }
 
-    private void await() {
+
+    private void doAwait(final Callable<Void> runnable) {
         try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
+            runnable.call();
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private void await() {
+        duration.ifPresent(duration1 -> {
+            doAwait(() -> {
+                countDownLatch.await(duration1.toMillis(), MILLISECONDS);
+                return null;
+            });
+        }).ifEmpty(() -> {
+            doAwait(() -> {
+                countDownLatch.await();
+                return null;
+            });
+        });
     }
 
 }

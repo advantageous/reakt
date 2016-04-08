@@ -83,8 +83,8 @@ public interface Stream<T> {
      * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
-     * @param result result value to send.
-     * @param done   if true signifies that that this is the last result.
+     * @param result        result value to send.
+     * @param done          if true signifies that that this is the last result.
      * @param cancelHandler cancel handler if you support canceling.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler) {
@@ -100,10 +100,10 @@ public interface Stream<T> {
      * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
-     * @param result result value to send.
-     * @param done   if true signifies that that this is the last result.
+     * @param result        result value to send.
+     * @param done          if true signifies that that this is the last result.
      * @param cancelHandler cancel handler if you support canceling the stream
-     * @param wantsMore handler so client can request more items if this is supported.
+     * @param wantsMore     handler so client can request more items if this is supported.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler, final Consumer<Long> wantsMore) {
         onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),

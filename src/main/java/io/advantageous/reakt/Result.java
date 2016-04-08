@@ -40,9 +40,9 @@ public interface Result<T> {
      * If a result is sent, and there was no error, then handle the result.
      *
      * @param consumer executed if result has no error.
+     * @return this, fluent API
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
-     * @return this, fluent API
      */
     Result<T> then(Consumer<T> consumer);
 
@@ -51,9 +51,9 @@ public interface Result<T> {
      * If a result is sent, and there was no error, then handle the result as a value which could be null.
      *
      * @param consumer executed if result has no error.
+     * @return this, fluent API
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
-     * @return this, fluent API
      */
     Result<T> thenRef(Consumer<Ref<T>> consumer);
 
@@ -62,9 +62,9 @@ public interface Result<T> {
      * If a result is sent, and there is an error, then handle handle the error.
      *
      * @param consumer executed if result has error.
+     * @return this, fluent API
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
-     * @return this, fluent API
      */
     Result<T> catchError(Consumer<Throwable> consumer);
 

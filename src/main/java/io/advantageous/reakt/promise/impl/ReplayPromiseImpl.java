@@ -16,6 +16,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     private Ref<Runnable> timeoutHandler;
     private Ref<Consumer<ReplayPromise>> afterResultProcessedHandler = Ref.empty();
 
+
     public ReplayPromiseImpl(final Duration timeout, final long startTime) {
 
         this.timeoutDuration = timeout;
@@ -29,7 +30,6 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     @Override
     public boolean check(final long time) {
-
 
         if (result.get() == null) {
             if ((time - startTime) > timeoutDuration.toMillis()) {
@@ -47,12 +47,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     }
 
     private void handleResultPresent(Result<T> theResult) {
-        if (theResult.success()) {
-            doThen(theResult.get());
-            doThenValue(theResult);
-        } else {
-            doFail(theResult.cause());
-        }
+        doOnResult(theResult);
         afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
     }
 

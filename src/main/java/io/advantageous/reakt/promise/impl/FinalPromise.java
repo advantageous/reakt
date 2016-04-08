@@ -5,13 +5,14 @@ import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class FinalPromise <T> implements Promise<T> {
+public class FinalPromise<T> implements Promise<T> {
 
-
+    protected final Ref<List<Runnable>> completeListeners;
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected final Ref<Consumer<T>> thenConsumer;
     protected final Ref<Consumer<Throwable>> catchConsumer;
@@ -19,10 +20,12 @@ public class FinalPromise <T> implements Promise<T> {
 
     public FinalPromise(Ref<Consumer<T>> thenConsumer,
                         Ref<Consumer<Throwable>> catchConsumer,
-                        Ref<Consumer<Ref<T>>> thenValueConsumer) {
+                        Ref<Consumer<Ref<T>>> thenValueConsumer,
+                        Ref<List<Runnable>> completeListeners) {
         this.thenConsumer = thenConsumer;
         this.catchConsumer = catchConsumer;
         this.thenValueConsumer = thenValueConsumer;
+        this.completeListeners = completeListeners;
     }
 
 
@@ -36,18 +39,24 @@ public class FinalPromise <T> implements Promise<T> {
 
 
     public Promise<T> then(final Consumer<T> consumer) {
-        throw new UnsupportedOperationException("then not supported for final promise");
+        throw new UnsupportedOperationException("then(..) not supported for final promise");
 
     }
 
     @Override
+    public Promise<T> whenComplete(Runnable doneListener) {
+        throw new UnsupportedOperationException("whenComplete(..) not supported for final promise");
+    }
+
+
+    @Override
     public synchronized Promise<T> thenRef(Consumer<Ref<T>> consumer) {
-        throw new UnsupportedOperationException("thenRef not supported for final promise");
+        throw new UnsupportedOperationException("thenRef(..) not supported for final promise");
     }
 
     @Override
     public Promise<T> catchError(Consumer<Throwable> consumer) {
-        throw new UnsupportedOperationException("catchError not supported for final promise");
+        throw new UnsupportedOperationException("catchError(..) not supported for final promise");
     }
 
     @Override
@@ -124,6 +133,8 @@ public class FinalPromise <T> implements Promise<T> {
         } else {
             doFail(result.cause());
         }
+        this.completeListeners.ifPresent(runnables -> runnables.forEach((Consumer<Runnable>) Runnable::run));
+
     }
 
     protected void doThenValue(final Result<T> result) {

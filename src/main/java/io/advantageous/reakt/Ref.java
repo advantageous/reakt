@@ -115,9 +115,9 @@ public interface Ref<T> {
      * If a value is present, invoke the consumer with the value.
      *
      * @param consumer executed if a value is present
+     * @return this, fluent API
      * @throws NullPointerException if value is present and {@code consumer} is
      *                              null
-     * @return this, fluent API
      */
     Ref<T> ifPresent(Consumer<? super T> consumer);
 
