@@ -64,9 +64,32 @@ In both of these examples, lookupService would look like:
 ```
 
 
+## Bridges
 
-***QBit version 2*** is going to use ***Reakt***.
-***Connekt***, a slimmed down fork of Vert.x, will also use ***Reakt***. 
+[Reakt Guava Bridge](http://advantageous.github.io/reakt-guava/) which 
+allows libs that use Guava async support to now have a modern Java feel.
+
+
+#### Cassandra Reakt example
+
+```java
+
+register(session.executeAsync("SELECT release_version FROM system.local"), 
+  promise().thenRef(ref -> 
+     gui.setMessage("Cassandra version is " +
+         ref.get().one().getString("release_version"))
+  ).catchError(error -> 
+     gui.setMessage("Error while reading Cassandra version: " 
+     + error.getMessage())
+  )
+);
+     
+```
+
+***QBit 1*** ships with a bridge and ***QBit 2***will use ***Reakt*** as its 
+primary reactive callback mechanism. 
+
+***Conekt***, a slimmed down fork of Vert.x, will also use ***Reakt***. 
 
 See [QBit](https://github.com/advantageous/qbit) microservices lib 
 for more details.
@@ -117,4 +140,3 @@ The Java microservice lib. QBit is a reactive programming lib for building micro
 
 [All code is written using JetBrains Idea - the best IDE ever!](https://www.jetbrains.com/idea/)
 
-Added travis support.
