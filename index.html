@@ -19,18 +19,12 @@
     </section>
 
     <section class="main-content">
-      <h1>
-<a id="reakt--" class="anchor" href="#reakt--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>reakt <a href="https://travis-ci.org/advantageous/reakt"><img src="https://travis-ci.org/advantageous/reakt.svg" alt="Build Status"></a> <a href="https://gitter.im/advantageous/reakt?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/advantageous/reakt"></a>
-</h1>
+      <p><strong><em>Reactive interfaces for Java.</em></strong></p>
 
-<p><a href="http://advantageous.github.io/reakt">Reakt website</a></p>
-
-<p>Reactive interfaces for Java.</p>
-
-<p>Reakt is reactive interfaces for Java: </p>
+<p>Reakt is reactive interfaces for Java which includes: </p>
 
 <ul>
-<li>Promises, </li>
+<li>Promises,</li>
 <li>Streams, </li>
 <li>Callbacks, </li>
 <li>Async results</li>
@@ -39,7 +33,7 @@
 <p>The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.</p>
 
-<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, Guava Async Futures, etc.</p>
+<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. </p>
 
 <h4>
 <a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
@@ -78,13 +72,13 @@ with Callbacks directly. </p>
             });
         });</pre></div>
 
-<p>In both of these examples, lookupService would look like:</p>
+<p>In both of these examples, lookupEmployee would look like:</p>
 
 <h4>
 <a id="using-result-and-callback-directly-1" class="anchor" href="#using-result-and-callback-directly-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Result and callback directly</h4>
 
 <div class="highlight highlight-source-java"><pre>
-   <span class="pl-k">public</span> <span class="pl-k">void</span> lookup(<span class="pl-k">long</span> employeeId, <span class="pl-k">Callback&lt;<span class="pl-smi">Employee</span>&gt;</span> callback){<span class="pl-c1">...</span>}
+   <span class="pl-k">public</span> <span class="pl-k">void</span> lookupEmployee(<span class="pl-k">long</span> employeeId, <span class="pl-k">Callback&lt;<span class="pl-smi">Employee</span>&gt;</span> callback){<span class="pl-c1">...</span>}
 </pre></div>
 
 <h2>
@@ -108,7 +102,7 @@ register(session<span class="pl-k">.</span>executeAsync(<span class="pl-s"><span
 );
 </pre></div>
 
-<p><strong><em>QBit 1</em></strong> ships with a bridge and <strong><em>QBit 2</em></strong>will use <strong><em>Reakt</em></strong> as its 
+<p><strong><em>QBit 1</em></strong> ships with a bridge and <strong><em>QBit 2</em></strong> will use <strong><em>Reakt</em></strong> as its 
 primary reactive callback mechanism. </p>
 
 <p><strong><em>Conekt</em></strong>, a slimmed down fork of Vert.x, will also use <strong><em>Reakt</em></strong>. </p>
