@@ -20,7 +20,10 @@
 
     <section class="main-content">
       <h1>
-<a id="reakt" class="anchor" href="#reakt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>reakt</h1>
+<a id="reakt--" class="anchor" href="#reakt--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>reakt <a href="https://travis-ci.org/advantageous/reakt"><img src="https://travis-ci.org/advantageous/reakt.svg" alt="Build Status"></a> <a href="https://gitter.im/advantageous/reakt?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/advantageous/reakt"></a>
+</h1>
+
+<p><a href="http://advantageous.github.io/reakt">Reakt website</a></p>
 
 <p>Reactive interfaces for Java.</p>
 
@@ -84,13 +87,46 @@ with Callbacks directly. </p>
    <span class="pl-k">public</span> <span class="pl-k">void</span> lookup(<span class="pl-k">long</span> employeeId, <span class="pl-k">Callback&lt;<span class="pl-smi">Employee</span>&gt;</span> callback){<span class="pl-c1">...</span>}
 </pre></div>
 
-<p><strong><em>QBit version 2</em></strong> is going to use <strong><em>Reakt</em></strong>.
-<strong><em>Connekt</em></strong>, a slimmed down fork of Vert.x, will also use <strong><em>Reakt</em></strong>. </p>
+<h2>
+<a id="bridges" class="anchor" href="#bridges" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bridges</h2>
+
+<p><a href="http://advantageous.github.io/reakt-guava/">Reakt Guava Bridge</a> which 
+allows libs that use Guava async support to now have a modern Java feel.</p>
+
+<h4>
+<a id="cassandra-reakt-example" class="anchor" href="#cassandra-reakt-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cassandra Reakt example</h4>
+
+<div class="highlight highlight-source-java"><pre>
+register(session<span class="pl-k">.</span>executeAsync(<span class="pl-s"><span class="pl-pds">"</span>SELECT release_version FROM system.local<span class="pl-pds">"</span></span>), 
+  promise()<span class="pl-k">.</span>thenRef(ref <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
+     gui<span class="pl-k">.</span>setMessage(<span class="pl-s"><span class="pl-pds">"</span>Cassandra version is <span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+         ref<span class="pl-k">.</span>get()<span class="pl-k">.</span>one()<span class="pl-k">.</span>getString(<span class="pl-s"><span class="pl-pds">"</span>release_version<span class="pl-pds">"</span></span>))
+  )<span class="pl-k">.</span>catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
+     gui<span class="pl-k">.</span>setMessage(<span class="pl-s"><span class="pl-pds">"</span>Error while reading Cassandra version: <span class="pl-pds">"</span></span> 
+     <span class="pl-k">+</span> error<span class="pl-k">.</span>getMessage())
+  )
+);
+</pre></div>
+
+<p><strong><em>QBit 1</em></strong> ships with a bridge and <strong><em>QBit 2</em></strong>will use <strong><em>Reakt</em></strong> as its 
+primary reactive callback mechanism. </p>
+
+<p><strong><em>Conekt</em></strong>, a slimmed down fork of Vert.x, will also use <strong><em>Reakt</em></strong>. </p>
 
 <p>See <a href="https://github.com/advantageous/qbit">QBit</a> microservices lib 
 for more details.</p>
 
 <p>See our wiki for more details on <a href="https://github.com/advantageous/reakt/wiki">Reakt</a>.</p>
+
+<h2>
+<a id="further-reading" class="anchor" href="#further-reading" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further reading</h2>
+
+<ul>
+<li><a href="http://rick-hightower.blogspot.com/2015/03/reactive-programming-service-discovery.html">Reactive Programming</a></li>
+<li><a href="http://www.mammatustech.com/">High-speed reactive microservices consulting firm and authors of QBit/Reakt with lots of experience with Vertx - Mammatus Technology</a></li>
+<li><a href="http://www.mammatustech.com/reactive-microservices">Reactive Microservices</a></li>
+<li><a href="https://www.jetbrains.com/idea/">All code is written using JetBrains Idea - the best IDE ever!</a></li>
+</ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
