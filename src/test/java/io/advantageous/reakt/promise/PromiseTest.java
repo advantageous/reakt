@@ -18,10 +18,10 @@ public class PromiseTest {
 
         TestService testService = new TestService();
 
-        Promise<Employee> promise1 = Promise.promise();
-        Promise<Employee> promise2 = Promise.promise();
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
 
-        final Promise<Void> promise = Promise.allBlocking(promise1, promise2);
+        final Promise<Void> promise = Promises.allBlocking(promise1, promise2);
 
         assertFalse(promise.complete());
 
@@ -43,12 +43,12 @@ public class PromiseTest {
         TestService testService = new TestService();
 
         /* Promise that expects an employee. */
-        Promise<Employee> promise1 = Promise.promise();
-        Promise<Employee> promise2 = Promise.promise();
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
 
 
         /* Promise that returns when all employees are returned. */
-        final Promise<Void> promise = Promise.all(promise1, promise2);
+        final Promise<Void> promise = Promises.all(promise1, promise2);
 
 
         promise.then(nil -> System.out.println("DONE!"));
@@ -78,10 +78,10 @@ public class PromiseTest {
 
         TestService testService = new TestService();
 
-        Promise<Employee> promise1 = Promise.promise();
-        Promise<Employee> promise2 = Promise.promise();
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
 
-        final ReplayPromise<Void> promise = Promise.allReplay(Duration.ofMillis(1000),
+        final ReplayPromise<Void> promise = Promises.allReplay(Duration.ofMillis(1000),
                 promise1, promise2);
 
         assertFalse(promise.complete());
@@ -113,7 +113,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         Ref[] value = new Ref[1];
 
-        Promise<Employee> promise = Promise.<Employee>promise().then(e -> employee[0] = e)
+        Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
                 .thenRef(employeeValue -> value[0] = employeeValue);
 
 
@@ -127,7 +127,7 @@ public class PromiseTest {
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
         Ref[] value = new Ref[1];
-        Promise<Employee> promise = Promise.<Employee>promise().then(e -> employee[0] = e)
+        Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
                 .thenRef(employeeValue -> value[0] = employeeValue).freeze();
 
 
@@ -157,7 +157,7 @@ public class PromiseTest {
         Ref[] value = new Ref[1];
 
         /* Note this is only for legacy integration and testing. */
-        Promise<Employee> promise = Promise.blockingPromise();
+        Promise<Employee> promise = Promises.blockingPromise();
 
         promise.then(e -> employee[0] = e);
         promise.thenRef(employeeValue -> value[0] = employeeValue);
@@ -187,7 +187,7 @@ public class PromiseTest {
         AtomicBoolean completedCalled = new AtomicBoolean();
 
         /* Note this is only for legacy integration and testing. */
-        Promise<Employee> promise = Promise.blockingPromise(Duration.ofMillis(1000));
+        Promise<Employee> promise = Promises.blockingPromise(Duration.ofMillis(1000));
 
         promise.then(e -> employee[0] = e);
         promise.thenRef(employeeValue -> value[0] = employeeValue)
@@ -214,7 +214,7 @@ public class PromiseTest {
     public void testAsyncWithReplayPromise() throws Exception {
 
 
-        ReplayPromise<Employee> promise = Promise.replayPromise(Duration.ofMinutes(10));
+        ReplayPromise<Employee> promise = Promises.replayPromise(Duration.ofMinutes(10));
 
         validateReplay(promise);
 
@@ -225,7 +225,7 @@ public class PromiseTest {
     public void testAsyncWithReplayPromise2() throws Exception {
 
 
-        ReplayPromise<Employee> promise = Promise.replayPromise(Duration.ofMinutes(10), System.currentTimeMillis());
+        ReplayPromise<Employee> promise = Promises.replayPromise(Duration.ofMinutes(10), System.currentTimeMillis());
 
         validateReplay(promise);
 
@@ -274,7 +274,7 @@ public class PromiseTest {
         AtomicBoolean afterCalled = new AtomicBoolean();
         AtomicBoolean timeoutCalled = new AtomicBoolean();
 
-        ReplayPromise<Employee> promise = Promise.replayPromise(Duration.ofMillis(1));
+        ReplayPromise<Employee> promise = Promises.replayPromise(Duration.ofMillis(1));
 
         promise.then(employee::set);
         promise.thenRef(ref::set);
@@ -324,7 +324,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        final Promise<Employee> promise = Promise.<Employee>promise()
+        final Promise<Employee> promise = Promises.<Employee>promise()
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true).freeze();
 
@@ -339,7 +339,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        final Promise<Employee> promise = Promise.<Employee>promise()
+        final Promise<Employee> promise = Promises.<Employee>promise()
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
@@ -379,7 +379,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promise.promise();
+        Promise<Employee> promise = Promises.promise();
         promise
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
@@ -395,7 +395,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promise.<Employee>promise().freeze();
+        Promise<Employee> promise = Promises.<Employee>promise().freeze();
 
         try {
             promise.then(e -> employee[0] = e);
@@ -428,7 +428,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promise.<Employee>promise()
+        Promise<Employee> promise = Promises.<Employee>promise()
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true).freeze();
 
