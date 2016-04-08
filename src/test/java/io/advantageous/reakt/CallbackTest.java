@@ -92,7 +92,7 @@ public class CallbackTest {
         }
 
         public void exception(Callback<Employee> callback) {
-            callback.fail(new IllegalStateException("Error"));
+            callback.fail("force exception", new IllegalStateException("Error"));
         }
     }
 }

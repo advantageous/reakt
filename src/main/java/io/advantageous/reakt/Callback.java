@@ -54,6 +54,20 @@ public interface Callback<T> {
 
     /**
      * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * <p>
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param errorMessage error message
+     * @param error exception
+     */
+    default void fail(final String errorMessage, final Exception error) {
+        fail(new IllegalStateException(errorMessage, error));
+    }
+
+
+    /**
+     * (Service view)
      * This allows services to send back a result easily to the client/handler.
      * <p>
      * This is a helper methods for producers (services that produce results) to send a result.

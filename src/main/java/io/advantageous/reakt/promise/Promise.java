@@ -173,4 +173,5 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      *                              null
      */
     Promise<T> catchError(Consumer<Throwable> consumer);
+
 }
