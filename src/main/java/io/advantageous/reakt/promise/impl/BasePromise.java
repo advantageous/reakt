@@ -9,13 +9,12 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class PromiseImpl<T> implements Promise<T> {
+public class BasePromise<T> implements Promise<T> {
 
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Ref<Consumer<T>> thenConsumer = Ref.empty();
     protected Ref<Consumer<Throwable>> catchConsumer = Ref.empty();
     protected Ref<Consumer<Ref<T>>> thenValueConsumer = Ref.empty();
-
 
     protected void doFail(Throwable cause) {
         catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(cause));
@@ -39,7 +38,7 @@ public class PromiseImpl<T> implements Promise<T> {
     }
 
     @Override
-    public Result<T> catchError(Consumer<Throwable> consumer) {
+    public Promise<T> catchError(Consumer<Throwable> consumer) {
         catchConsumer = Ref.of(consumer);
         return this;
     }
@@ -122,5 +121,16 @@ public class PromiseImpl<T> implements Promise<T> {
 
     protected void doThenValue(final Result<T> result) {
         this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getRef()));
+    }
+
+    public static <T> Promise<T> provideFinalPromise(Promise<T> promise) {
+        if (promise instanceof BasePromise) {
+            BasePromise<T> basePromise = ((BasePromise<T>) promise);
+            return new FinalPromise<>(basePromise.thenConsumer,
+                    basePromise.catchConsumer,
+                    basePromise.thenValueConsumer);
+        } else {
+            throw new IllegalStateException("Operation not supported use FinalPromise directly");
+        }
     }
 }

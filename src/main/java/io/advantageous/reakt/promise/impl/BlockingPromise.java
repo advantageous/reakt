@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @param <T> value of result.
  */
-public class BlockingPromise<T> extends PromiseImpl<T> {
+public class BlockingPromise<T> extends BasePromise<T> {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 

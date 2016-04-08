@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class ReplayPromiseImpl<T> extends PromiseImpl<T> implements ReplayPromise<T> {
+public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromise<T> {
 
     private final Duration timeoutDuration;
     private final long startTime;

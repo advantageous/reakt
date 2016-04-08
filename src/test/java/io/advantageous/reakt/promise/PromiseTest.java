@@ -20,10 +20,28 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         Ref[] value = new Ref[1];
 
-        Promise<Employee> promise = Promise.promise();
+        Promise<Employee> promise = Promise.<Employee>promise().then(e -> employee[0] = e)
+                .thenRef(employeeValue -> value[0] = employeeValue);
 
-        promise.then(e -> employee[0] = e);
-        promise.thenRef(employeeValue -> value[0] = employeeValue);
+
+        testSuccessWithPromise(testService, employee, value, promise);
+    }
+
+
+    @Test
+    public void testFreeze() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Ref[] value = new Ref[1];
+        Promise<Employee> promise = Promise.<Employee>promise().then(e -> employee[0] = e)
+                .thenRef(employeeValue -> value[0] = employeeValue).freeze();
+
+
+        testSuccessWithPromise(testService, employee, value, promise);
+    }
+
+    private void testSuccessWithPromise(TestService testService, Employee[] employee, Ref[] value, Promise<Employee> promise) {
 
 
         testService.simple(promise);
@@ -175,17 +193,35 @@ public class PromiseTest {
     }
 
     @Test
+    public void testErrorFreeze() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        boolean[] error = new boolean[1];
+
+        final Promise<Employee> promise = Promise.<Employee>promise()
+                .then(e -> employee[0] = e)
+                .catchError(throwable -> error[0] = true).freeze();
+
+        testErrorWithPromise(testService, employee, error, promise);
+    }
+
+
+    @Test
     public void testError() throws Exception {
 
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promise.promise();
-        promise
+        final Promise<Employee> promise = Promise.<Employee>promise()
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
+        testErrorWithPromise(testService, employee, error, promise);
+    }
+
+    private void testErrorWithPromise(TestService testService, Employee[] employee, boolean[] error, Promise<Employee> promise) {
         testService.error(promise);
 
 
@@ -205,7 +241,6 @@ public class PromiseTest {
 
 
         //assertNotNull(promise.getRef());
-
         assertNull(employee[0]);
         assertTrue(error[0]);
         assertTrue(promise.complete());
@@ -224,6 +259,57 @@ public class PromiseTest {
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
+        testPrematureAccessWithPromise(promise);
+
+    }
+
+
+    @Test
+    public void testFreezeImmutability() throws Exception {
+
+        Employee[] employee = new Employee[1];
+        boolean[] error = new boolean[1];
+
+        Promise<Employee> promise = Promise.<Employee>promise().freeze();
+
+        try {
+            promise.then(e -> employee[0] = e);
+            fail();
+        } catch (UnsupportedOperationException oe) {
+
+        }
+
+
+        try {
+            promise.thenRef(e -> {});
+            fail();
+        } catch (UnsupportedOperationException oe) {
+
+        }
+
+        try {
+            promise.catchError(throwable -> error[0] = true);
+            fail();
+        }catch (UnsupportedOperationException oe) {
+
+        }
+
+    }
+
+    @Test
+    public void testPrematureAccessWithFreeze() throws Exception {
+
+        Employee[] employee = new Employee[1];
+        boolean[] error = new boolean[1];
+
+        Promise<Employee> promise = Promise.<Employee>promise()
+                .then(e -> employee[0] = e)
+                .catchError(throwable -> error[0] = true).freeze();
+
+        testPrematureAccessWithPromise(promise);
+
+    }
+    private void testPrematureAccessWithPromise(Promise<Employee> promise) {
         try {
             promise.get();
             fail();
@@ -237,7 +323,6 @@ public class PromiseTest {
         } catch (NoSuchElementException ex) {
 
         }
-
 
 
         try {
@@ -262,7 +347,6 @@ public class PromiseTest {
         } catch (NoSuchElementException ex) {
 
         }
-
     }
 
     static class Employee {
