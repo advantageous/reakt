@@ -61,7 +61,7 @@ public interface Callback<T> {
      * @param errorMessage error message
      * @param error exception
      */
-    default void fail(final String errorMessage, final Exception error) {
+    default void fail(final String errorMessage, final Throwable error) {
         fail(new IllegalStateException(errorMessage, error));
     }
 
