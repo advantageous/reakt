@@ -13,8 +13,22 @@ Reakt is reactive interfaces for Java:
 The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.
 
-
 Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, Guava Async Futures, etc.
+
+#### Using from maven
+
+```xml
+<dependency>
+    <groupId>io.advantageous</groupId>
+    <artifactId>reakt</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+#### Using from gradle
+```xml
+compile 'io.advantageous:reakt:0.1.0'
+```
 
 #### Fluent Promise API
 ```java
