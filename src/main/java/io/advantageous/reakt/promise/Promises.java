@@ -32,9 +32,10 @@ public interface Promises {
      * All promises must complete.
      *
      * @param promises promises
+     * @param <T> types of promise
      * @return return containing promise
      */
-    static Promise<Void> all(List<Promise<?>> promises) {
+    static <T> Promise<Void> all(List<Promise<T>> promises) {
         return new AllPromise(promises.toArray(new Promise[promises.size()]));
     }
 
@@ -54,9 +55,10 @@ public interface Promises {
      * All promises must complete.
      *
      * @param promises promises
+     * @param <T> types of promise
      * @return return containing promise that is blocking.
      */
-    static Promise<Void> allBlocking(List<Promise<?>> promises) {
+    static <T> Promise<Void> allBlocking(List<Promise<T>> promises) {
         return new AllBlockingPromise(promises.toArray(new Promise[promises.size()]));
     }
 
@@ -78,9 +80,10 @@ public interface Promises {
      * @param timeout  timeout
      * @param time     time
      * @param promises promises
+     * @param <T> types of promise
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static ReplayPromise<Void> allReplay(final Duration timeout, long time, List<Promise<?>> promises) {
+    static <T> ReplayPromise<Void> allReplay(final Duration timeout, long time, List<Promise<T>> promises) {
         return new AllReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
     }
 
@@ -101,9 +104,10 @@ public interface Promises {
      *
      * @param timeout  timeout
      * @param promises promises
+     * @param <T> types of promise
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static ReplayPromise<Void> allReplay(final Duration timeout, List<Promise<?>> promises) {
+    static <T>  ReplayPromise<Void> allReplay(final Duration timeout, List<Promise<T>> promises) {
         return allReplay(timeout, System.currentTimeMillis(), promises.toArray(new Promise[promises.size()]));
     }
 
