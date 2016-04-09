@@ -59,7 +59,7 @@ public interface Callback<T> {
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param errorMessage error message
-     * @param error exception
+     * @param error        exception
      */
     default void fail(final String errorMessage, final Throwable error) {
         fail(new IllegalStateException(errorMessage, error));

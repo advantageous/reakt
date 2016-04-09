@@ -3,7 +3,7 @@ package io.advantageous.reakt.promise;
 import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
-import io.advantageous.reakt.promise.impl.*;
+import io.advantageous.reakt.promise.impl.BasePromise;
 
 import java.util.function.Consumer;
 

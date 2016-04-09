@@ -24,7 +24,7 @@ public interface Promises {
      * @param promises promises
      * @return return containing promise
      */
-    static Promise<Void> all(Promise<?>... promises) {
+    static Promise<Void> all(final Promise<?>... promises) {
         return new AllPromise(promises);
     }
 
@@ -32,11 +32,32 @@ public interface Promises {
      * All promises must complete.
      *
      * @param promises promises
-     * @param <T> types of promise
+     * @param <T>      types of promise
      * @return return containing promise
      */
-    static <T> Promise<Void> all(List<Promise<T>> promises) {
+    static <T> Promise<Void> all(final List<Promise<T>> promises) {
         return new AllPromise(promises.toArray(new Promise[promises.size()]));
+    }
+
+    /**
+     * Any promises must complete.
+     *
+     * @param promises promises
+     * @return return containing promise
+     */
+    static Promise<Void> any(final Promise<?>... promises) {
+        return new AnyPromise(promises);
+    }
+
+    /**
+     * All promises must complete.
+     *
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise
+     */
+    static <T> Promise<Void> any(final List<Promise<T>> promises) {
+        return new AnyPromise(promises.toArray(new Promise[promises.size()]));
     }
 
 
@@ -46,7 +67,7 @@ public interface Promises {
      * @param promises promises
      * @return return containing promise that is blocking.
      */
-    static Promise<Void> allBlocking(Promise<?>... promises) {
+    static Promise<Void> allBlocking(final Promise<?>... promises) {
         return new AllBlockingPromise(promises);
     }
 
@@ -55,11 +76,34 @@ public interface Promises {
      * All promises must complete.
      *
      * @param promises promises
-     * @param <T> types of promise
+     * @param <T>      types of promise
      * @return return containing promise that is blocking.
      */
-    static <T> Promise<Void> allBlocking(List<Promise<T>> promises) {
+    static <T> Promise<Void> allBlocking(final List<Promise<T>> promises) {
         return new AllBlockingPromise(promises.toArray(new Promise[promises.size()]));
+    }
+
+
+    /**
+     * Any promises must complete.
+     *
+     * @param promises promises
+     * @return return containing promise that is blocking.
+     */
+    static Promise<Void> anyBlocking(final Promise<?>... promises) {
+        return new AnyBlockingPromise(promises);
+    }
+
+
+    /**
+     * Any promises must complete.
+     *
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise that is blocking.
+     */
+    static <T> Promise<Void> anyBlocking(final List<Promise<T>> promises) {
+        return new AnyBlockingPromise(promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -70,7 +114,9 @@ public interface Promises {
      * @param promises promises
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static ReplayPromise<Void> allReplay(final Duration timeout, long time, Promise<?>... promises) {
+    static ReplayPromise<Void> allReplay(final Duration timeout,
+                                         final long time,
+                                         final Promise<?>... promises) {
         return new AllReplayPromise(timeout, time, promises);
     }
 
@@ -80,10 +126,12 @@ public interface Promises {
      * @param timeout  timeout
      * @param time     time
      * @param promises promises
-     * @param <T> types of promise
+     * @param <T>      types of promise
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static <T> ReplayPromise<Void> allReplay(final Duration timeout, long time, List<Promise<T>> promises) {
+    static <T> ReplayPromise<Void> allReplay(final Duration timeout,
+                                             final long time,
+                                             final List<Promise<T>> promises) {
         return new AllReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
     }
 
@@ -94,7 +142,8 @@ public interface Promises {
      * @param promises promises
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static ReplayPromise<Void> allReplay(final Duration timeout, Promise<?>... promises) {
+    static ReplayPromise<Void> allReplay(final Duration timeout,
+                                         final Promise<?>... promises) {
         return allReplay(timeout, System.currentTimeMillis(), promises);
     }
 
@@ -104,11 +153,63 @@ public interface Promises {
      *
      * @param timeout  timeout
      * @param promises promises
-     * @param <T> types of promise
+     * @param <T>      types of promise
      * @return returns replay promise so promise can be replayed in caller's thread.
      */
-    static <T>  ReplayPromise<Void> allReplay(final Duration timeout, List<Promise<T>> promises) {
+    static <T> ReplayPromise<Void> allReplay(final Duration timeout,
+                                             final List<Promise<T>> promises) {
         return allReplay(timeout, System.currentTimeMillis(), promises.toArray(new Promise[promises.size()]));
+    }
+
+    /**
+     * Any promises must complete.
+     *
+     * @param timeout  timeout
+     * @param time     time
+     * @param promises promises
+     * @return returns replay promise so promise can be replayed in caller's thread.
+     */
+    static ReplayPromise<Void> anyReplay(final Duration timeout, long time,
+                                         final Promise<?>... promises) {
+        return new AnyReplayPromise(timeout, time, promises);
+    }
+
+    /**
+     * Any promises must complete.
+     *
+     * @param timeout  timeout
+     * @param time     time
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return returns replay promise so promise can be replayed in caller's thread.
+     */
+    static <T> ReplayPromise<Void> anyReplay(final Duration timeout, long time,
+                                             final List<Promise<T>> promises) {
+        return new AnyReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
+    }
+
+    /**
+     * Any promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @return returns replay promise so promise can be replayed in caller's thread.
+     */
+    static ReplayPromise<Void> anyReplay(final Duration timeout, final Promise<?>... promises) {
+        return anyReplay(timeout, System.currentTimeMillis(), promises);
+    }
+
+
+    /**
+     * Any promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return returns replay promise so promise can be replayed in caller's thread.
+     */
+    static <T> ReplayPromise<Void> anyReplay(final Duration timeout, final List<Promise<T>> promises) {
+        return anyReplay(timeout, System.currentTimeMillis(), promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -119,7 +220,8 @@ public interface Promises {
      * @param <T>     type of result
      * @return new replay promise
      */
-    static <T> ReplayPromise<T> replayPromise(final Duration timeout, long time) {
+    static <T> ReplayPromise<T> replayPromise(final Duration timeout,
+                                              final long time) {
         return new ReplayPromiseImpl<>(timeout, time);
     }
 

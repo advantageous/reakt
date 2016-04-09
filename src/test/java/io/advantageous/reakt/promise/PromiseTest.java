@@ -14,6 +14,24 @@ import static org.junit.Assert.*;
 public class PromiseTest {
 
     @Test
+    public void testAnyBlocking() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
+
+        final Promise<Void> promise = Promises.anyBlocking(promise1, promise2);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise2);
+
+        assertTrue(promise.success());
+
+    }
+
+    @Test
     public void testAllBlocking() throws Exception {
 
         TestService testService = new TestService();
@@ -72,6 +90,39 @@ public class PromiseTest {
 
     }
 
+    @Test
+    public void testAny() throws Exception {
+
+        /** Test service. */
+        TestService testService = new TestService();
+
+        /* Promise that expects an employee. */
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
+
+
+        /* Promise that returns when all employees are returned. */
+        final Promise<Void> promise = Promises.any(promise1, promise2);
+
+
+        promise.then(nil -> System.out.println("DONE!"));
+
+        assertFalse("Not done yet", promise.complete());
+
+        /** Call service. */
+        testService.simple(promise1);
+
+        /** Ok now second service is called and any service means promise will return. */
+        testService.simple(promise2);
+
+        /** Wait some time. */
+        //...
+
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+    }
+
 
     @Test
     public void testAllReplay() throws Exception {
@@ -87,6 +138,36 @@ public class PromiseTest {
         assertFalse(promise.complete());
 
         testService.async(promise1);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise2);
+
+
+        for (int index = 0; index < 10; index++) {
+            promise.check(System.currentTimeMillis());
+            if (promise.complete()) break;
+            Thread.sleep(10);
+
+        }
+
+
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+    }
+
+
+    @Test
+    public void testAnyReplay() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
+
+        final ReplayPromise<Void> promise = Promises.anyReplay(Duration.ofMillis(1000),
+                promise1, promise2);
 
         assertFalse(promise.complete());
 
