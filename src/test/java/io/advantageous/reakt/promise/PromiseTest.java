@@ -110,10 +110,8 @@ public class PromiseTest {
         assertFalse("Not done yet", promise.complete());
 
         /** Call service. */
-        testService.simple(promise1);
-
-        /** Ok now second service is called and any service means promise will return. */
         testService.simple(promise2);
+
 
         /** Wait some time. */
         //...

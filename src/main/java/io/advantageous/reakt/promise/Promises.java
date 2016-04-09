@@ -5,6 +5,9 @@ import io.advantageous.reakt.promise.impl.*;
 import java.time.Duration;
 import java.util.List;
 
+/**
+ * Utility methods for creating promises.
+ */
 public interface Promises {
     /**
      * Create a promise.
