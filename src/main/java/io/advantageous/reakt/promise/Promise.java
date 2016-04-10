@@ -15,7 +15,7 @@ import java.util.function.Function;
  * A promise is both a {@code Callback} ({@link io.advantageous.reakt.Callback}),
  * and a {@code Result} {@link io.advantageous.reakt.Result}.
  * </p>
- * <p>
+ *
  * A promise is a sort of deferred value.
  *
  * @param <T> value of result.
@@ -34,9 +34,8 @@ public interface Promise<T> extends Callback<T>, Result<T> {
     /**
      * If a result is sent, and there was no error, then handle the result.
      * <p>
-     * <p>
-     * There is only one thenHandler.
-     * <p>
+     * There is only one {@code then} Handler.
+     * </p>
      * Unlike ES6, {@code then(..)} cannot be chained per se, but {@code whenComplete(..)}, and
      * {@code }thenMap(...)} can be nested.
      *

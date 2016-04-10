@@ -109,32 +109,46 @@ A promise can be:
 
 Java is not single threaded, meaning that two bits of code can run at 
 the same time, so the design of this promise and streaming library takes
-that into account. It is common to make async calls to store data in 
+that into account. 
+
+There are three types of promises:
+* Callback promises
+* Blocking promises (for testing and legacy integration)
+* Replay promises (allow promises to be handled on the same thread as caller)
+
+Replay promises are the most like their JS cousins. Replay promises are usually
+managed by the Reakt `Reactor` and supports environments like Vert.x and QBit.
+See the wiki for more details on Replay promises.
+
+It is common to make async calls to store data in 
 a NoSQL store or to call a remote REST interface or deal with a 
 distributed cache or queue. Also Java is strongly typed so the library
 that mimics JS promises is going to look a bit different. We tried to 
 use similar terminology where it makes sense. 
 
 Events and Streams are great for things that can happen multiple times 
-on the same object — keyup, touchstart, user action stream from Kafka, etc. 
+on the same object — keyup, touchstart, or event a 
+user action stream from Kafka, etc. 
 
 With those events you don't really care about what happened before 
 when you attached the listener. 
 
-But often times when dealing with services you want to handle a response
-with a specific next action, and a different action if there was an error
+But often times when dealing with services and data repositories,
+you want to handle a response with a specific next action, 
+and a different action if there was an error
 or timeout from the responses. You essentially want to call and handle
 a response asynchronously and that is what promises allow.
 
 This is not our first time to bat with Promises. QBit has had Promises for
 a few years now. We just called them CallbackBuilders instead. 
 We wanted to use more standard terminology and wanted to use the same 
-terminology and modeling o projects that do not use QBit.
+terminology and modeling on projects that do not use QBit like Conekt, 
+Vert.x, RxJava, and reactive streams.
 
 At their most basic level, promises are like event listeners except:
 
-A promise can only succeed or fail once. 
-A promise cannot succeed or fail twice, neither can it switch from 
+A promise can only succeed or fail once. A promise cannot succeed or 
+fail twice, neither can it switch from 
 success to failure. Once it enters its `completed` state, then it is done.
 
 
