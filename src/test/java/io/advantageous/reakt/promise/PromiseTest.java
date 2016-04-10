@@ -157,6 +157,39 @@ public class PromiseTest {
 
 
     @Test
+    public void testAllReplayFailFast() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
+
+        final ReplayPromise<Void> promise = Promises.allReplay(Duration.ofMillis(1000),
+                promise1, promise2);
+
+        assertFalse(promise.complete());
+
+        testService.async(promise1);
+
+        assertFalse(promise.complete());
+
+        testService.asyncError(promise2);
+
+
+        for (int index = 0; index < 10; index++) {
+            promise.check(System.currentTimeMillis());
+            if (promise.complete()) break;
+            Thread.sleep(10);
+
+        }
+
+
+        assertTrue(promise.complete());
+        assertTrue(promise.failure());
+
+    }
+
+    @Test
     public void testAnyReplay() throws Exception {
 
         TestService testService = new TestService();
@@ -182,6 +215,36 @@ public class PromiseTest {
 
         assertTrue(promise.complete());
         assertTrue(promise.success());
+
+    }
+
+
+    @Test
+    public void testAnyReplayFailFast() throws Exception {
+
+        TestService testService = new TestService();
+
+        Promise<Employee> promise1 = Promises.promise();
+        Promise<Employee> promise2 = Promises.promise();
+
+        final ReplayPromise<Void> promise = Promises.anyReplay(Duration.ofMillis(1000),
+                promise1, promise2);
+
+        assertFalse(promise.complete());
+
+        testService.asyncError(promise2);
+
+
+        for (int index = 0; index < 10; index++) {
+            promise.check(System.currentTimeMillis());
+            if (promise.complete()) break;
+            Thread.sleep(10);
+
+        }
+
+
+        assertTrue(promise.complete());
+        assertTrue(promise.failure());
 
     }
 
