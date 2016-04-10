@@ -42,9 +42,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> all(Promise<?>... promises) {
-        return addPromiseToProcessingQueue(
-                Promises.allReplay(defaultTimeout, timeSource.getTime(), promises)
-        );
+        return all(defaultTimeout, promises);
     }
 
     @Override
@@ -57,9 +55,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> all(List<Promise<T>> promises) {
-        return addPromiseToProcessingQueue(
-                Promises.allReplay(defaultTimeout, timeSource.getTime(), promises)
-        );
+        return all(defaultTimeout, promises);
     }
 
     @Override
@@ -73,9 +69,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> any(Promise<?>... promises) {
-        return addPromiseToProcessingQueue(
-                Promises.anyReplay(defaultTimeout, timeSource.getTime(), promises)
-        );
+        return any(defaultTimeout, promises);
     }
 
     @Override
@@ -88,9 +82,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> any(List<Promise<T>> promises) {
-        return addPromiseToProcessingQueue(
-                Promises.anyReplay(defaultTimeout, timeSource.getTime(), promises)
-        );
+        return any(defaultTimeout, promises);
     }
 
     @Override

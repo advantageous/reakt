@@ -25,7 +25,10 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     @Override
     public void onResult(final Result<T> result) {
+
         this.result.compareAndSet(null, result);
+        afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
+
     }
 
     @Override
@@ -48,7 +51,6 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     private void handleResultPresent(Result<T> theResult) {
         doOnResult(theResult);
-        afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
     }
 
     private void handleTimeout(long time) {

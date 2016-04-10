@@ -455,8 +455,10 @@ public class PromiseTest {
         assertNotNull(promise.cause());
         assertNull(employee.get());
         assertNull(ref.get());
-        assertTrue(afterCalled.get());
         assertTrue(timeoutCalled.get());
+
+        promise.check(System.currentTimeMillis());
+
     }
 
     @Test
