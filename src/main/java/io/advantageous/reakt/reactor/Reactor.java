@@ -1,6 +1,7 @@
 package io.advantageous.reakt.reactor;
 
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.reactor.impl.ReactorImpl;
 
 import java.time.Duration;
 import java.util.List;
@@ -10,6 +11,36 @@ import java.util.List;
  * Used with actor service models like QBit, Vertx, etc.
  */
 public interface Reactor {
+
+    /**
+     * Creates a default reactor.
+     *
+     * @return a reactor
+     */
+    static Reactor reactor() {
+        return new ReactorImpl(Duration.ofSeconds(30), System::currentTimeMillis);
+    }
+
+    /**
+     * Creates a default reactor with timeout.
+     *
+     * @param timeout timeout
+     * @return a reactor
+     */
+    static Reactor reactor(final Duration timeout) {
+        return new ReactorImpl(timeout, System::currentTimeMillis);
+    }
+
+    /**
+     * Creates a default reactor with timeout and timesource.
+     *
+     * @param timeout    timeout
+     * @param timeSource time source
+     * @return a reactor
+     */
+    static Reactor reactor(final Duration timeout, final TimeSource timeSource) {
+        return new ReactorImpl(timeout, timeSource);
+    }
 
     /**
      * Create a promise.

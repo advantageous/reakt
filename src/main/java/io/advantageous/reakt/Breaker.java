@@ -10,20 +10,20 @@ import java.util.function.Consumer;
  * The contained service can be broken (open circuit) or operational (closed circuit).
  * <p>
  * This represents a service which may or may not be available.
- * <p>
+ * </p>
  * We were using Ref a lot where we really wanted something like a Breaker.
  * <p>
  * This could be extended to blow the circuit with different conditions by providing
  * your own Breaker.
- * <p>
+ * </p>
  * <p>
  * Also we want to use interfaces for all core concepts.
- * <p>
+ * </p>
  * In addition we wanted callback for ifBroken and ifOperational.
  * <p>
  * If a service is active and healthy, {@code isOperational()} will return {@code true}.
  * If a service is not healthy or not working, {code isBroken()} will return {@code true}.
- * <p>
+ * </p>
  * This is heavily modeled after {@code Ref} optional.
  */
 public interface Breaker<T> {
