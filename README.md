@@ -2,10 +2,10 @@
 
 [Reakt website](http://advantageous.github.io/reakt)
 
-Reactive interfaces for Java.
+***Reactive interfaces for Java.***
 
-Reakt is reactive interfaces for Java: 
- * Promises, 
+Reakt is reactive interfaces for Java which includes: 
+ * Promises,
  * Streams, 
  * Callbacks, 
  * Async results
@@ -13,8 +13,10 @@ Reakt is reactive interfaces for Java:
 The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.
 
-Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, Guava Async Futures, etc.
 
+Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for ***Guava Async*** (used by Cassandra) and the ***QBit*** microservices lib. 
+
+## Getting started
 #### Using from maven
 
 ```xml
@@ -68,17 +70,34 @@ with Callbacks directly.
         });
 ```
 
-In both of these examples, lookupService would look like:
+In both of these examples, lookupEmployee would look like:
 
 #### Using Result and callback directly
 ```java
 
-   public void lookup(long employeeId, Callback<Employee> callback){...}
+   public void lookupEmployee(long employeeId, Callback<Employee> callback){...}
 
 ```
 
+You can use Promises to transform into other promises. 
 
-## Promise API concepts
+#### Transforming into another type of promise using thenMap
+```java
+
+        Promise<Employee> employeePromise = Promises.<Employee>blockingPromise();
+
+        Promise<Sheep> sheepPromise = employeePromise
+                .thenMap(employee1 -> new Sheep(employee1.getId()));
+```
+
+The `thenMap` will return a new type of Promise. 
+
+You can find more examples in the [reakt wiki](https://github.com/advantageous/reakt/wiki).
+
+We also support working with streams. 
+
+
+## Promise concepts
 
 This has been adapted from this [article on ES6 promises](http://www.html5rocks.com/en/tutorials/es6/promises/).
 A promise can be:
