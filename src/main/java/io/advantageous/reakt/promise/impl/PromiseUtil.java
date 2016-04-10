@@ -2,10 +2,12 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.Promises;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface PromiseUtil {
 
@@ -15,6 +17,7 @@ public interface PromiseUtil {
      *
      * @param parent        parent
      * @param childPromises promises that all have to come back before this promise comes back
+     * @param <T>           type of result
      */
     static <T> void all(Promise<T> parent, Promise<T>[] childPromises) {
         final AtomicInteger count = new AtomicInteger(childPromises.length);
@@ -43,6 +46,7 @@ public interface PromiseUtil {
      *
      * @param parent        parent promise
      * @param childPromises list of promises
+     * @param <T>           type of result
      */
     static <T> void any(Promise<T> parent, Promise<T>[] childPromises) {
 
@@ -65,5 +69,18 @@ public interface PromiseUtil {
         for (Promise<T> childPromise : childPromises) {
             childPromise.whenComplete(runnable);
         }
+    }
+
+    static <T, U> Promise<U> mapPromise(Promise<T> thisPromise, Function<? super T, ? extends U> mapper) {
+        final Promise<U> mappedPromise = Promises.promise();
+        thisPromise.whenComplete(promise -> {
+            if (promise.success()) {
+                final U mapped = mapper.apply(promise.get());
+                mappedPromise.reply(mapped);
+            } else {
+                mappedPromise.fail(promise.cause());
+            }
+        });
+        return mappedPromise;
     }
 }

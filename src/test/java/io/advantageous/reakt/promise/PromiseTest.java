@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -320,6 +321,68 @@ public class PromiseTest {
     }
 
     @Test
+    public void testAsyncWithBlockingPromiseThenMap() throws Exception {
+
+        TestService testService = new TestService();
+        Sheep[] employee = new Sheep[1];
+        Ref[] value = new Ref[1];
+
+        /* Note this is only for legacy integration and testing. */
+
+        Promise<Employee> employeePromise = Promises.<Employee>blockingPromise();
+
+        Promise<Sheep> sheepPromise = employeePromise
+                .thenMap(employee1 -> new Sheep(employee1.id));
+
+        sheepPromise.then(e -> employee[0] = e);
+        sheepPromise.thenRef(employeeValue -> value[0] = employeeValue);
+
+
+        testService.async(employeePromise);
+
+        assertNotNull(employeePromise.get());
+        assertNotNull(employeePromise.getRef());
+        assertTrue(employeePromise.complete());
+        assertFalse(employeePromise.failure());
+        assertTrue(employeePromise.success());
+        assertNull(employeePromise.cause());
+        assertNotNull(employee[0]);
+
+        assertNotNull(value[0]);
+
+    }
+
+    @Test
+    public void testPromiseThenMap() throws Exception {
+
+        TestService testService = new TestService();
+        Sheep[] employee = new Sheep[1];
+        Ref[] value = new Ref[1];
+
+        /* Note this is only for legacy integration and testing. */
+
+        Promise<Employee> employeePromise = Promises.<Employee>promise();
+
+        Promise<Sheep> sheepPromise = employeePromise
+                .thenMap(employee1 -> new Sheep(employee1.id));
+
+        sheepPromise.then(e -> employee[0] = e);
+        sheepPromise.thenRef(employeeValue -> value[0] = employeeValue);
+
+
+        testService.simple(employeePromise);
+
+        assertNotNull(employeePromise.get());
+        assertNotNull(employeePromise.getRef());
+        assertTrue(employeePromise.complete());
+        assertFalse(employeePromise.failure());
+        assertTrue(employeePromise.success());
+        assertNull(employeePromise.cause());
+        assertNotNull(employee[0]);
+        assertNotNull(value[0]);
+    }
+
+    @Test
     public void testAsyncWithBlockingPromiseWithDuration() throws Exception {
 
         TestService testService = new TestService();
@@ -361,7 +424,6 @@ public class PromiseTest {
         validateReplay(promise);
 
     }
-
 
     @Test
     public void testAsyncWithReplayPromise2() throws Exception {
@@ -405,7 +467,6 @@ public class PromiseTest {
         assertNotNull(ref.get());
         assertTrue(afterCalled.get());
     }
-
 
     @Test
     public void testAsyncHandleTimeout() throws Exception {
@@ -475,7 +536,6 @@ public class PromiseTest {
         testErrorWithPromise(testService, employee, error, promise);
     }
 
-
     @Test
     public void testError() throws Exception {
 
@@ -532,7 +592,6 @@ public class PromiseTest {
 
     }
 
-
     @Test
     public void testFreezeImmutability() throws Exception {
 
@@ -543,6 +602,20 @@ public class PromiseTest {
 
         try {
             promise.then(e -> employee[0] = e);
+            fail();
+        } catch (UnsupportedOperationException oe) {
+
+        }
+
+        try {
+            promise.thenMap((Function<Employee, Sheep>) employee1 -> null);
+            fail();
+        } catch (UnsupportedOperationException oe) {
+
+        }
+
+        try {
+            promise.whenComplete(null);
             fail();
         } catch (UnsupportedOperationException oe) {
 
@@ -617,6 +690,15 @@ public class PromiseTest {
             fail();
         } catch (NoSuchElementException ex) {
 
+        }
+    }
+
+    public static class Sheep {
+
+        private final String name;
+
+        public Sheep(String name) {
+            this.name = name;
         }
     }
 

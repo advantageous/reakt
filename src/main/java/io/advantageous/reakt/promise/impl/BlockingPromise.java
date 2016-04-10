@@ -2,10 +2,13 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Ref;
 import io.advantageous.reakt.Result;
+import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.Promises;
 
 import java.time.Duration;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -74,6 +77,12 @@ public class BlockingPromise<T> extends BasePromise<T> {
         }
     }
 
+
+    protected boolean _success() {
+        return super.success();
+    }
+
+
     private void await() {
         duration.ifPresent(duration1 -> {
             doAwait(() -> {
@@ -86,6 +95,22 @@ public class BlockingPromise<T> extends BasePromise<T> {
                 return null;
             });
         });
+    }
+
+    @Override
+    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+        final Promise<U> mappedPromise = Promises.promise();
+        this.whenComplete(p -> {
+            final BlockingPromise<T> promise = (BlockingPromise) p;
+            if (promise._success()) {
+                final T t = promise.result.get().get();
+                final U mapped = mapper.apply(t);
+                mappedPromise.reply(mapped);
+            } else {
+                mappedPromise.fail(promise.cause());
+            }
+        });
+        return mappedPromise;
     }
 
 }

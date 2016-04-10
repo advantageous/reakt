@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class FinalPromise<T> implements Promise<T> {
 
@@ -139,5 +140,10 @@ public class FinalPromise<T> implements Promise<T> {
 
     protected void doThenValue(final Result<T> result) {
         this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getRef()));
+    }
+
+    @Override
+    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+        throw new UnsupportedOperationException("then(..) not supported for final promise");
     }
 }

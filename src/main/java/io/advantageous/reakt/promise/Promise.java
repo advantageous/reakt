@@ -6,6 +6,7 @@ import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A promise is like a non-blocking {@code Future}({@link java.util.concurrent.Future}).
@@ -57,6 +58,9 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      *                              null
      */
     Promise<T> thenRef(Consumer<Ref<T>> consumer);
+
+
+    <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper);
 
     /**
      * If a result is sent, and there is an error, then handle handle the error.

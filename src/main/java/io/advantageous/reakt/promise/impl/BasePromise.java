@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class BasePromise<T> implements Promise<T> {
 
@@ -136,4 +137,11 @@ public class BasePromise<T> implements Promise<T> {
         this.completeListeners.ifPresent(runnables ->
                 runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
     }
+
+
+    @Override
+    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+        return PromiseUtil.mapPromise(this, mapper);
+    }
+
 }
