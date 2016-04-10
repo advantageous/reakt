@@ -75,6 +75,7 @@ public interface Breaker<T> {
 
     /**
      * Short version of isOperational.
+     *
      * @return ok
      */
     default boolean isOk() {
@@ -83,7 +84,7 @@ public interface Breaker<T> {
 
     /**
      * If a service is beleived to be working, invoke the consumer with the value.
-     *
+     * <p>
      * This tracks errors thrown by the consumer.
      *
      * @param consumer executed if a value is present

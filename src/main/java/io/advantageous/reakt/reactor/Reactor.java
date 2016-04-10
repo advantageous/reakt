@@ -1,18 +1,132 @@
 package io.advantageous.reakt.reactor;
 
-import io.advantageous.reakt.promise.ReplayPromise;
+import io.advantageous.reakt.promise.Promise;
 
 import java.time.Duration;
+import java.util.List;
 
+/**
+ * Ensures that tasks, repeating tasks and callbacks run in the callers thread.
+ * Used with actor service models like QBit, Vertx, etc.
+ */
 public interface Reactor {
 
-    <T> void addReplayPromise(ReplayPromise<T> replayPromise);
+    /**
+     * Create a promise.
+     * After you create a promise you register its then(...) and catchError(...) and then you use it to
+     * handle a callback.
+     * <p>
+     * Creates a replay promise that is managed by this Reactor.
+     *
+     * @param <T> type of result
+     * @return new promise
+     */
+    <T> Promise<T> promise();
 
-    void addRepeatingTask(Duration interval, Runnable runnable);
+    /**
+     * All promises must complete.
+     *
+     * @param promises promises
+     * @return return containing promise
+     */
+    Promise<Void> all(final Promise<?>... promises);
 
-    void runTaskAfter(Duration interval, Runnable runnable);
 
+    /**
+     * All promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @return return containing promise
+     */
+    Promise<Void> all(final Duration timeout,
+                      final Promise<?>... promises);
+
+    /**
+     * All promises must complete.
+     *
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise
+     */
+    <T> Promise<Void> all(final List<Promise<T>> promises);
+
+    /**
+     * All promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise
+     */
+    <T> Promise<Void> all(final Duration timeout,
+                          final List<Promise<T>> promises);
+
+    /**
+     * Any promises must complete.
+     *
+     * @param promises promises
+     * @return return containing promise
+     */
+    Promise<Void> any(final Promise<?>... promises);
+
+
+    /**
+     * Any promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @return return containing promise
+     */
+    Promise<Void> any(final Duration timeout,
+                      final Promise<?>... promises);
+
+    /**
+     * All promises must complete.
+     *
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise
+     */
+    <T> Promise<Void> any(final List<Promise<T>> promises);
+
+    /**
+     * All promises must complete.
+     *
+     * @param timeout  timeout
+     * @param promises promises
+     * @param <T>      types of promise
+     * @return return containing promise
+     */
+    <T> Promise<Void> any(final Duration timeout,
+                          final List<Promise<T>> promises);
+
+
+    /**
+     * Add a repeating task that will run every interval
+     *
+     * @param interval duration of interval
+     * @param runnable runnable to run.
+     */
+    void addRepeatingTask(final Duration interval, final Runnable runnable);
+
+    /**
+     * Add a task that will run once after the interval.
+     *
+     * @param afterInterval duration of interval
+     * @param runnable      runnable to run.
+     */
+    void runTaskAfter(final Duration afterInterval, final Runnable runnable);
+
+    /**
+     * Run on this Reactor's thread as soon as you can.
+     *
+     * @param runnable runnable
+     */
     void deferRun(Runnable runnable);
 
+    /**
+     * Allows the reactor to process its tasks, and promises (callbacks).
+     */
     void process();
 }
