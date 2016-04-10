@@ -16,27 +16,38 @@ public class BreakerImpl<T> implements Breaker<T> {
      */
     private final T service;
 
+
     /**
      * Hold blow circuit breaker flag.
      */
     private final AtomicLong errors = new AtomicLong();
+    private final int maxErrorCount;
 
     public BreakerImpl() {
+        maxErrorCount = 0;
         this.service = null;
     }
 
     public BreakerImpl(T value) {
+        maxErrorCount = 0;
         this.service = Objects.requireNonNull(value);
     }
 
+
+    public BreakerImpl(T value, int maxErrorCount) {
+        this.service = Objects.requireNonNull(value);
+        this.maxErrorCount = maxErrorCount;
+    }
+
+
     @Override
     public boolean isOperational() {
-        return service != null;
+        return service != null && maxErrorCount == 0 || errorCount() < maxErrorCount;
     }
 
     @Override
     public boolean isBroken() {
-        return service == null;
+        return !isOperational();
     }
 
     @Override

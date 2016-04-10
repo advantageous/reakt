@@ -57,6 +57,19 @@ public interface Breaker<T> {
         return new BreakerImpl<>(value);
     }
 
+    /**
+     * Returns an {@code Breaker} using the specified present value, which must not be null.
+     *
+     * @param <T>            the class of the value
+     * @param value          the value to be present. Must be non-null
+     * @param maxErrorsCount max error count
+     * @return an {@code RefImpl} with the value present
+     * @throws NullPointerException if value is null
+     */
+    static <T> Breaker<T> operational(T value, final int maxErrorsCount) {
+        return new BreakerImpl<>(value, maxErrorsCount);
+    }
+
 
     /**
      * Return {@code true} if the service is broken, otherwise {@code false}.
