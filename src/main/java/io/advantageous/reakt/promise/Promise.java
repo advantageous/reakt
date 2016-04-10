@@ -46,7 +46,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * @param doneListener doneListener
      * @return this, fluent API
      */
-    Promise<T> whenComplete(Runnable doneListener);
+    Promise<T> whenComplete(Consumer<Promise<T>> doneListener);
 
     /**
      * If a result is sent, and there was no error, then handle the result as a value which could be null.

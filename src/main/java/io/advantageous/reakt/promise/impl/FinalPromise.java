@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class FinalPromise<T> implements Promise<T> {
 
-    protected final Ref<List<Runnable>> completeListeners;
+    protected final Ref<List<Consumer<Promise<T>>>> completeListeners;
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected final Ref<Consumer<T>> thenConsumer;
     protected final Ref<Consumer<Throwable>> catchConsumer;
@@ -21,7 +21,7 @@ public class FinalPromise<T> implements Promise<T> {
     public FinalPromise(Ref<Consumer<T>> thenConsumer,
                         Ref<Consumer<Throwable>> catchConsumer,
                         Ref<Consumer<Ref<T>>> thenValueConsumer,
-                        Ref<List<Runnable>> completeListeners) {
+                        Ref<List<Consumer<Promise<T>>>> completeListeners) {
         this.thenConsumer = thenConsumer;
         this.catchConsumer = catchConsumer;
         this.thenValueConsumer = thenValueConsumer;
@@ -44,7 +44,7 @@ public class FinalPromise<T> implements Promise<T> {
     }
 
     @Override
-    public Promise<T> whenComplete(Runnable doneListener) {
+    public Promise<T> whenComplete(Consumer<Promise<T>> doneListener) {
         throw new UnsupportedOperationException("whenComplete(..) not supported for final promise");
     }
 
@@ -133,8 +133,8 @@ public class FinalPromise<T> implements Promise<T> {
         } else {
             doFail(result.cause());
         }
-        this.completeListeners.ifPresent(runnables -> runnables.forEach((Consumer<Runnable>) Runnable::run));
-
+        this.completeListeners.ifPresent(runnables ->
+                runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
     }
 
     protected void doThenValue(final Result<T> result) {

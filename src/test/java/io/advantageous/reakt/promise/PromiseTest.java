@@ -270,7 +270,7 @@ public class PromiseTest {
 
         promise.then(e -> employee[0] = e);
         promise.thenRef(employeeValue -> value[0] = employeeValue)
-                .whenComplete(() -> completedCalled.set(true));
+                .whenComplete((p) -> completedCalled.set(true));
 
 
         testService.async(promise);

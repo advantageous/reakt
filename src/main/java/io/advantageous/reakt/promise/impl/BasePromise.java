@@ -17,7 +17,7 @@ public class BasePromise<T> implements Promise<T> {
     protected Ref<Consumer<T>> thenConsumer = Ref.empty();
     protected Ref<Consumer<Throwable>> catchConsumer = Ref.empty();
     protected Ref<Consumer<Ref<T>>> thenValueConsumer = Ref.empty();
-    protected Ref<List<Runnable>> completeListeners = Ref.empty();
+    protected Ref<List<Consumer<Promise<T>>>> completeListeners = Ref.empty();
 
     public static <T> Promise<T> provideFinalPromise(Promise<T> promise) {
         if (promise instanceof BasePromise) {
@@ -37,7 +37,7 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public Promise<T> whenComplete(final Runnable doneListener) {
+    public Promise<T> whenComplete(final Consumer<Promise<T>> doneListener) {
         if (completeListeners.isEmpty()) {
             completeListeners = Ref.of(new CopyOnWriteArrayList<>());
         }
@@ -133,6 +133,7 @@ public class BasePromise<T> implements Promise<T> {
         } else {
             catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }
-        this.completeListeners.ifPresent(runnables -> runnables.forEach((Consumer<Runnable>) Runnable::run));
+        this.completeListeners.ifPresent(runnables ->
+                runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
     }
 }

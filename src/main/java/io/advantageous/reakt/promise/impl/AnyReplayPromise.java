@@ -7,6 +7,6 @@ import java.time.Duration;
 public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements Promise<Void> {
     public AnyReplayPromise(final Duration timeout, final long startTime, Promise<?>... promises) {
         super(timeout, startTime);
-        PromiseUtil.any(this, promises);
+        PromiseUtil.any(this, (Promise[])promises);
     }
 }
