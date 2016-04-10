@@ -34,7 +34,7 @@ public interface Callback<T> {
      *
      * @param error error
      */
-    default void fail(final Throwable error) {
+    default void reject(final Throwable error) {
         onResult(new ResultImpl<>(error));
     }
 
@@ -47,7 +47,7 @@ public interface Callback<T> {
      *
      * @param errorMessage error message
      */
-    default void fail(final String errorMessage) {
+    default void reject(final String errorMessage) {
         onResult(new ResultImpl<>(new IllegalStateException(errorMessage)));
     }
 
@@ -61,8 +61,8 @@ public interface Callback<T> {
      * @param errorMessage error message
      * @param error        exception
      */
-    default void fail(final String errorMessage, final Throwable error) {
-        fail(new IllegalStateException(errorMessage, error));
+    default void reject(final String errorMessage, final Throwable error) {
+        reject(new IllegalStateException(errorMessage, error));
     }
 
 
@@ -76,6 +76,14 @@ public interface Callback<T> {
      */
     default void reply(final T result) {
         onResult(new ResultImpl<>(result));
+    }
+
+    /**
+     * Resolve resolves a promise.
+     * @param result makes it more compatible with ES6 style promises
+     */
+    default void resolve(final T result) {
+        reply(result);
     }
 
 }

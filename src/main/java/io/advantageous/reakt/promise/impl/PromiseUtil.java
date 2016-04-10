@@ -24,7 +24,7 @@ public interface PromiseUtil {
         final Consumer<Promise<T>> consumer = (childPromise) -> {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
-                parent.fail(childPromise.cause());
+                parent.reject(childPromise.cause());
                 count.set(0);
             } else {
                 /** If the count is 0, then we are done. */
@@ -55,13 +55,13 @@ public interface PromiseUtil {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
                 if (done.compareAndSet(false, true)) {
-                    parent.fail(childPromise.cause());
+                    parent.reject(childPromise.cause());
                 }
             } else {
                 /** Only fire if the child promise is the first promise
                  * so the parent does not fire multiple times. */
                 if (done.compareAndSet(false, true)) {
-                    parent.fail(childPromise.cause());
+                    parent.reject(childPromise.cause());
                 }
             }
 
@@ -78,7 +78,7 @@ public interface PromiseUtil {
                 final U mapped = mapper.apply(promise.get());
                 mappedPromise.reply(mapped);
             } else {
-                mappedPromise.fail(promise.cause());
+                mappedPromise.reject(promise.cause());
             }
         });
         return mappedPromise;

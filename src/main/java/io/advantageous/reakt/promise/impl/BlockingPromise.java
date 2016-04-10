@@ -107,7 +107,7 @@ public class BlockingPromise<T> extends BasePromise<T> {
                 final U mapped = mapper.apply(t);
                 mappedPromise.reply(mapped);
             } else {
-                mappedPromise.fail(promise.cause());
+                mappedPromise.reject(promise.cause());
             }
         });
         return mappedPromise;

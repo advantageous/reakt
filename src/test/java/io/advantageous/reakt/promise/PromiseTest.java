@@ -756,17 +756,17 @@ public class PromiseTest {
 
         public void asyncError(final Callback<Employee> callback) {
             new Thread(() -> {
-                callback.fail("Rick");
+                callback.reject("Rick");
             }).start();
         }
 
 
         public void error(Callback<Employee> callback) {
-            callback.fail("Error");
+            callback.reject("Error");
         }
 
         public void exception(Callback<Employee> callback) {
-            callback.fail(new IllegalStateException("Error"));
+            callback.reject(new IllegalStateException("Error"));
         }
     }
 }

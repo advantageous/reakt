@@ -88,11 +88,11 @@ public class CallbackTest {
 
 
         public void error(Callback<Employee> callback) {
-            callback.fail("Error");
+            callback.reject("Error");
         }
 
         public void exception(Callback<Employee> callback) {
-            callback.fail("force exception", new IllegalStateException("Error"));
+            callback.reject("force exception", new IllegalStateException("Error"));
         }
     }
 }

@@ -78,6 +78,48 @@ In both of these examples, lookupService would look like:
 ```
 
 
+## Promise API concepts
+
+This has been adapted from this [article on ES6 promises](http://www.html5rocks.com/en/tutorials/es6/promises/).
+A promise can be:
+
+* fulfilled The callback/action relating to the promise succeeded 
+* rejected  The callback/action relating to the promise failed 
+* pending   The callback/action has not been fulfilled or rejected yet 
+* completed The callback/action has been fulfilled/resolved or rejected
+
+Java is not single threaded, meaning that two bits of code can run at 
+the same time, so the design of this promise and streaming library takes
+that into account. It is common to make async calls to store data in 
+a NoSQL store or to call a remote REST interface or deal with a 
+distributed cache or queue. Also Java is strongly typed so the library
+that mimics JS promises is going to look a bit different. We tried to 
+use similar terminology where it makes sense. 
+
+Events and Streams are great for things that can happen multiple times 
+on the same object — keyup, touchstart, user action stream from Kafka, etc. 
+
+With those events you don't really care about what happened before 
+when you attached the listener. 
+
+But often times when dealing with services you want to handle a response
+with a specific next action, and a different action if there was an error
+or timeout from the responses. You essentially want to call and handle
+a response asynchronously and that is what promises allow.
+
+This is not our first time to bat with Promises. QBit has had Promises for
+a few years now. We just called them CallbackBuilders instead. 
+We wanted to use more standard terminology and wanted to use the same 
+terminology and modeling o projects that do not use QBit.
+
+At their most basic level, promises are like event listeners except:
+
+A promise can only succeed or fail once. 
+A promise cannot succeed or fail twice, neither can it switch from 
+success to failure. Once it enters its `completed` state, then it is done.
+
+
+
 ## Bridges
 
 [Reakt Guava Bridge](http://advantageous.github.io/reakt-guava/) which 
