@@ -35,6 +35,23 @@ and fluent APIs for asynchronous programming for Java.</p>
 
 <p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. </p>
 
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
+
+<h4>
+<a id="using-from-maven" class="anchor" href="#using-from-maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from maven</h4>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;io.advantageous&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;reakt&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;0.1.0&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
+
+<h4>
+<a id="using-from-gradle" class="anchor" href="#using-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from gradle</h4>
+
+<div class="highlight highlight-text-xml"><pre>compile 'io.advantageous:reakt:0.1.0'</pre></div>
+
 <h4>
 <a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
 
@@ -81,6 +98,66 @@ with Callbacks directly. </p>
    <span class="pl-k">public</span> <span class="pl-k">void</span> lookupEmployee(<span class="pl-k">long</span> employeeId, <span class="pl-k">Callback&lt;<span class="pl-smi">Employee</span>&gt;</span> callback){<span class="pl-c1">...</span>}
 </pre></div>
 
+<p>You can use Promises to transform into other promises. </p>
+
+<h4>
+<a id="transforming-into-another-type-of-promise-using-thenmap" class="anchor" href="#transforming-into-another-type-of-promise-using-thenmap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Transforming into another type of promise using thenMap</h4>
+
+<div class="highlight highlight-source-java"><pre>
+        <span class="pl-k">Promise&lt;<span class="pl-smi">Employee</span>&gt;</span> employeePromise <span class="pl-k">=</span> <span class="pl-smi">Promises</span><span class="pl-k">.</span><span class="pl-k">&lt;</span><span class="pl-smi">Employee</span><span class="pl-k">&gt;</span>blockingPromise();
+
+        <span class="pl-k">Promise&lt;<span class="pl-smi">Sheep</span>&gt;</span> sheepPromise <span class="pl-k">=</span> employeePromise
+                .thenMap(employee1 <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">new</span> <span class="pl-smi">Sheep</span>(employee1<span class="pl-k">.</span>getId()));</pre></div>
+
+<p>The <code>thenMap</code> will return a new type of Promise. </p>
+
+<p>You can find more examples in the <a href="https://github.com/advantageous/reakt/wiki">reakt wiki</a>.</p>
+
+<p>We also support working with streams. </p>
+
+<h2>
+<a id="promise-concepts" class="anchor" href="#promise-concepts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Promise concepts</h2>
+
+<p>This has been adapted from this <a href="http://www.html5rocks.com/en/tutorials/es6/promises/">article on ES6 promises</a>.
+A promise can be:</p>
+
+<ul>
+<li>fulfilled The callback/action relating to the promise succeeded </li>
+<li>rejected  The callback/action relating to the promise failed </li>
+<li>pending   The callback/action has not been fulfilled or rejected yet </li>
+<li>completed The callback/action has been fulfilled/resolved or rejected</li>
+</ul>
+
+<p>Java is not single threaded, meaning that two bits of code can run at 
+the same time, so the design of this promise and streaming library takes
+that into account. It is common to make async calls to store data in 
+a NoSQL store or to call a remote REST interface or deal with a 
+distributed cache or queue. Also Java is strongly typed so the library
+that mimics JS promises is going to look a bit different. We tried to 
+use similar terminology where it makes sense. </p>
+
+<p>Events and Streams are great for things that can happen multiple times 
+on the same object — keyup, touchstart, user action stream from Kafka, etc. </p>
+
+<p>With those events you don't really care about what happened before 
+when you attached the listener. </p>
+
+<p>But often times when dealing with services you want to handle a response
+with a specific next action, and a different action if there was an error
+or timeout from the responses. You essentially want to call and handle
+a response asynchronously and that is what promises allow.</p>
+
+<p>This is not our first time to bat with Promises. QBit has had Promises for
+a few years now. We just called them CallbackBuilders instead. 
+We wanted to use more standard terminology and wanted to use the same 
+terminology and modeling o projects that do not use QBit.</p>
+
+<p>At their most basic level, promises are like event listeners except:</p>
+
+<p>A promise can only succeed or fail once. 
+A promise cannot succeed or fail twice, neither can it switch from 
+success to failure. Once it enters its <code>completed</code> state, then it is done.</p>
+
 <h2>
 <a id="bridges" class="anchor" href="#bridges" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bridges</h2>
 
@@ -102,7 +179,7 @@ register(session<span class="pl-k">.</span>executeAsync(<span class="pl-s"><span
 );
 </pre></div>
 
-<p><strong><em>QBit 1</em></strong> ships with a bridge and <strong><em>QBit 2</em></strong> will use <strong><em>Reakt</em></strong> as its 
+<p><strong><em>QBit 1</em></strong> ships with a bridge and <strong><em>QBit 2</em></strong>will use <strong><em>Reakt</em></strong> as its 
 primary reactive callback mechanism. </p>
 
 <p><strong><em>Conekt</em></strong>, a slimmed down fork of Vert.x, will also use <strong><em>Reakt</em></strong>. </p>
@@ -111,16 +188,6 @@ primary reactive callback mechanism. </p>
 for more details.</p>
 
 <p>See our wiki for more details on <a href="https://github.com/advantageous/reakt/wiki">Reakt</a>.</p>
-
-<h2>
-<a id="further-reading" class="anchor" href="#further-reading" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further reading</h2>
-
-<ul>
-<li><a href="http://rick-hightower.blogspot.com/2015/03/reactive-programming-service-discovery.html">Reactive Programming</a></li>
-<li><a href="http://www.mammatustech.com/">High-speed reactive microservices consulting firm and authors of QBit/Reakt with lots of experience with Vertx - Mammatus Technology</a></li>
-<li><a href="http://www.mammatustech.com/reactive-microservices">Reactive Microservices</a></li>
-<li><a href="https://www.jetbrains.com/idea/">All code is written using JetBrains Idea - the best IDE ever!</a></li>
-</ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
