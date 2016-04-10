@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 
 /**
+ * Represents a Circuit Breaker.
  * The contained service can be broken (open circuit) or operational (closed circuit).
  * <p>
  * This represents a service which may or may not be available.
@@ -72,9 +73,18 @@ public interface Breaker<T> {
      */
     boolean isOperational();
 
+    /**
+     * Short version of isOperational.
+     * @return ok
+     */
+    default boolean isOk() {
+        return isOperational();
+    }
 
     /**
      * If a service is beleived to be working, invoke the consumer with the value.
+     *
+     * This tracks errors thrown by the consumer.
      *
      * @param consumer executed if a value is present
      * @return this, fluent API
@@ -85,13 +95,25 @@ public interface Breaker<T> {
 
 
     /**
+     * Short version of ifOperational.
+     * If a service is beleived to be working, invoke the consumer with the value.
+     *
+     * @param consumer executed if a value is present
+     * @return this, fluent API
+     * @throws NullPointerException if value is present and {@code consumer} is
+     *                              null
+     */
+    default Breaker<T> ifOk(Consumer<? super T> consumer) {
+        return ifOperational(consumer);
+    }
+
+    /**
      * If a service is broken, invoke the runnable.
      *
      * @param runnable executed if a value is not present
      * @return this, fluent API
      */
     Breaker<T> ifBroken(Runnable runnable);
-
 
     /**
      * If a service is broken but present, invoke the consumer.
