@@ -80,6 +80,7 @@ public interface Callback<T> {
 
     /**
      * Resolve resolves a promise.
+     *
      * @param result makes it more compatible with ES6 style promises
      */
     default void resolve(final T result) {

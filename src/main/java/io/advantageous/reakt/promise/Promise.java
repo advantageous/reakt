@@ -33,13 +33,12 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     /**
      * If a result is sent, and there was no error, then handle the result.
-     *
-     *
+     * <p>
+     * <p>
      * There is only one thenHandler.
-     *
+     * <p>
      * Unlike ES6, {@code then(..)} cannot be chained per se, but {@code whenComplete(..)}, and
      * {@code }thenMap(...)} can be nested.
-     *
      *
      * @param consumer executed if result has no error.
      * @return this, fluent API
@@ -50,12 +49,12 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     /**
      * Notified of completeness.
-     *
+     * <p>
      * If you want N handlers for when the promise gets called back use whenComplete instead of
      * {@code then} or {@code thenRef}.
-     *
+     * <p>
      * There can be many {@code whenComplete} handlers.
-     *
+     * <p>
      * This does not create a new promise.
      *
      * @param doneListener doneListener
@@ -65,14 +64,13 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     /**
      * If a result is sent, and there was no error, then handle the result as a value which could be null.
-     *
+     * <p>
      * There is only one thenRef handler per promise.
-     *
+     * <p>
      * Unlike ES6, {@code thenRef(..)} cannot be chained per se as it does not create a new promise,
      * but {@code whenComplete(..)}, and {@code }thenMap(...)} can be chained.
-     *
+     * <p>
      * This does not create a new promise.
-     *
      *
      * @param consumer executed if result has no error.
      * @return this, fluent API
@@ -86,7 +84,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * This method can be chained, and it creates a new promise, which can be a different type.
      *
      * @param mapper mapper function
-     * @param <U> new type for new promise
+     * @param <U>    new type for new promise
      * @return a promise that uses mapper function to map old promise result to new result.
      */
     <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper);
