@@ -1,5 +1,5 @@
 group 'io.advantageous'
-version '1.0.0.RELEASE'
+version '2.0.0.RELEASE'
 
 apply plugin: 'java'
 apply plugin: 'maven'
