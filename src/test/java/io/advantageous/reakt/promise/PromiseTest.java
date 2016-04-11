@@ -257,7 +257,7 @@ public class PromiseTest {
         Expected[] value = new Expected[1];
 
         Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenExpected(employeeValue -> value[0] = employeeValue);
+                .thenExpect(employeeValue -> value[0] = employeeValue);
 
 
         testSuccessWithPromise(testService, employee, value, promise);
@@ -271,7 +271,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         Expected[] value = new Expected[1];
         Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenExpected(employeeValue -> value[0] = employeeValue).freeze();
+                .thenExpect(employeeValue -> value[0] = employeeValue).freeze();
 
 
         testSuccessWithPromise(testService, employee, value, promise);
@@ -283,7 +283,7 @@ public class PromiseTest {
         testService.simple(promise);
 
         assertNotNull(promise.get());
-        assertNotNull(promise.getRef());
+        assertNotNull(promise.expect());
         assertNotNull(value[0]);
         assertTrue(promise.complete());
         assertFalse(promise.failure());
@@ -303,13 +303,13 @@ public class PromiseTest {
         Promise<Employee> promise = Promises.blockingPromise();
 
         promise.then(e -> employee[0] = e);
-        promise.thenExpected(employeeValue -> value[0] = employeeValue);
+        promise.thenExpect(employeeValue -> value[0] = employeeValue);
 
 
         testService.async(promise);
 
         assertNotNull(promise.get());
-        assertNotNull(promise.getRef());
+        assertNotNull(promise.expect());
         assertTrue(promise.complete());
         assertFalse(promise.failure());
         assertTrue(promise.success());
@@ -335,13 +335,13 @@ public class PromiseTest {
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
-        sheepPromise.thenExpected(employeeValue -> value[0] = employeeValue);
+        sheepPromise.thenExpect(employeeValue -> value[0] = employeeValue);
 
 
         testService.async(employeePromise);
 
         assertNotNull(employeePromise.get());
-        assertNotNull(employeePromise.getRef());
+        assertNotNull(employeePromise.expect());
         assertTrue(employeePromise.complete());
         assertFalse(employeePromise.failure());
         assertTrue(employeePromise.success());
@@ -367,13 +367,13 @@ public class PromiseTest {
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
-        sheepPromise.thenExpected(employeeValue -> value[0] = employeeValue);
+        sheepPromise.thenExpect(employeeValue -> value[0] = employeeValue);
 
 
         testService.simple(employeePromise);
 
         assertNotNull(employeePromise.get());
-        assertNotNull(employeePromise.getRef());
+        assertNotNull(employeePromise.expect());
         assertTrue(employeePromise.complete());
         assertFalse(employeePromise.failure());
         assertTrue(employeePromise.success());
@@ -395,7 +395,7 @@ public class PromiseTest {
         Promise<Employee> promise = Promises.blockingPromise(Duration.ofMillis(1000));
 
         promise.then(e -> employee[0] = e);
-        promise.thenExpected(employeeValue -> value[0] = employeeValue)
+        promise.thenExpect(employeeValue -> value[0] = employeeValue)
                 .whenComplete((p) -> completedCalled.set(true));
 
 
@@ -404,7 +404,7 @@ public class PromiseTest {
         assertNotNull(promise.get());
 
         assertTrue(completedCalled.get());
-        assertNotNull(promise.getRef());
+        assertNotNull(promise.expect());
         assertTrue(promise.complete());
         assertFalse(promise.failure());
         assertTrue(promise.success());
@@ -443,7 +443,7 @@ public class PromiseTest {
 
 
         promise.then(employee::set);
-        promise.thenExpected(ref::set);
+        promise.thenExpect(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
 
 
@@ -458,7 +458,7 @@ public class PromiseTest {
         }
 
         assertNotNull(promise.get());
-        assertNotNull(promise.getRef());
+        assertNotNull(promise.expect());
         assertTrue(promise.complete());
         assertFalse(promise.failure());
         assertTrue(promise.success());
@@ -480,7 +480,7 @@ public class PromiseTest {
         ReplayPromise<Employee> promise = Promises.replayPromise(Duration.ofMillis(1));
 
         promise.then(employee::set);
-        promise.thenExpected(ref::set);
+        promise.thenExpect(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
         promise.onTimeout(() -> timeoutCalled.set(true));
 
@@ -503,7 +503,7 @@ public class PromiseTest {
         }
 
         try {
-            assertNotNull(promise.getRef());
+            assertNotNull(promise.expect());
             fail();
         } catch (Exception ex) {
 
@@ -562,14 +562,14 @@ public class PromiseTest {
         }
 
         try {
-            assertNull(promise.getRef());
+            assertNull(promise.expect());
             fail();
         } catch (Exception ex) {
 
         }
 
 
-        //assertNotNull(promise.getRef());
+        //assertNotNull(promise.expect());
         assertNull(employee[0]);
         assertTrue(error[0]);
         assertTrue(promise.complete());
@@ -623,7 +623,7 @@ public class PromiseTest {
 
 
         try {
-            promise.thenExpected(e -> {
+            promise.thenExpect(e -> {
             });
             fail();
         } catch (UnsupportedOperationException oe) {
@@ -662,7 +662,7 @@ public class PromiseTest {
         }
 
         try {
-            promise.getRef();
+            promise.expect();
             fail();
         } catch (NoSuchElementException ex) {
 

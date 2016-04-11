@@ -47,7 +47,7 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public synchronized Promise<T> thenExpected(Consumer<Expected<T>> consumer) {
+    public synchronized Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
         thenValueConsumer = Expected.of(consumer);
         return this;
     }
@@ -94,19 +94,19 @@ public class BasePromise<T> implements Promise<T> {
      *
      * @return value associated with a successful result.
      */
-    public Expected<T> getRef() {
+    public Expected<T> expect() {
         if (result.get() == null) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (failure()) {
             throw new IllegalStateException(cause());
         }
-        return result.get().getRef();
+        return result.get().expect();
     }
 
     /**
      * Raw value of the result.
-     * You should not use this if the result could be null, use getRef instead.
+     * You should not use this if the result could be null, use expect instead.
      *
      * @return raw value associated with the result.
      */
@@ -122,6 +122,14 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
+    public T orElse(T other) {
+        if (!complete()) {
+            throw new NoSuchElementException("No value present, result not returned.");
+        }
+        return success() ? result.get().get() : other;
+    }
+
+    @Override
     public void onResult(Result<T> result) {
         doOnResult(result);
     }
@@ -130,7 +138,7 @@ public class BasePromise<T> implements Promise<T> {
         this.result.set(result);
         if (result.success()) {
             thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
-            thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getRef()));
+            thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
         } else {
             catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }

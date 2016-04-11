@@ -51,8 +51,8 @@ public class FinalPromise<T> implements Promise<T> {
 
 
     @Override
-    public synchronized Promise<T> thenExpected(Consumer<Expected<T>> consumer) {
-        throw new UnsupportedOperationException("thenExpected(..) not supported for final promise");
+    public synchronized Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
+        throw new UnsupportedOperationException("thenExpect(..) not supported for final promise");
     }
 
     @Override
@@ -97,19 +97,19 @@ public class FinalPromise<T> implements Promise<T> {
      *
      * @return value associated with a successful result.
      */
-    public Expected<T> getRef() {
+    public Expected<T> expect() {
         if (result.get() == null) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (failure()) {
             throw new IllegalStateException(cause());
         }
-        return result.get().getRef();
+        return result.get().expect();
     }
 
     /**
      * Raw value of the result.
-     * You should not use this if the result could be null, use getRef instead.
+     * You should not use this if the result could be null, use expect instead.
      *
      * @return raw value associated with the result.
      */
@@ -139,11 +139,19 @@ public class FinalPromise<T> implements Promise<T> {
     }
 
     protected void doThenValue(final Result<T> result) {
-        this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.getRef()));
+        this.thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
     }
 
     @Override
     public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
     }
+    @Override
+    public T orElse(T other) {
+        if (!complete()) {
+            throw new NoSuchElementException("No value present, result not returned.");
+        }
+        return success() ? result.get().get() : other;
+    }
+
 }

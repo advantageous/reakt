@@ -55,7 +55,7 @@ public interface Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Result<T> thenExpected(Consumer<Expected<T>> consumer);
+    Result<T> thenExpect(Consumer<Expected<T>> consumer);
 
 
     /**
@@ -99,13 +99,22 @@ public interface Result<T> {
      *
      * @return value associated with a successful result.
      */
-    Expected<T> getRef();
+    Expected<T> expect();
 
     /**
      * Raw value of the result.
-     * You should not use this if the result could be null, use getRef instead.
+     * You should not use this if the result could be null, use expect instead.
      *
      * @return raw value associated with the result.
      */
     T get();
+
+
+    /**
+     * Return the value if no error.  If there was ane error return {@code other}.
+     *
+     * @param other value which is returned if no there was an error.
+     * @return the value, if no error, or if error return {@code other}
+     */
+    T orElse(T other);
 }

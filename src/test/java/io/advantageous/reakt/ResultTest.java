@@ -15,7 +15,7 @@ public class ResultTest {
         assertNotNull(employee[0]);
         Expected<Employee>[] employeeValue = new Expected[1];
 
-        rick.thenExpected(ev -> employeeValue[0] = ev);
+        rick.thenExpect(ev -> employeeValue[0] = ev);
         assertNotNull(employeeValue[0]);
         assertTrue(employeeValue[0].isPresent());
 
@@ -34,7 +34,7 @@ public class ResultTest {
         assertNull(employee[0]);
         Expected<Employee>[] employeeValue = new Expected[1];
 
-        rick.thenExpected(ev -> employeeValue[0] = ev);
+        rick.thenExpect(ev -> employeeValue[0] = ev);
         assertNull(employeeValue[0]);
 
         assertTrue(rick.complete());
@@ -54,7 +54,7 @@ public class ResultTest {
 
 
         try {
-            rick.getRef();
+            rick.expect();
             fail();
         } catch (Exception e) {
 

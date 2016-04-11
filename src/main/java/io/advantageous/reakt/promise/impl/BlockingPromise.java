@@ -39,9 +39,9 @@ public class BlockingPromise<T> extends BasePromise<T> {
     }
 
     @Override
-    public Expected<T> getRef() {
+    public Expected<T> expect() {
         await();
-        return super.getRef();
+        return super.expect();
     }
 
     @Override

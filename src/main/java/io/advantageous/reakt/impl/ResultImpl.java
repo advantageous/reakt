@@ -3,6 +3,7 @@ package io.advantageous.reakt.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 public class ResultImpl<T> implements Result<T> {
@@ -14,9 +15,9 @@ public class ResultImpl<T> implements Result<T> {
     }
 
     @Override
-    public Result<T> thenExpected(Consumer<Expected<T>> consumer) {
+    public Result<T> thenExpect(Consumer<Expected<T>> consumer) {
         if (success()) {
-            consumer.accept(getRef());
+            consumer.accept(expect());
         }
         return this;
     }
@@ -61,7 +62,7 @@ public class ResultImpl<T> implements Result<T> {
 
 
     @SuppressWarnings("unchecked")
-    public Expected<T> getRef() {
+    public Expected<T> expect() {
         if (failure()) {
             throw new IllegalStateException(cause());
         }
@@ -76,4 +77,10 @@ public class ResultImpl<T> implements Result<T> {
         }
         return (T) object;
     }
+
+    @Override
+    public T orElse(T other) {
+        return success() ? (T)object : other;
+    }
+
 }
