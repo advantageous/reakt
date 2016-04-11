@@ -33,13 +33,27 @@ public interface Breaker<T> {
     Breaker OPENED = new BreakerImpl<>();
 
     /**
-     * Returns an empty {@code Breaker} instance.  No service is present for this
+     * Returns an open {@code Breaker} instance.  No service is present for this
      * value.
      *
      * @param <T> Type of the non-existent value
      * @return an empty {@code ExpectedImpl}
      */
     static <T> Breaker<T> broken() {
+        @SuppressWarnings("unchecked")
+        Breaker<T> t = OPENED;
+        return t;
+    }
+
+
+    /**
+     * Returns an open/broken {@code Breaker} instance.  No service is present for this
+     * value.
+     *
+     * @param <T> Type of the non-existent value
+     * @return an empty {@code ExpectedImpl}
+     */
+    static <T> Breaker<T> opened() {
         @SuppressWarnings("unchecked")
         Breaker<T> t = OPENED;
         return t;
