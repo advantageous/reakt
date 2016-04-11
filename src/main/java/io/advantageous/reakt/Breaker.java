@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * <p>
  * This represents a service which may or may not be available.
  * </p>
- * We were using Ref a lot where we really wanted something like a Breaker.
+ * We were using Expected a lot where we really wanted something like a Breaker.
  * <p>
  * This could be extended to blow the circuit with different conditions by providing
  * your own Breaker.
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * If a service is active and healthy, {@code isOperational()} will return {@code true}.
  * If a service is not healthy or not working, {code isBroken()} will return {@code true}.
  * </p>
- * This is heavily modeled after {@code Ref} optional.
+ * This is heavily modeled after {@code Expected} optional.
  */
 public interface Breaker<T> {
     /**
@@ -33,13 +33,27 @@ public interface Breaker<T> {
     Breaker OPENED = new BreakerImpl<>();
 
     /**
-     * Returns an empty {@code Breaker} instance.  No service is present for this
+     * Returns an open {@code Breaker} instance.  No service is present for this
      * value.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code RefImpl}
+     * @return an empty {@code ExpectedImpl}
      */
     static <T> Breaker<T> broken() {
+        @SuppressWarnings("unchecked")
+        Breaker<T> t = OPENED;
+        return t;
+    }
+
+
+    /**
+     * Returns an open/broken {@code Breaker} instance.  No service is present for this
+     * value.
+     *
+     * @param <T> Type of the non-existent value
+     * @return an empty {@code ExpectedImpl}
+     */
+    static <T> Breaker<T> opened() {
         @SuppressWarnings("unchecked")
         Breaker<T> t = OPENED;
         return t;
@@ -50,7 +64,7 @@ public interface Breaker<T> {
      *
      * @param <T>   the class of the value
      * @param value the value to be present. Must be non-null
-     * @return an {@code RefImpl} with the value present
+     * @return an {@code ExpectedImpl} with the value present
      * @throws NullPointerException if value is null
      */
     static <T> Breaker<T> operational(T value) {
@@ -63,7 +77,7 @@ public interface Breaker<T> {
      * @param <T>            the class of the value
      * @param value          the value to be present. Must be non-null
      * @param maxErrorsCount max error count
-     * @return an {@code RefImpl} with the value present
+     * @return an {@code ExpectedImpl} with the value present
      * @throws NullPointerException if value is null
      */
     static <T> Breaker<T> operational(T value, final int maxErrorsCount) {

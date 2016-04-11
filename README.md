@@ -13,8 +13,10 @@ Reakt is reactive interfaces for Java which includes:
 The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.
 
-
 Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for ***Guava Async*** (used by Cassandra) and the ***QBit*** microservices lib. 
+
+## Have a question?
+[Reakt Mailing List](https://groups.google.com/forum/#!forum/reakt)
 
 ## Getting started
 #### Using from maven

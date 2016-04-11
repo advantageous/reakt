@@ -13,9 +13,9 @@ public class ResultTest {
         Employee[] employee = new Employee[1];
         rick.then(e -> employee[0] = e);
         assertNotNull(employee[0]);
-        Ref<Employee>[] employeeValue = new Ref[1];
+        Expected<Employee>[] employeeValue = new Expected[1];
 
-        rick.thenRef(ev -> employeeValue[0] = ev);
+        rick.thenExpect(ev -> employeeValue[0] = ev);
         assertNotNull(employeeValue[0]);
         assertTrue(employeeValue[0].isPresent());
 
@@ -32,9 +32,9 @@ public class ResultTest {
         Employee[] employee = new Employee[1];
         rick.then(e -> employee[0] = e);
         assertNull(employee[0]);
-        Ref<Employee>[] employeeValue = new Ref[1];
+        Expected<Employee>[] employeeValue = new Expected[1];
 
-        rick.thenRef(ev -> employeeValue[0] = ev);
+        rick.thenExpect(ev -> employeeValue[0] = ev);
         assertNull(employeeValue[0]);
 
         assertTrue(rick.complete());
@@ -54,13 +54,18 @@ public class ResultTest {
 
 
         try {
-            rick.getRef();
+            rick.expect();
             fail();
         } catch (Exception e) {
 
         }
+
+
         assertTrue(flag[0]);
 
+        final Employee richard = rick.orElse(new Employee("richard"));
+
+        assertNotNull(richard);
 
     }
 
