@@ -59,8 +59,13 @@ public class ResultTest {
         } catch (Exception e) {
 
         }
+
+
         assertTrue(flag[0]);
 
+        final Employee richard = rick.orElse(new Employee("richard"));
+
+        assertNotNull(richard);
 
     }
 

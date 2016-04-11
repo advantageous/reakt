@@ -2,8 +2,6 @@ package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
-
-import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 public class ResultImpl<T> implements Result<T> {

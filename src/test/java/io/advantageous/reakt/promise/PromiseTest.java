@@ -547,6 +547,8 @@ public class PromiseTest {
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
+
+
         testErrorWithPromise(testService, employee, error, promise);
     }
 
@@ -569,12 +571,16 @@ public class PromiseTest {
         }
 
 
-        //assertNotNull(promise.expect());
         assertNull(employee[0]);
         assertTrue(error[0]);
         assertTrue(promise.complete());
         assertTrue(promise.failure());
         assertFalse(promise.success());
+
+
+        final Employee richard = promise.orElse(new Employee("richard"));
+
+        assertNotNull(richard);
     }
 
     @Test
