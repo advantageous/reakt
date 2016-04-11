@@ -55,7 +55,7 @@ public interface Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Result<T> thenRef(Consumer<Ref<T>> consumer);
+    Result<T> thenExpected(Consumer<Expected<T>> consumer);
 
 
     /**
@@ -95,11 +95,11 @@ public interface Result<T> {
 
 
     /**
-     * If the value of the result can be null, it is better to use Ref which is like Optional.
+     * If the value of the result can be null, it is better to use Expected which is like Optional.
      *
      * @return value associated with a successful result.
      */
-    Ref<T> getRef();
+    Expected<T> getRef();
 
     /**
      * Raw value of the result.

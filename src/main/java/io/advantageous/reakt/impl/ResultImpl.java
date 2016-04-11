@@ -1,6 +1,6 @@
 package io.advantageous.reakt.impl;
 
-import io.advantageous.reakt.Ref;
+import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 
 import java.util.function.Consumer;
@@ -14,7 +14,7 @@ public class ResultImpl<T> implements Result<T> {
     }
 
     @Override
-    public Result<T> thenRef(Consumer<Ref<T>> consumer) {
+    public Result<T> thenExpected(Consumer<Expected<T>> consumer) {
         if (success()) {
             consumer.accept(getRef());
         }
@@ -61,11 +61,11 @@ public class ResultImpl<T> implements Result<T> {
 
 
     @SuppressWarnings("unchecked")
-    public Ref<T> getRef() {
+    public Expected<T> getRef() {
         if (failure()) {
             throw new IllegalStateException(cause());
         }
-        return Ref.ofNullable((T) object);
+        return Expected.ofNullable((T) object);
     }
 
 

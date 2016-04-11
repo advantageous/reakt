@@ -43,7 +43,7 @@ public interface Stream<T> {
      * @param result result value to send.
      */
     default void complete(final T result) {
-        onNext(new StreamResultImpl<>(result, true, Ref.empty(), Ref.empty()));
+        onNext(new StreamResultImpl<>(result, true, Expected.empty(), Expected.empty()));
     }
 
     /**
@@ -56,7 +56,7 @@ public interface Stream<T> {
      */
     default void reply(final T result) {
         onNext(new StreamResultImpl<>(result, false,
-                Ref.empty(), Ref.empty()));
+                Expected.empty(), Expected.empty()));
     }
 
 
@@ -71,8 +71,8 @@ public interface Stream<T> {
      * @param done   if true signifies that that this is the last result.
      */
     default void reply(final T result, final boolean done) {
-        onNext(new StreamResultImpl<>(result, done, Ref.empty(),
-                Ref.empty()));
+        onNext(new StreamResultImpl<>(result, done, Expected.empty(),
+                Expected.empty()));
     }
 
 
@@ -88,8 +88,8 @@ public interface Stream<T> {
      * @param cancelHandler cancel handler if you support canceling.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler) {
-        onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),
-                Ref.empty()));
+        onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler),
+                Expected.empty()));
     }
 
 
@@ -106,8 +106,8 @@ public interface Stream<T> {
      * @param wantsMore     handler so client can request more items if this is supported.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler, final Consumer<Long> wantsMore) {
-        onNext(new StreamResultImpl<>(result, done, Ref.of(cancelHandler),
-                Ref.of(wantsMore)));
+        onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler),
+                Expected.of(wantsMore)));
     }
 
     /**
@@ -120,7 +120,7 @@ public interface Stream<T> {
      */
     default void fail(final Throwable error) {
 
-        onNext(new StreamResultImpl<>(error, true, Ref.empty(), Ref.empty()));
+        onNext(new StreamResultImpl<>(error, true, Expected.empty(), Expected.empty()));
     }
 
 
@@ -134,7 +134,7 @@ public interface Stream<T> {
      */
     default void fail(final String errorMessage) {
         onNext(new StreamResultImpl<>(new IllegalStateException(errorMessage),
-                true, Ref.empty(), Ref.empty()));
+                true, Expected.empty(), Expected.empty()));
 
     }
 

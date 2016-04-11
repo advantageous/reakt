@@ -8,12 +8,12 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 
-public class RefTest {
+public class ExpectedTest {
 
     @Test
     public void testEmpty() {
 
-        final Ref<Employee> empty = Ref.empty();
+        final Expected<Employee> empty = Expected.empty();
         emptyTest(empty);
 
     }
@@ -21,7 +21,7 @@ public class RefTest {
     @Test
     public void testEmptyFromNull() {
 
-        final Ref<Employee> empty = Ref.ofNullable(null);
+        final Expected<Employee> empty = Expected.ofNullable(null);
         emptyTest(empty);
 
     }
@@ -29,7 +29,7 @@ public class RefTest {
     @Test
     public void testNotEmptyFromNullable() {
 
-        final Ref<Employee> rick = Ref.ofNullable(new Employee("Rick"));
+        final Expected<Employee> rick = Expected.ofNullable(new Employee("Rick"));
         notEmptyTest(rick);
 
     }
@@ -37,7 +37,7 @@ public class RefTest {
     @Test
     public void testNotEmpty() {
 
-        final Ref<Employee> rick = Ref.of(new Employee("Rick"));
+        final Expected<Employee> rick = Expected.of(new Employee("Rick"));
         notEmptyTest(rick);
 
     }
@@ -45,13 +45,13 @@ public class RefTest {
     @Test
     public void testNotEmptyFromOptional() {
 
-        final Ref<Employee> rick = Ref.ofOptional(Optional.of(new Employee("Rick")));
+        final Expected<Employee> rick = Expected.ofOptional(Optional.of(new Employee("Rick")));
         notEmptyTest(rick);
 
     }
 
 
-    private void emptyTest(Ref<Employee> empty) {
+    private void emptyTest(Expected<Employee> empty) {
         final boolean[] flag = new boolean[1];
 
         assertTrue(empty.isEmpty());
@@ -77,12 +77,12 @@ public class RefTest {
         assertFalse(empty.filter(employee -> employee.id.equals("Bob")).isPresent());
 
 
-        final Ref<Sheep> sheepValue = empty.map(employee -> new Sheep(employee.id));
+        final Expected<Sheep> sheepValue = empty.map(employee -> new Sheep(employee.id));
         assertTrue(sheepValue.isEmpty());
     }
 
 
-    private void notEmptyTest(Ref<Employee> rick) {
+    private void notEmptyTest(Expected<Employee> rick) {
         final boolean[] flag = new boolean[1];
 
         assertFalse(rick.isEmpty());
@@ -109,7 +109,7 @@ public class RefTest {
         /** Test equals. */
         assertTrue(rick.equalsValue(new Employee("Rick")));
         assertTrue(rick.equals(rick));
-        assertTrue(rick.equals(Ref.of(new Employee("Rick"))));
+        assertTrue(rick.equals(Expected.of(new Employee("Rick"))));
         assertFalse(rick.equals(new Employee("Rick")));
         rick.hashCode();
         rick.toString();

@@ -1,6 +1,6 @@
 package io.advantageous.reakt.promise.impl;
 
-import io.advantageous.reakt.Ref;
+import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.promise.Promises;
@@ -21,15 +21,15 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class BlockingPromise<T> extends BasePromise<T> {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
-    private final Ref<Duration> duration;
+    private final Expected<Duration> duration;
 
     public BlockingPromise() {
-        this.duration = Ref.empty();
+        this.duration = Expected.empty();
     }
 
 
     public BlockingPromise(final Duration duration) {
-        this.duration = Ref.of(duration);
+        this.duration = Expected.of(duration);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class BlockingPromise<T> extends BasePromise<T> {
     }
 
     @Override
-    public Ref<T> getRef() {
+    public Expected<T> getRef() {
         await();
         return super.getRef();
     }

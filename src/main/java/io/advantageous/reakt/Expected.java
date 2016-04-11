@@ -1,6 +1,6 @@
 package io.advantageous.reakt;
 
-import io.advantageous.reakt.impl.RefImpl;
+import io.advantageous.reakt.impl.ExpectedImpl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,71 +26,71 @@ import java.util.function.Predicate;
  * <p>
  * This is heavily modeled after {@link java.util.Optional} optional.
  */
-public interface Ref<T> {
+public interface Expected<T> {
     /**
      * Common instance for {@code empty()}.
      */
-    Ref EMPTY = new RefImpl<>();
+    Expected EMPTY = new ExpectedImpl<>();
 
     /**
-     * Returns an empty {@code RefImpl} instance.  No value is present for this
+     * Returns an empty {@code ExpectedImpl} instance.  No value is present for this
      * value.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code RefImpl}
+     * @return an empty {@code ExpectedImpl}
      */
-    static <T> Ref<T> empty() {
+    static <T> Expected<T> empty() {
         @SuppressWarnings("unchecked")
-        Ref<T> t = EMPTY;
+        Expected<T> t = EMPTY;
         return t;
     }
 
     /**
-     * Returns an {@code RefImpl} using the specified present value, which must not be null.
+     * Returns an {@code ExpectedImpl} using the specified present value, which must not be null.
      *
      * @param <T>   the class of the value
      * @param value the value to be present. Must be non-null
-     * @return an {@code RefImpl} with the value present
+     * @return an {@code ExpectedImpl} with the value present
      * @throws NullPointerException if value is null
      */
-    static <T> Ref<T> of(T value) {
-        return new RefImpl<>(value);
+    static <T> Expected<T> of(T value) {
+        return new ExpectedImpl<>(value);
     }
 
     /**
-     * Returns an {@code RefImpl} describing the specified value, if non-null,
-     * otherwise returns an empty {@code RefImpl}.
+     * Returns an {@code ExpectedImpl} describing the specified value, if non-null,
+     * otherwise returns an empty {@code ExpectedImpl}.
      *
      * @param <T>   the class of the value
      * @param value the possibly non-existent value
-     * @return an {@code RefImpl} with a present value if the specified value
+     * @return an {@code ExpectedImpl} with a present value if the specified value
      * is non-null, otherwise an empty {@code Optional}
      */
-    static <T> Ref<T> ofNullable(T value) {
+    static <T> Expected<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
 
     /**
-     * Returns an {@code RefImpl} describing the specified value, if non-null,
-     * otherwise returns an empty {@code RefImpl}.
+     * Returns an {@code ExpectedImpl} describing the specified value, if non-null,
+     * otherwise returns an empty {@code ExpectedImpl}.
      *
      * @param <T>   the class of the value
      * @param value the possibly non-existent value
-     * @return an {@code RefImpl} with a present value if the specified value
+     * @return an {@code ExpectedImpl} with a present value if the specified value
      * is not empty, otherwise an empty {@code Optional}
      */
-    static <T> Ref<T> ofOptional(Optional<T> value) {
+    static <T> Expected<T> ofOptional(Optional<T> value) {
         return !value.isPresent() ? empty() : of(value.get());
     }
 
 
     /**
-     * If a value is present in this {@code Ref}, returns the value,
+     * If a value is present in this {@code Expected}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
      *
-     * @return the value held by this {@code Ref}
+     * @return the value held by this {@code Expected}
      * @throws NoSuchElementException if there is no value present
-     * @see Ref#isPresent()
+     * @see Expected#isPresent()
      */
     T get();
 
@@ -119,7 +119,7 @@ public interface Ref<T> {
      * @throws NullPointerException if value is present and {@code consumer} is
      *                              null
      */
-    Ref<T> ifPresent(Consumer<? super T> consumer);
+    Expected<T> ifPresent(Consumer<? super T> consumer);
 
 
     /**
@@ -128,35 +128,35 @@ public interface Ref<T> {
      * @param runnable executed if a value is not present
      * @return this, fluent API
      */
-    Ref<T> ifEmpty(Runnable runnable);
+    Expected<T> ifEmpty(Runnable runnable);
 
 
     /**
      * If a value is present, and the value matches the given predicate,
-     * return an {@code RefImpl} describing the value, otherwise return an
-     * empty {@code RefImpl}.
+     * return an {@code ExpectedImpl} describing the value, otherwise return an
+     * empty {@code ExpectedImpl}.
      *
      * @param predicate a predicate to apply to the value, if present
-     * @return an {@code RefImpl} the value {@code Ref}
+     * @return an {@code ExpectedImpl} the value {@code Expected}
      * if present and the value matches the predicate,
-     * otherwise an empty {@code Ref}
+     * otherwise an empty {@code Expected}
      * @throws NullPointerException if the predicate is null
      */
-    Ref<T> filter(Predicate<? super T> predicate);
+    Expected<T> filter(Predicate<? super T> predicate);
 
 
     /**
      * If a value present, use the mapping function to it,
-     * and if the result is present, return an {@code RefImpl} with the result.
-     * Otherwise return an empty value {@code Ref}.
+     * and if the result is present, return an {@code ExpectedImpl} with the result.
+     * Otherwise return an empty value {@code Expected}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper a mapper to apply to the value, if present
-     * @return a value {@code Ref} which is the result of the mapper
-     * function applied to {@code Ref} value if present or an empty value.
+     * @return a value {@code Expected} which is the result of the mapper
+     * function applied to {@code Expected} value if present or an empty value.
      * @throws NullPointerException if the mapper is null
      */
-    <U> Ref<U> map(Function<? super T, ? extends U> mapper);
+    <U> Expected<U> map(Function<? super T, ? extends U> mapper);
 
 
     /**

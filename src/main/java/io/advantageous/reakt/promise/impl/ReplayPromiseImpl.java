@@ -1,6 +1,6 @@
 package io.advantageous.reakt.promise.impl;
 
-import io.advantageous.reakt.Ref;
+import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.impl.ResultImpl;
 import io.advantageous.reakt.promise.ReplayPromise;
@@ -13,8 +13,8 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     private final Duration timeoutDuration;
     private final long startTime;
-    private Ref<Runnable> timeoutHandler;
-    private Ref<Consumer<ReplayPromise>> afterResultProcessedHandler = Ref.empty();
+    private Expected<Runnable> timeoutHandler;
+    private Expected<Consumer<ReplayPromise>> afterResultProcessedHandler = Expected.empty();
 
 
     public ReplayPromiseImpl(final Duration timeout, final long startTime) {
@@ -63,13 +63,13 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     @Override
     public synchronized ReplayPromise<T> onTimeout(final Runnable handler) {
-        timeoutHandler = Ref.of(handler);
+        timeoutHandler = Expected.of(handler);
         return this;
     }
 
     @Override
     public synchronized ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler) {
-        afterResultProcessedHandler = Ref.of(handler);
+        afterResultProcessedHandler = Expected.of(handler);
         return this;
     }
 }

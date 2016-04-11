@@ -1,7 +1,7 @@
 package io.advantageous.reakt.promise;
 
 import io.advantageous.reakt.Callback;
-import io.advantageous.reakt.Ref;
+import io.advantageous.reakt.Expected;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -254,10 +254,10 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
 
         Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenRef(employeeValue -> value[0] = employeeValue);
+                .thenExpected(employeeValue -> value[0] = employeeValue);
 
 
         testSuccessWithPromise(testService, employee, value, promise);
@@ -269,15 +269,15 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
         Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenRef(employeeValue -> value[0] = employeeValue).freeze();
+                .thenExpected(employeeValue -> value[0] = employeeValue).freeze();
 
 
         testSuccessWithPromise(testService, employee, value, promise);
     }
 
-    private void testSuccessWithPromise(TestService testService, Employee[] employee, Ref[] value, Promise<Employee> promise) {
+    private void testSuccessWithPromise(TestService testService, Employee[] employee, Expected[] value, Promise<Employee> promise) {
 
 
         testService.simple(promise);
@@ -297,13 +297,13 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
 
         /* Note this is only for legacy integration and testing. */
         Promise<Employee> promise = Promises.blockingPromise();
 
         promise.then(e -> employee[0] = e);
-        promise.thenRef(employeeValue -> value[0] = employeeValue);
+        promise.thenExpected(employeeValue -> value[0] = employeeValue);
 
 
         testService.async(promise);
@@ -325,7 +325,7 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Sheep[] employee = new Sheep[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
 
         /* Note this is only for legacy integration and testing. */
 
@@ -335,7 +335,7 @@ public class PromiseTest {
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
-        sheepPromise.thenRef(employeeValue -> value[0] = employeeValue);
+        sheepPromise.thenExpected(employeeValue -> value[0] = employeeValue);
 
 
         testService.async(employeePromise);
@@ -357,7 +357,7 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Sheep[] employee = new Sheep[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
 
         /* Note this is only for legacy integration and testing. */
 
@@ -367,7 +367,7 @@ public class PromiseTest {
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
-        sheepPromise.thenRef(employeeValue -> value[0] = employeeValue);
+        sheepPromise.thenExpected(employeeValue -> value[0] = employeeValue);
 
 
         testService.simple(employeePromise);
@@ -387,7 +387,7 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
-        Ref[] value = new Ref[1];
+        Expected[] value = new Expected[1];
 
         AtomicBoolean completedCalled = new AtomicBoolean();
 
@@ -395,7 +395,7 @@ public class PromiseTest {
         Promise<Employee> promise = Promises.blockingPromise(Duration.ofMillis(1000));
 
         promise.then(e -> employee[0] = e);
-        promise.thenRef(employeeValue -> value[0] = employeeValue)
+        promise.thenExpected(employeeValue -> value[0] = employeeValue)
                 .whenComplete((p) -> completedCalled.set(true));
 
 
@@ -438,12 +438,12 @@ public class PromiseTest {
     private void validateReplay(ReplayPromise<Employee> promise) throws InterruptedException {
         TestService testService = new TestService();
         AtomicReference<Employee> employee = new AtomicReference<>();
-        AtomicReference<Ref> ref = new AtomicReference<>();
+        AtomicReference<Expected> ref = new AtomicReference<>();
         AtomicBoolean afterCalled = new AtomicBoolean();
 
 
         promise.then(employee::set);
-        promise.thenRef(ref::set);
+        promise.thenExpected(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
 
 
@@ -473,14 +473,14 @@ public class PromiseTest {
 
         TestService testService = new TestService();
         AtomicReference<Employee> employee = new AtomicReference<>();
-        AtomicReference<Ref> ref = new AtomicReference<>();
+        AtomicReference<Expected> ref = new AtomicReference<>();
         AtomicBoolean afterCalled = new AtomicBoolean();
         AtomicBoolean timeoutCalled = new AtomicBoolean();
 
         ReplayPromise<Employee> promise = Promises.replayPromise(Duration.ofMillis(1));
 
         promise.then(employee::set);
-        promise.thenRef(ref::set);
+        promise.thenExpected(ref::set);
         promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
         promise.onTimeout(() -> timeoutCalled.set(true));
 
@@ -623,7 +623,7 @@ public class PromiseTest {
 
 
         try {
-            promise.thenRef(e -> {
+            promise.thenExpected(e -> {
             });
             fail();
         } catch (UnsupportedOperationException oe) {

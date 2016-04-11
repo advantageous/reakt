@@ -1,7 +1,7 @@
 package io.advantageous.reakt.promise;
 
 import io.advantageous.reakt.Callback;
-import io.advantageous.reakt.Ref;
+import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 
@@ -50,7 +50,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * Notified of completeness.
      * <p>
      * If you want N handlers for when the promise gets called back use whenComplete instead of
-     * {@code then} or {@code thenRef}.
+     * {@code then} or {@code thenExpected}.
      * <p>
      * There can be many {@code whenComplete} handlers.
      * <p>
@@ -64,9 +64,9 @@ public interface Promise<T> extends Callback<T>, Result<T> {
     /**
      * If a result is sent, and there was no error, then handle the result as a value which could be null.
      * <p>
-     * There is only one thenRef handler per promise.
+     * There is only one thenExpected handler per promise.
      * <p>
-     * Unlike ES6, {@code thenRef(..)} cannot be chained per se as it does not create a new promise,
+     * Unlike ES6, {@code thenExpected(..)} cannot be chained per se as it does not create a new promise,
      * but {@code whenComplete(..)}, and {@code }thenMap(...)} can be chained.
      * <p>
      * This does not create a new promise.
@@ -76,7 +76,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * @throws NullPointerException if result is present and {@code consumer} is
      *                              null
      */
-    Promise<T> thenRef(Consumer<Ref<T>> consumer);
+    Promise<T> thenExpected(Consumer<Expected<T>> consumer);
 
 
     /**
