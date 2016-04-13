@@ -24,16 +24,27 @@
 <p>Reakt is reactive interfaces for Java which includes: </p>
 
 <ul>
-<li>Promises,</li>
-<li>Streams, </li>
-<li>Callbacks, </li>
-<li>Async results</li>
+<li>
+<a href="https://github.com/advantageous/reakt/wiki/Promise">Promises</a>,</li>
+<li>
+<a href="https://github.com/advantageous/reakt/wiki/Stream">Streams</a>, </li>
+<li>
+<a href="https://github.com/advantageous/reakt/wiki/Callback">Callbacks</a>, </li>
+<li>
+<a href="https://github.com/advantageous/reakt/wiki/Result">Async Results</a> with <a href="https://github.com/advantageous/reakt/wiki/Expected">Expected</a>
+</li>
+<li><a href="https://github.com/advantageous/reakt/wiki/Breaker">Circuit Breakers</a></li>
 </ul>
 
 <p>The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.</p>
 
-<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. </p>
+<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. <a href="http://advantageous.github.io/czar-maker/">Czar Maker</a> uses Reakt for its reactive leadership election.</p>
+
+<h2>
+<a id="have-a-question" class="anchor" href="#have-a-question" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Have a question?</h2>
+
+<p><a href="https://groups.google.com/forum/#!forum/reakt">Reakt Mailing List</a></p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
@@ -44,13 +55,13 @@ and fluent APIs for asynchronous programming for Java.</p>
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
     &lt;<span class="pl-ent">groupId</span>&gt;io.advantageous&lt;/<span class="pl-ent">groupId</span>&gt;
     &lt;<span class="pl-ent">artifactId</span>&gt;reakt&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">version</span>&gt;0.1.0&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;2.0.0.RELEASE&lt;/<span class="pl-ent">version</span>&gt;
 &lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
 <h4>
 <a id="using-from-gradle" class="anchor" href="#using-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from gradle</h4>
 
-<div class="highlight highlight-text-xml"><pre>compile 'io.advantageous:reakt:0.1.0'</pre></div>
+<div class="highlight highlight-text-xml"><pre>compile 'io.advantageous:reakt:2.0.0.RELEASE'</pre></div>
 
 <h4>
 <a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
@@ -186,9 +197,9 @@ allows libs that use Guava async support to now have a modern Java feel.</p>
 
 <div class="highlight highlight-source-java"><pre>
 register(session<span class="pl-k">.</span>executeAsync(<span class="pl-s"><span class="pl-pds">"</span>SELECT release_version FROM system.local<span class="pl-pds">"</span></span>), 
-  promise()<span class="pl-k">.</span>thenRef(ref <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
+  promise()<span class="pl-k">.</span>thenExpect(expected <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
      gui<span class="pl-k">.</span>setMessage(<span class="pl-s"><span class="pl-pds">"</span>Cassandra version is <span class="pl-pds">"</span></span> <span class="pl-k">+</span>
-         ref<span class="pl-k">.</span>get()<span class="pl-k">.</span>one()<span class="pl-k">.</span>getString(<span class="pl-s"><span class="pl-pds">"</span>release_version<span class="pl-pds">"</span></span>))
+         expected<span class="pl-k">.</span>get()<span class="pl-k">.</span>one()<span class="pl-k">.</span>getString(<span class="pl-s"><span class="pl-pds">"</span>release_version<span class="pl-pds">"</span></span>))
   )<span class="pl-k">.</span>catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
      gui<span class="pl-k">.</span>setMessage(<span class="pl-s"><span class="pl-pds">"</span>Error while reading Cassandra version: <span class="pl-pds">"</span></span> 
      <span class="pl-k">+</span> error<span class="pl-k">.</span>getMessage())
