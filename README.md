@@ -5,15 +5,18 @@
 ***Reactive interfaces for Java.***
 
 Reakt is reactive interfaces for Java which includes: 
- * Promises,
- * Streams, 
- * Callbacks, 
- * Async results
+ * [Promises](https://github.com/advantageous/reakt/wiki/Promise),
+ * [Streams](https://github.com/advantageous/reakt/wiki/Stream), 
+ * [Callbacks](https://github.com/advantageous/reakt/wiki/Callback), 
+ * [Async Results](https://github.com/advantageous/reakt/wiki/Result) with [Expected](https://github.com/advantageous/reakt/wiki/Expected)
+ * [Circuit Breakers](https://github.com/advantageous/reakt/wiki/Breaker)
  
 The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.
 
-Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for ***Guava Async*** (used by Cassandra) and the ***QBit*** microservices lib. 
+Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for ***Guava Async*** (used by Cassandra) and the ***QBit*** microservices lib. [Czar Maker](http://advantageous.github.io/czar-maker/) uses Reakt for its reactive leadership election.
+
+
 
 ## Have a question?
 [Reakt Mailing List](https://groups.google.com/forum/#!forum/reakt)
