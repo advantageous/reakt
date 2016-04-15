@@ -146,6 +146,7 @@ public class FinalPromise<T> implements Promise<T> {
     public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
     }
+
     @Override
     public T orElse(T other) {
         if (!complete()) {

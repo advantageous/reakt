@@ -548,7 +548,6 @@ public class PromiseTest {
                 .catchError(throwable -> error[0] = true);
 
 
-
         testErrorWithPromise(testService, employee, error, promise);
     }
 

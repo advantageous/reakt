@@ -2,6 +2,7 @@ package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
+
 import java.util.function.Consumer;
 
 public class ResultImpl<T> implements Result<T> {
@@ -78,7 +79,7 @@ public class ResultImpl<T> implements Result<T> {
 
     @Override
     public T orElse(T other) {
-        return success() ? (T)object : other;
+        return success() ? (T) object : other;
     }
 
 }
