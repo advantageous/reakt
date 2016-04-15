@@ -26,15 +26,15 @@ Note: This mostly just provides the interfaces not the implementations. There ar
 
 ```xml
 <dependency>
-    <groupId>io.advantageous</groupId>
+    <groupId>io.advantageous.reakt</groupId>
     <artifactId>reakt</artifactId>
-    <version>2.0.0.RELEASE</version>
+    <version>2.1.0.RELEASE</version>
 </dependency>
 ```
 
 #### Using from gradle
 ```xml
-compile 'io.advantageous:reakt:2.0.0.RELEASE'
+compile 'io.advantageous.reakt:reakt:2.1.0.RELEASE'
 ```
 
 #### Fluent Promise API
