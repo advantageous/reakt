@@ -99,7 +99,7 @@ public class BlockingPromise<T> extends BasePromise<T> {
 
     @Override
     public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
-        final Promise<U> mappedPromise = Promises.promise();
+        final Promise<U> mappedPromise = Promises.blockingPromise();
         this.whenComplete(p -> {
             final BlockingPromise<T> promise = (BlockingPromise) p;
             if (promise._success()) {

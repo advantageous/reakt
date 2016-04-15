@@ -2,6 +2,8 @@ package io.advantageous.reakt.promise;
 
 import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.Expected;
+import io.advantageous.reakt.promise.impl.BasePromise;
+import io.advantageous.reakt.promise.impl.BlockingPromise;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -340,12 +342,12 @@ public class PromiseTest {
 
         testService.async(employeePromise);
 
-        assertNotNull(employeePromise.get());
-        assertNotNull(employeePromise.expect());
-        assertTrue(employeePromise.complete());
-        assertFalse(employeePromise.failure());
-        assertTrue(employeePromise.success());
-        assertNull(employeePromise.cause());
+        assertNotNull(sheepPromise.get());
+        assertNotNull(sheepPromise.expect());
+        assertTrue(sheepPromise.complete());
+        assertFalse(sheepPromise.failure());
+        assertTrue(sheepPromise.success());
+        assertNull(sheepPromise.cause());
         assertNotNull(employee[0]);
 
         assertNotNull(value[0]);
@@ -698,6 +700,120 @@ public class PromiseTest {
         }
     }
 
+    @Test
+    public void utilityMethods() {
+        Promise promise;
+
+        promise = Promises.promiseNotify();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promise(Employee.class);
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseString();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseBoolean();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseLong();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseInt();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseFloat();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseDouble();
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseList(Employee.class);
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseSet(Employee.class);
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseCollection(Employee.class);
+        assertTrue(promise instanceof BasePromise);
+        promise = Promises.promiseMap(String.class, Employee.class);
+        assertTrue(promise instanceof BasePromise);
+
+
+        promise = Promises.blockingPromiseNotify();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromise(Employee.class);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseString();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseBoolean();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseLong();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseInt();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseFloat();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseDouble();
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseList(Employee.class);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseSet(Employee.class);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseCollection(Employee.class);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseMap(String.class, Employee.class);
+        assertTrue(promise instanceof BlockingPromise);
+
+
+        Duration duration = Duration.ZERO;
+
+
+        promise = Promises.blockingPromiseNotify(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromise(Employee.class, duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseString(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseBoolean(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseLong(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseInt(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseFloat(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseDouble(duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseList(Employee.class, duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseSet(Employee.class, duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseCollection(Employee.class, duration);
+        assertTrue(promise instanceof BlockingPromise);
+        promise = Promises.blockingPromiseMap(String.class, Employee.class, duration);
+        assertTrue(promise instanceof BlockingPromise);
+
+        long time = 0;
+
+
+        promise = Promises.replayPromiseNotify(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromise(Employee.class, duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseString(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseBoolean(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseLong(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseInt(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseFloat(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseDouble(duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseList(Employee.class, duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseSet(Employee.class, duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseCollection(Employee.class, duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = Promises.replayPromiseMap(String.class, Employee.class, duration, time);
+        assertTrue(promise instanceof ReplayPromise);
+
+    }
+
     public static class Sheep {
 
         private final String name;
@@ -730,7 +846,6 @@ public class PromiseTest {
             return id != null ? id.hashCode() : 0;
         }
     }
-
 
     public static class TestService {
 
