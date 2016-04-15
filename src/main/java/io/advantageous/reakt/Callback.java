@@ -2,6 +2,8 @@ package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.ResultImpl;
 
+import static io.advantageous.reakt.Result.doneResult;
+
 /**
  * A generic event handler which can be thought of as a callback handler.
  * <p>
@@ -76,6 +78,16 @@ public interface Callback<T> {
      */
     default void reply(final T result) {
         onResult(new ResultImpl<>(result));
+    }
+
+
+    /**
+     * Reply that you are done.
+     * You can only use this for Callback of type Void only.
+     */
+    @SuppressWarnings("all")
+    default void replyDone() {
+        onResult((Result<T>) doneResult());
     }
 
     /**

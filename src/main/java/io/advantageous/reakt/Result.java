@@ -14,7 +14,13 @@ import java.util.function.Consumer;
 public interface Result<T> {
 
     /**
-     * Create a result
+     * DONE Result for Callback Void.
+     */
+    Result<Void> DONE = new ResultImpl<>(null);
+
+
+    /**
+     * Create a result.
      *
      * @param value value
      * @param <T>   T
@@ -35,6 +41,14 @@ public interface Result<T> {
         return new ResultImpl<>(error);
     }
 
+    /**
+     * Done results
+     *
+     * @return returns constant which is a result that is done.
+     */
+    static Result<Void> doneResult() {
+        return DONE;
+    }
 
     /**
      * If a result is sent, and there was no error, then handle the result.
@@ -46,7 +60,6 @@ public interface Result<T> {
      */
     Result<T> then(Consumer<T> consumer);
 
-
     /**
      * If a result is sent, and there was no error, then handle the result as a value which could be null.
      *
@@ -56,7 +69,6 @@ public interface Result<T> {
      *                              null
      */
     Result<T> thenExpect(Consumer<Expected<T>> consumer);
-
 
     /**
      * If a result is sent, and there is an error, then handle handle the error.
@@ -78,7 +90,6 @@ public interface Result<T> {
      */
     boolean complete();
 
-
     /**
      * If failure is true then cause will not be null.
      *
@@ -92,7 +103,6 @@ public interface Result<T> {
      * @return cause of error associated with the result
      */
     Throwable cause();
-
 
     /**
      * If the value of the result can be null, it is better to use Expected which is like Optional.
@@ -109,7 +119,6 @@ public interface Result<T> {
      */
     T get();
 
-
     /**
      * Return the value if no error.  If there was ane error return {@code other}.
      *
@@ -117,4 +126,5 @@ public interface Result<T> {
      * @return the value, if no error, or if error return {@code other}
      */
     T orElse(T other);
+
 }
