@@ -7,8 +7,7 @@ import io.advantageous.reakt.reactor.Reactor;
 import io.advantageous.reakt.reactor.TimeSource;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.stream.Collectors;
@@ -115,6 +114,71 @@ public class ReactorImpl implements Reactor {
         processDeferRuns();
         processRepeatingTasks();
         processFireOnceTasks();
+    }
+
+    @Override
+    public Promise<String> promiseString() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseString(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Integer> promiseInt() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseInt(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Long> promiseLong() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseLong(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Double> promiseDouble() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseDouble(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Float> promiseFloat() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseFloat(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Void> promiseNotify() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseNotify(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public Promise<Boolean> promiseBoolean() {
+        return addPromiseToProcessingQueue(Promises.replayPromiseBoolean(defaultTimeout, currentTime));
+    }
+
+    @Override
+    public <T> Promise<T> promise(Class<T> cls) {
+        return addPromiseToProcessingQueue(Promises.replayPromise(cls, defaultTimeout, currentTime));
+    }
+
+    @Override
+    public <T> Promise<List<T>> promiseList(Class<T> componentType) {
+        return addPromiseToProcessingQueue(Promises.replayPromiseList(componentType,
+                defaultTimeout, currentTime));
+    }
+
+    @Override
+    public <T> Promise<Collection<T>> promiseCollection(Class<T> componentType) {
+        return addPromiseToProcessingQueue(Promises.replayPromiseCollection(componentType,
+                defaultTimeout, currentTime));
+    }
+
+    @Override
+    public <K, V> Promise<Map<K, V>> promiseMap(Class<K> keyType, Class<V> valueType) {
+
+        return addPromiseToProcessingQueue(Promises.replayPromiseMap(keyType, valueType,
+                defaultTimeout, currentTime));
+    }
+
+    @Override
+    public <T> Promise<Set<T>> promiseSet(Class<T> componentType) {
+        return addPromiseToProcessingQueue(Promises.replayPromiseSet(componentType,
+                defaultTimeout, currentTime));
     }
 
     private void processDeferRuns() {

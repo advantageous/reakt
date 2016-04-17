@@ -7,6 +7,7 @@ import io.advantageous.reakt.promise.impl.BlockingPromise;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,7 +25,7 @@ public class PromiseTest {
         Promise<Employee> promise1 = Promises.promise();
         Promise<Employee> promise2 = Promises.promise();
 
-        final Promise<Void> promise = Promises.anyBlocking(promise1, promise2);
+        final Promise<Void> promise = Promises.anyBlocking(Arrays.asList(promise1, promise2));
 
         assertFalse(promise.complete());
 
@@ -42,7 +43,7 @@ public class PromiseTest {
         Promise<Employee> promise1 = Promises.promise();
         Promise<Employee> promise2 = Promises.promise();
 
-        final Promise<Void> promise = Promises.allBlocking(promise1, promise2);
+        final Promise<Void> promise = Promises.allBlocking(Arrays.asList(promise1, promise2));
 
         assertFalse(promise.complete());
 
@@ -134,7 +135,7 @@ public class PromiseTest {
         Promise<Employee> promise2 = Promises.promise();
 
         final ReplayPromise<Void> promise = Promises.allReplay(Duration.ofMillis(1000),
-                promise1, promise2);
+                Arrays.asList(promise1, promise2));
 
         assertFalse(promise.complete());
 
@@ -168,7 +169,7 @@ public class PromiseTest {
         Promise<Employee> promise2 = Promises.promise();
 
         final ReplayPromise<Void> promise = Promises.allReplay(Duration.ofMillis(1000),
-                promise1, promise2);
+                Arrays.asList(promise1, promise2));
 
         assertFalse(promise.complete());
 
@@ -201,7 +202,7 @@ public class PromiseTest {
         Promise<Employee> promise2 = Promises.promise();
 
         final ReplayPromise<Void> promise = Promises.anyReplay(Duration.ofMillis(1000),
-                promise1, promise2);
+                Arrays.asList(promise1, promise2));
 
         assertFalse(promise.complete());
 

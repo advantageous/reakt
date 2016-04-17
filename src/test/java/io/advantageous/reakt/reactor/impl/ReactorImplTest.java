@@ -1,6 +1,7 @@
 package io.advantageous.reakt.reactor.impl;
 
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.ReplayPromise;
 import io.advantageous.reakt.reactor.Reactor;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.advantageous.reakt.reactor.Reactor.reactor;
 import static org.junit.Assert.*;
 
 public class ReactorImplTest {
@@ -21,7 +23,9 @@ public class ReactorImplTest {
     public void before() {
         testTimer = new TestTimer();
         testTimer.setTime(System.currentTimeMillis());
-        reactor = Reactor.reactor(Duration.ofSeconds(30), testTimer);
+
+        reactor = reactor();
+        reactor = reactor(Duration.ofSeconds(30), testTimer);
         reactor.process();
     }
 
@@ -231,5 +235,39 @@ public class ReactorImplTest {
         /** Now we see the event. */
         assertTrue(thenCalled.get());
 
+    }
+
+    @Test
+    public void utilityMethod() {
+        Promise promise;
+
+        promise = reactor.promiseNotify();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promise(Employee.class);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseString();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseBoolean();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseLong();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseInt();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseFloat();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseDouble();
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseList(Employee.class);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseSet(Employee.class);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseCollection(Employee.class);
+        assertTrue(promise instanceof ReplayPromise);
+        promise = reactor.promiseMap(String.class, Employee.class);
+        assertTrue(promise instanceof ReplayPromise);
+    }
+
+    public static class Employee {
+        private String id;
     }
 }

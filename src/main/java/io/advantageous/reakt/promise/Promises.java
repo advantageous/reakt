@@ -43,7 +43,7 @@ public interface Promises {
      * @return return containing promise
      */
     static <T> Promise<Void> all(final List<Promise<T>> promises) {
-        return new AllPromise(promises.toArray(new Promise[promises.size()]));
+        return all(promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -64,7 +64,7 @@ public interface Promises {
      * @return return containing promise
      */
     static <T> Promise<Void> any(final List<Promise<T>> promises) {
-        return new AnyPromise(promises.toArray(new Promise[promises.size()]));
+        return any(promises.toArray(new Promise[promises.size()]));
     }
 
 
@@ -87,7 +87,7 @@ public interface Promises {
      * @return return containing promise that is blocking.
      */
     static <T> Promise<Void> allBlocking(final List<Promise<T>> promises) {
-        return new AllBlockingPromise(promises.toArray(new Promise[promises.size()]));
+        return allBlocking(promises.toArray(new Promise[promises.size()]));
     }
 
 
@@ -110,7 +110,7 @@ public interface Promises {
      * @return return containing promise that is blocking.
      */
     static <T> Promise<Void> anyBlocking(final List<Promise<T>> promises) {
-        return new AnyBlockingPromise(promises.toArray(new Promise[promises.size()]));
+        return anyBlocking(promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -139,7 +139,7 @@ public interface Promises {
     static <T> ReplayPromise<Void> allReplay(final Duration timeout,
                                              final long time,
                                              final List<Promise<T>> promises) {
-        return new AllReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
+        return allReplay(timeout, time, promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -723,7 +723,6 @@ public interface Promises {
      * Create a blocking promise.
      * NOTE BLOCKING PROMISES ARE FOR LEGACY INTEGRATION AND TESTING ONLY!!!
      *
-     * @param duration      duration of block
      * @param duration      duration of block
      * @param componentType component type of list
      * @param <T>           promise a list of type T
