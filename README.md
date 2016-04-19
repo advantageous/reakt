@@ -24,22 +24,23 @@ Note: This mostly just provides the interfaces not the implementations. There ar
 ## Getting started
 #### Using from maven
 
+Reakt is published in the [maven public repo](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.advantageous.reakt%22).
+
 ```xml
 <dependency>
     <groupId>io.advantageous.reakt</groupId>
     <artifactId>reakt</artifactId>
-    <version>2.1.0.RELEASE</version>
+    <version>2.4.0.RELEASE</version>
 </dependency>
 ```
 
 #### Using from gradle
 ```xml
-compile 'io.advantageous.reakt:reakt:2.1.0.RELEASE'
+compile 'io.advantageous.reakt:reakt:2.4.0.RELEASE'
 ```
 
 #### Fluent Promise API
 ```java
-
   Promise<Employee> promise = promise()
                 .then(e -> saveEmployee(e))
                 .catchError(error -> 
