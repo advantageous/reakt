@@ -91,10 +91,19 @@ public interface Callback<T> {
     }
 
     /**
+     * Calls replayDone, for VOID callback only. ES6 promise style.
+     */
+    @SuppressWarnings("unused")
+    default void resolve() {
+        replyDone();
+    }
+
+    /**
      * Resolve resolves a promise.
      *
      * @param result makes it more compatible with ES6 style promises
      */
+    @SuppressWarnings("unused")
     default void resolve(final T result) {
         reply(result);
     }
