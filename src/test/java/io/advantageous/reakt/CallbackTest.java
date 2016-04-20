@@ -41,6 +41,63 @@ public class CallbackTest {
     }
 
 
+
+    @Test
+    public void testErrorConsumer() throws Exception {
+
+        TestService testService = new TestService();
+        Result<Employee>[] results = new Result[1];
+        testService.errorConsumer(result -> {
+            results[0] = result;
+
+        });
+        assertTrue(results[0].complete());
+        assertTrue(results[0].failure());
+        assertFalse(results[0].success());
+    }
+
+
+    @Test
+    public void testConsumer() throws Exception {
+
+        TestService testService = new TestService();
+        Result<Employee>[] results = new Result[1];
+        Employee[] employee = new Employee[1];
+        testService.simpleConsumer(result -> {
+            results[0] = result;
+            result.then(e -> employee[0] = e).catchError(error -> {
+                System.err.println(error.getMessage());
+            });
+        });
+
+        assertTrue(results[0].complete());
+        assertFalse(results[0].failure());
+        assertTrue(results[0].success());
+        assertNotNull(employee[0]);
+    }
+
+    @Test
+    public void testNoReturn() throws Exception {
+
+        TestService testService = new TestService();
+        Result<Employee>[] results = new Result[1];
+        Employee[] employee = new Employee[1];
+        testService.simpleNoReturn(result -> {
+            results[0] = result;
+            result.then(e -> employee[0] = e).catchError(error -> {
+                System.err.println(error.getMessage());
+            });
+        });
+
+        assertTrue(results[0].complete());
+        assertFalse(results[0].failure());
+        assertTrue(results[0].success());
+        assertNull(employee[0]);
+    }
+
+
+
+
     @Test
     public void testException() throws Exception {
 
@@ -83,12 +140,26 @@ public class CallbackTest {
     public static class TestService {
 
         public void simple(Callback<Employee> callback) {
-            callback.reply(new Employee("Rick"));
+
+            callback.resolve(new Employee("Rick"));
+        }
+        public void simpleNoReturn(Callback<Employee> callback) {
+
+            callback.resolve();
+        }
+
+        public void simpleConsumer(Callback<Employee> callback) {
+            callback.consumer().accept(new Employee("Rick"));
         }
 
 
         public void error(Callback<Employee> callback) {
             callback.reject("Error");
+        }
+
+
+        public void errorConsumer(Callback<Employee> callback) {
+            callback.errorConsumer().accept(new IllegalStateException("Error"));
         }
 
         public void exception(Callback<Employee> callback) {

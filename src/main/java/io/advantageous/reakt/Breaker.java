@@ -40,9 +40,7 @@ public interface Breaker<T> {
      * @return an empty {@code ExpectedImpl}
      */
     static <T> Breaker<T> broken() {
-        @SuppressWarnings("unchecked")
-        Breaker<T> t = OPENED;
-        return t;
+        return opened();
     }
 
 
