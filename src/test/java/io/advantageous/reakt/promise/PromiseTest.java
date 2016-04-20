@@ -17,6 +17,22 @@ import static org.junit.Assert.*;
 
 public class PromiseTest {
 
+
+
+    @Test (expected = UnsupportedOperationException.class)
+    public void testNotSupportedInvokableInvoke() throws Exception {
+
+        Promise promise = Promises.promise();
+        promise.invoke();
+    }
+
+
+    @Test
+    public void testNotSupportedInvokableIsInvokable() throws Exception {
+        Promise promise = Promises.promise();
+        assertFalse(promise.isInvokable());
+    }
+
     @Test
     public void testAnyBlocking() throws Exception {
 

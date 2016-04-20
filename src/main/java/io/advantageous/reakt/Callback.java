@@ -2,7 +2,6 @@ package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.ResultImpl;
 
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import static io.advantageous.reakt.Result.doneResult;
@@ -143,47 +142,6 @@ public interface Callback<T> extends Consumer<T> {
      */
     default Consumer<T> consumer() {
         return this;
-    }
-
-
-    /**
-     * Service View (service)
-     * Return an error message
-     * alias for reject.
-     *
-     * This will be taken out in Reakt 3.0 (and QBit 2.0).
-     * Use reject instead.
-     * @param error error
-     */
-    @Deprecated @SuppressWarnings("deprecated")
-    default void returnError(final String error) {
-        reject(error);
-    }
-
-
-    /**
-     * Called if there is a timeout.
-     *
-     * This will be taken out in Reakt 3.0 (and QBit 2.0).
-     * Use reject instead.
-     */
-    @Deprecated @SuppressWarnings("deprecated")
-    default void onTimeout() {
-        reject(new TimeoutException());
-    }
-
-
-    /**
-     * Service View (service)
-     * alias for reply
-     *
-     * This will be taken out in Reakt 3.0 (and QBit 2.0).
-     * Use resolve or reply instead.
-     * @param thisReturn the value to return.
-     */
-    @Deprecated @SuppressWarnings("deprecated")
-    default void returnThis(T thisReturn) {
-        resolve(thisReturn);
     }
 
 

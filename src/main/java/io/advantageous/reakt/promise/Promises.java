@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Utility methods for creating promises.
@@ -951,5 +952,19 @@ public interface Promises {
     @SuppressWarnings("unused")
     static <T> Promise<Set<T>> blockingPromiseSet(Class<T> componentType) {
         return new BlockingPromise<>();
+    }
+
+
+    /**
+     * Create an invokable promise.
+     * After you create a promise you register its then(...) and catchError(...) and then you use it to
+     * handle a callback.
+     *
+     * @param <T>             type of result
+     * @param promiseConsumer promise consumer so you can call reject or resolve on the service side
+     * @return new promise
+     */
+    static <T> Promise<T> invokablePromise(Consumer<Promise<T>> promiseConsumer) {
+        return new InvokerPromise<>(promiseConsumer);
     }
 }
