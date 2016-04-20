@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.advantageous.reakt.promise.Promises.*;
 import static org.junit.Assert.*;
 
-public class InvokablePromise {
+public class InvokablePromiseTest {
 
 
     final URI successResult = URI.create("http://localhost:8080/employeeService/");
