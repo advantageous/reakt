@@ -10,6 +10,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static io.advantageous.reakt.promise.Promises.*;
 import static org.junit.Assert.*;
 
 public class InvokablePromise {
@@ -136,7 +137,7 @@ public class InvokablePromise {
 
         @Override
         public Promise<URI> lookupService(URI uri) {
-            return Promises.invokablePromise(promise -> {
+            return invokablePromise(promise -> {
 
                 if (uri == null) {
                     promise.reject("URI was null");
@@ -164,7 +165,7 @@ public class InvokablePromise {
 
         @Override
         public Promise<URI> lookupService(URI uri) {
-            return Promises.invokablePromise(promise -> {
+            return invokablePromise(promise -> {
                 runnables.offer(() -> {
                     if (uri == null) {
                         promise.reject("URI was null");
