@@ -5,9 +5,4 @@ package io.advantageous.reakt;
  */
 public interface Invokable {
 
-    /**
-     * invoke something.
-     */
-    default void invoke() {
-    }
 }

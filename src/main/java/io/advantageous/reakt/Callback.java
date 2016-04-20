@@ -2,6 +2,7 @@ package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.ResultImpl;
 
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import static io.advantageous.reakt.Result.doneResult;
@@ -143,5 +144,37 @@ public interface Callback<T> extends Consumer<T> {
     default Consumer<T> consumer() {
         return this;
     }
+
+
+    /**
+     * Service View (service)
+     * Return an error message
+     * alias for reject.
+     *
+     * @param error error
+     */
+    default void returnError(final String error) {
+        reject(error);
+    }
+
+
+    /**
+     * Called if there is a timeout.
+     */
+    default void onTimeout() {
+        reject(new TimeoutException());
+    }
+
+
+    /**
+     * Service View (service)
+     * alias for reply
+     *
+     * @param thisReturn the value to return.
+     */
+    default void returnThis(T thisReturn) {
+        accept(thisReturn);
+    }
+
 
 }
