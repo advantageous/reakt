@@ -2,6 +2,8 @@ package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.ResultImpl;
 
+import java.util.function.Consumer;
+
 import static io.advantageous.reakt.Result.doneResult;
 
 /**
@@ -11,10 +13,15 @@ import static io.advantageous.reakt.Result.doneResult;
  * <p>
  * This was modeled after QBit's callback, and JavaScripts callbacks.
  * The {@link Result} result represents the result or error from an async operation.
+ * <p>
+ * <p>
+ * A {@code Callback} is a {@code Consumer} and can be used anywhere a consumer is used.
+ * This is for easy integration with non-Reakt libs and code bases.
+ * <p>
  *
  * @param <T> type of result returned from callback
  */
-public interface Callback<T> {
+public interface Callback<T> extends Consumer<T> {
 
     /**
      * (Client view)
@@ -106,6 +113,36 @@ public interface Callback<T> {
     @SuppressWarnings("unused")
     default void resolve(final T result) {
         reply(result);
+    }
+
+    /**
+     * Bridge between Consumer world and Callback world
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
+    @Override
+    default void accept(T t) {
+        reply(t);
+    }
+
+    /**
+     * Used to convert the error handling of the callback or promise
+     * into a Consumer so you can easily integrate with non-Reakt code.
+     *
+     * @return Consumer version of error handling.
+     */
+    default Consumer<Throwable> errorConsumer() {
+        return this::reject;
+    }
+
+    /**
+     * Used to easily cast this callback to a consumer.
+     *
+     * @return Consumer version of this callback.
+     */
+    default Consumer<T> consumer() {
+        return this;
     }
 
 }

@@ -2,6 +2,7 @@ package io.advantageous.reakt.promise;
 
 import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.Expected;
+import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 
@@ -97,5 +98,38 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      *                              null
      */
     Promise<T> catchError(Consumer<Throwable> consumer);
+
+    /**
+     * Returns true if this Promise is an Invokable Promise.
+     * <p>
+     * Hint: if you have to ask, the answer is no.
+     *
+     * @return true if it is invokable
+     */
+    default boolean isInvokable() {
+        return this instanceof Invokable;
+    }
+
+    /**
+     * Allows promises returned from, for example, proxy stubs for services methods
+     * to invoke the operation.
+     * <p>
+     * This allows use to set up the catchError and then before the method is
+     * async invoked.
+     * <p>
+     * Example Remote Proxy Gen to support returning Reakt invokeable promise
+     * <pre>
+     * <code>
+     *
+     *     employeeService.lookupEmployee("123")
+     *           .then((employee)-> {...})
+     *           .catchError(...)
+     *           .invoke();
+     * </code>
+     * </pre>
+     */
+    default void invoke() {
+        throw new UnsupportedOperationException("This is not an invokable promise.");
+    }
 
 }
