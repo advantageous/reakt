@@ -14,7 +14,6 @@ import static io.advantageous.reakt.Result.doneResult;
  * This was modeled after QBit's callback, and JavaScripts callbacks.
  * The {@link Result} result represents the result or error from an async operation.
  * <p>
- * <p>
  * A {@code Callback} is a {@code Consumer} and can be used anywhere a consumer is used.
  * This is for easy integration with non-Reakt libs and code bases.
  * <p>

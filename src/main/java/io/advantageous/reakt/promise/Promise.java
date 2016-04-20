@@ -122,7 +122,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * <code>
      *
      *     employeeService.lookupEmployee("123")
-     *           .then((employee)-> {...})
+     *           .then((employee)-&gt; {...})
      *           .catchError(...)
      *           .invoke();
      * </code>
