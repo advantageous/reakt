@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Reakt by advantageous</title>
+    <title>Reakt Reactive Java by advantageous</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -11,7 +11,7 @@
   </head>
   <body>
     <section class="page-header">
-      <h1 class="project-name">Reakt</h1>
+      <h1 class="project-name">Reakt Reactive Java</h1>
       <h2 class="project-tagline">Reactive Java. Promises, Streams, Callbacks, Async results, interfaces for Java that are lambda expression friendly and fluent.</h2>
       <a href="https://github.com/advantageous/reakt" class="btn">View on GitHub</a>
       <a href="https://github.com/advantageous/reakt/zipball/master" class="btn">Download .zip</a>
@@ -24,7 +24,7 @@
 <h1>
 <a id="reactive-interfaces-for-java-promise-stream-callback-async-results" class="anchor" href="#reactive-interfaces-for-java-promise-stream-callback-async-results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Reactive interfaces for Java, Promise, Stream, Callback, Async Results</h1>
 
-<p>Reakt is reactive interfaces for Java which includes: </p>
+<p>Reakt is <strong><em>Reactive Java</em></strong> and provides reactive interfaces for Java which include: </p>
 
 <ul>
 <li>
@@ -55,18 +55,18 @@ and fluent APIs for asynchronous programming for Java.</p>
 <h4>
 <a id="using-from-maven" class="anchor" href="#using-from-maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from maven</h4>
 
-<p>Reakt is published in the <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.advantageous.reakt%22">maven public repo</a>.</p>
+<p>Reakt, Reactive Java Lib that provide Streams and Promises, is published in the <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.advantageous.reakt%22">maven public repo</a>.</p>
 
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
     &lt;<span class="pl-ent">groupId</span>&gt;io.advantageous.reakt&lt;/<span class="pl-ent">groupId</span>&gt;
     &lt;<span class="pl-ent">artifactId</span>&gt;reakt&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">version</span>&gt;2.4.0.RELEASE&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;2.5.0.RELEASE&lt;/<span class="pl-ent">version</span>&gt;
 &lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
 <h4>
-<a id="using-from-gradle" class="anchor" href="#using-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from gradle</h4>
+<a id="using-reakt-reactive-java-lib-for-streams-and-promises-from-gradle" class="anchor" href="#using-reakt-reactive-java-lib-for-streams-and-promises-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Reakt, Reactive Java Lib for Streams and Promises from gradle</h4>
 
-<div class="highlight highlight-source-java"><pre>compile <span class="pl-s"><span class="pl-pds">'</span>io.advantageous.reakt:reakt:2.4.0.RELEASE<span class="pl-pds">'</span></span></pre></div>
+<div class="highlight highlight-source-java"><pre>compile <span class="pl-s"><span class="pl-pds">'</span>io.advantageous.reakt:reakt:2.5.0.RELEASE<span class="pl-pds">'</span></span></pre></div>
 
 <h4>
 <a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
@@ -91,6 +91,17 @@ and fluent APIs for asynchronous programming for Java.</p>
                  .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(
                                            <span class="pl-s"><span class="pl-pds">"</span>Unable to lookup <span class="pl-pds">"</span></span>, error))
         );</pre></div>
+
+<p>Also you can use invokable promises</p>
+
+<h4>
+<a id="fluent-invokable-promise-api" class="anchor" href="#fluent-invokable-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Invokable Promise API</h4>
+
+<div class="highlight highlight-source-java"><pre>        employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-s"><span class="pl-pds">"</span>123<span class="pl-pds">"</span></span>)
+               .then((employee)<span class="pl-k">-</span><span class="pl-k">&gt;</span> {<span class="pl-c1">...</span>})<span class="pl-k">.</span>catchError(<span class="pl-c1">...</span>)<span class="pl-k">.</span>invoke();</pre></div>
+
+<p>Check out <a href="https://github.com/advantageous/reakt/wiki/Invokable-Promise">invokable promises</a>, they bring a nice
+fluent level of cool to Reactive Java. QBit 1.4 uses invokable promises in its remote client proxies and local service proxies. It is a very productive and fluent way to do async, reactive programming.</p>
 
 <p>Promises are both a callback and a Result; however, you can work
 with Callbacks directly. </p>
@@ -223,7 +234,7 @@ for more details.</p>
 <p>See our wiki for more details on <a href="https://github.com/advantageous/reakt/wiki">Reakt</a>.</p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt Reactive Java</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
