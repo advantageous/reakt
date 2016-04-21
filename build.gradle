@@ -1,5 +1,5 @@
 group 'io.advantageous.reakt'
-version '2.5.0-RC1'
+version '2.5.0.RELEASE'
 
 apply plugin: 'java'
 apply plugin: 'maven'
