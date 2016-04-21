@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt.reactor;
 
 import io.advantageous.reakt.promise.Promise;
@@ -12,6 +30,8 @@ import java.util.Set;
 /**
  * Ensures that tasks, repeating tasks and callbacks run in the callers thread.
  * Used with actor service models like QBit, Vertx, etc.
+ *
+ * @author Rick Hightower
  */
 public interface Reactor {
 
@@ -73,8 +93,7 @@ public interface Reactor {
      * @param promises promises
      * @return return containing promise
      */
-    Promise<Void> all(final Duration timeout,
-                      final Promise<?>... promises);
+    Promise<Void> all(final Duration timeout, final Promise<?>... promises);
 
     /**
      * All promises must complete.
@@ -93,8 +112,7 @@ public interface Reactor {
      * @param <T>      types of promise
      * @return return containing promise
      */
-    <T> Promise<Void> all(final Duration timeout,
-                          final List<Promise<T>> promises);
+    <T> Promise<Void> all(final Duration timeout, final List<Promise<T>> promises);
 
     /**
      * Any promises must complete.
@@ -104,7 +122,6 @@ public interface Reactor {
      */
     Promise<Void> any(final Promise<?>... promises);
 
-
     /**
      * Any promises must complete.
      *
@@ -112,8 +129,7 @@ public interface Reactor {
      * @param promises promises
      * @return return containing promise
      */
-    Promise<Void> any(final Duration timeout,
-                      final Promise<?>... promises);
+    Promise<Void> any(final Duration timeout, final Promise<?>... promises);
 
     /**
      * All promises must complete.
@@ -132,9 +148,7 @@ public interface Reactor {
      * @param <T>      types of promise
      * @return return containing promise
      */
-    <T> Promise<Void> any(final Duration timeout,
-                          final List<Promise<T>> promises);
-
+    <T> Promise<Void> any(final Duration timeout, final List<Promise<T>> promises);
 
     /**
      * Add a repeating task that will run every interval
@@ -157,7 +171,7 @@ public interface Reactor {
      *
      * @param runnable runnable
      */
-    void deferRun(Runnable runnable);
+    void deferRun(final Runnable runnable);
 
     /**
      * Allows the reactor to process its tasks, and promises (callbacks).
@@ -178,7 +192,6 @@ public interface Reactor {
      */
     Promise<Integer> promiseInt();
 
-
     /**
      * Returns a Long promise
      *
@@ -192,7 +205,6 @@ public interface Reactor {
      * @return returns an double promise
      */
     Promise<Double> promiseDouble();
-
 
     /**
      * Returns a Float promise
@@ -226,7 +238,7 @@ public interface Reactor {
      * @return new Promise of type T
      */
     @SuppressWarnings("unused")
-    <T> Promise<T> promise(Class<T> cls);
+    <T> Promise<T> promise(final Class<T> cls);
 
 
     /**
@@ -237,7 +249,7 @@ public interface Reactor {
      * @return new Promise for a list of type T
      */
     @SuppressWarnings("unused")
-    <T> Promise<List<T>> promiseList(Class<T> componentType);
+    <T> Promise<List<T>> promiseList(final Class<T> componentType);
 
     /**
      * Generic collection promise.
@@ -247,7 +259,7 @@ public interface Reactor {
      * @return new Promise for a collection of type T
      */
     @SuppressWarnings("unused")
-    <T> Promise<Collection<T>> promiseCollection(Class<T> componentType);
+    <T> Promise<Collection<T>> promiseCollection(final Class<T> componentType);
 
     /**
      * Generic map promise.
@@ -259,7 +271,7 @@ public interface Reactor {
      * @return new Promise for a collection of type T
      */
     @SuppressWarnings("unused")
-    <K, V> Promise<Map<K, V>> promiseMap(Class<K> keyType, Class<V> valueType);
+    <K, V> Promise<Map<K, V>> promiseMap(final Class<K> keyType, final Class<V> valueType);
 
     /**
      * Generic set promise.
@@ -269,6 +281,6 @@ public interface Reactor {
      * @return new Promise for a set of type T
      */
     @SuppressWarnings("unused")
-    <T> Promise<Set<T>> promiseSet(Class<T> componentType);
+    <T> Promise<Set<T>> promiseSet(final Class<T> componentType);
 
 }

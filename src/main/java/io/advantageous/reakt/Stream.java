@@ -1,9 +1,26 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.StreamResultImpl;
 
 import java.util.function.Consumer;
-
 
 /**
  * A generic event handler for N results, i.e., a stream of results.
@@ -18,9 +35,9 @@ import java.util.function.Consumer;
  * This is like an async future or promise.
  *
  * @param <T> type of result returned from callback
+ * @author Rick Hightower
  */
 public interface Stream<T> {
-
 
     /**
      * (Client view)
@@ -31,8 +48,7 @@ public interface Stream<T> {
      *
      * @param result to handle
      */
-    void onNext(StreamResult<T> result);
-
+    void onNext(final StreamResult<T> result);
 
     /**
      * (Service view)
@@ -43,7 +59,7 @@ public interface Stream<T> {
      * @param result result value to send.
      */
     default void complete(final T result) {
-        onNext(new StreamResultImpl<>(result, true, Expected.empty(), Expected.empty()));
+        this.onNext(new StreamResultImpl<>(result, true, Expected.empty(), Expected.empty()));
     }
 
     /**
@@ -55,10 +71,8 @@ public interface Stream<T> {
      * @param result result value to send.
      */
     default void reply(final T result) {
-        onNext(new StreamResultImpl<>(result, false,
-                Expected.empty(), Expected.empty()));
+        this.onNext(new StreamResultImpl<>(result, false, Expected.empty(), Expected.empty()));
     }
-
 
     /**
      * (Service view)
@@ -71,10 +85,8 @@ public interface Stream<T> {
      * @param done   if true signifies that that this is the last result.
      */
     default void reply(final T result, final boolean done) {
-        onNext(new StreamResultImpl<>(result, done, Expected.empty(),
-                Expected.empty()));
+        this.onNext(new StreamResultImpl<>(result, done, Expected.empty(), Expected.empty()));
     }
-
 
     /**
      * (Service view)
@@ -88,10 +100,8 @@ public interface Stream<T> {
      * @param cancelHandler cancel handler if you support canceling.
      */
     default void reply(final T result, final boolean done, final Runnable cancelHandler) {
-        onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler),
-                Expected.empty()));
+        this.onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler), Expected.empty()));
     }
-
 
     /**
      * (Service view)
@@ -105,9 +115,11 @@ public interface Stream<T> {
      * @param cancelHandler cancel handler if you support canceling the stream
      * @param wantsMore     handler so client can request more items if this is supported.
      */
-    default void reply(final T result, final boolean done, final Runnable cancelHandler, final Consumer<Long> wantsMore) {
-        onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler),
-                Expected.of(wantsMore)));
+    default void reply(final T result, final boolean done,
+                       final Runnable cancelHandler,
+                       final Consumer<Long> wantsMore) {
+
+        this.onNext(new StreamResultImpl<>(result, done, Expected.of(cancelHandler), Expected.of(wantsMore)));
     }
 
     /**
@@ -119,10 +131,8 @@ public interface Stream<T> {
      * @param error error
      */
     default void fail(final Throwable error) {
-
-        onNext(new StreamResultImpl<>(error, true, Expected.empty(), Expected.empty()));
+        this.onNext(new StreamResultImpl<>(error, true, Expected.empty(), Expected.empty()));
     }
-
 
     /**
      * (Service view)
@@ -133,9 +143,7 @@ public interface Stream<T> {
      * @param errorMessage error message
      */
     default void fail(final String errorMessage) {
-        onNext(new StreamResultImpl<>(new IllegalStateException(errorMessage),
-                true, Expected.empty(), Expected.empty()));
-
+        this.onNext(new StreamResultImpl<>(
+                new IllegalStateException(errorMessage), true, Expected.empty(), Expected.empty()));
     }
-
 }

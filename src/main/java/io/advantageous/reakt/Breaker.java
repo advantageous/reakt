@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.BreakerImpl;
@@ -25,6 +43,9 @@ import java.util.function.Consumer;
  * If a service is not healthy or not working, {code isBroken()} will return {@code true}.
  * </p>
  * This is heavily modeled after {@code Expected} optional.
+ *
+ * @author Rick Hightower
+ * @author Geoff Chandler
  */
 public interface Breaker<T> {
     /**
@@ -42,7 +63,6 @@ public interface Breaker<T> {
     static <T> Breaker<T> broken() {
         return opened();
     }
-
 
     /**
      * Returns an open/broken {@code Breaker} instance.  No service is present for this
@@ -82,14 +102,12 @@ public interface Breaker<T> {
         return new BreakerImpl<>(value, maxErrorsCount);
     }
 
-
     /**
      * Return {@code true} if the service is broken, otherwise {@code false}.
      *
      * @return {@code true} if the service is broken, otherwise {@code false}
      */
     boolean isBroken();
-
 
     /**
      * Return {@code true} if the service is working, otherwise {@code false}.
@@ -118,7 +136,6 @@ public interface Breaker<T> {
      *                              null
      */
     Breaker<T> ifOperational(Consumer<? super T> consumer);
-
 
     /**
      * Short version of ifOperational.
@@ -154,6 +171,5 @@ public interface Breaker<T> {
      * @return number of errors detected.
      */
     long errorCount();
-
 
 }

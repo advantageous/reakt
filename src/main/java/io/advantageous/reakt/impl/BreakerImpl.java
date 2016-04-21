@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Breaker;
@@ -8,6 +26,8 @@ import java.util.function.Consumer;
 
 /**
  * Circuit breaker.
+ *
+ * @author Rick Hightower
  */
 public class BreakerImpl<T> implements Breaker<T> {
 
@@ -16,7 +36,6 @@ public class BreakerImpl<T> implements Breaker<T> {
      */
     private final T service;
 
-
     /**
      * Hold blow circuit breaker flag.
      */
@@ -24,25 +43,23 @@ public class BreakerImpl<T> implements Breaker<T> {
     private final int maxErrorCount;
 
     public BreakerImpl() {
-        maxErrorCount = 0;
+        this.maxErrorCount = 0;
         this.service = null;
     }
 
-    public BreakerImpl(T value) {
-        maxErrorCount = 0;
+    public BreakerImpl(final T value) {
+        this.maxErrorCount = 0;
         this.service = Objects.requireNonNull(value);
     }
 
-
-    public BreakerImpl(T value, int maxErrorCount) {
+    public BreakerImpl(final T value, final int maxErrorCount) {
         this.service = Objects.requireNonNull(value);
         this.maxErrorCount = maxErrorCount;
     }
 
-
     @Override
     public boolean isOperational() {
-        return service != null && maxErrorCount == 0 || errorCount() < maxErrorCount;
+        return this.service != null && this.maxErrorCount == 0 || errorCount() < this.maxErrorCount;
     }
 
     @Override
@@ -51,34 +68,31 @@ public class BreakerImpl<T> implements Breaker<T> {
     }
 
     @Override
-    public Breaker<T> ifOperational(Consumer<? super T> consumer) {
+    public Breaker<T> ifOperational(final Consumer<? super T> consumer) {
         try {
-            if (isOperational())
-                consumer.accept(service);
+            if (isOperational()) consumer.accept(this.service);
             return this;
         } catch (Exception ex) {
-            errors.incrementAndGet();
+            this.errors.incrementAndGet();
             throw new IllegalStateException("Operation failed", ex);
         }
     }
 
     @Override
-    public Breaker<T> ifBroken(Runnable runnable) {
-        if (isBroken())
-            runnable.run();
+    public Breaker<T> ifBroken(final Runnable runnable) {
+        if (isBroken()) runnable.run();
         return this;
     }
 
 
     @Override
-    public Breaker<T> cleanup(Consumer<? super T> consumer) {
-        if (isBroken() && service != null)
-            consumer.accept(service);
+    public Breaker<T> cleanup(final Consumer<? super T> consumer) {
+        if (isBroken() && this.service != null) consumer.accept(this.service);
         return this;
     }
 
     @Override
     public long errorCount() {
-        return errors.get();
+        return this.errors.get();
     }
 }

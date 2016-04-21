@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Expected;
@@ -12,6 +30,8 @@ import java.util.function.Predicate;
  * Contains an value object which may not be set.
  * If a value is present, {@code isPresent()} will return {@code true} and
  * {@code get()} will return the value.
+ *
+ * @author Rick Hightower
  */
 public class ExpectedImpl<T> implements Expected<T> {
 
@@ -37,7 +57,6 @@ public class ExpectedImpl<T> implements Expected<T> {
         this.value = Objects.requireNonNull(value);
     }
 
-
     /**
      * If a value is present in this {@code Expected}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
@@ -48,10 +67,8 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public T get() {
-        if (value == null) {
-            throw new NoSuchElementException("No value present");
-        }
-        return value;
+        if (this.value == null) throw new NoSuchElementException("No value present");
+        return this.value;
     }
 
     /**
@@ -61,9 +78,8 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public boolean isPresent() {
-        return value != null;
+        return this.value != null;
     }
-
 
     /**
      * Return {@code true} if there is not a value present, otherwise {@code false}.
@@ -72,7 +88,7 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public boolean isEmpty() {
-        return value == null;
+        return this.value == null;
     }
 
     /**
@@ -83,10 +99,8 @@ public class ExpectedImpl<T> implements Expected<T> {
      *                              null
      */
     @Override
-    public Expected<T> ifPresent(Consumer<? super T> consumer) {
-        if (value != null)
-            consumer.accept(value);
-
+    public Expected<T> ifPresent(final Consumer<? super T> consumer) {
+        if (this.value != null) consumer.accept(this.value);
         return this;
     }
 
@@ -96,12 +110,10 @@ public class ExpectedImpl<T> implements Expected<T> {
      * @param runnable executed if a value is not present
      */
     @Override
-    public Expected<T> ifEmpty(Runnable runnable) {
-        if (value == null)
-            runnable.run();
+    public Expected<T> ifEmpty(final Runnable runnable) {
+        if (this.value == null) runnable.run();
         return this;
     }
-
 
     /**
      * If a value is present, and the value matches the given predicate,
@@ -115,12 +127,9 @@ public class ExpectedImpl<T> implements Expected<T> {
      * @throws NullPointerException if the predicate is null
      */
     @Override
-    public Expected<T> filter(Predicate<? super T> predicate) {
+    public Expected<T> filter(final Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (!isPresent())
-            return this;
-        else
-            return predicate.test(value) ? this : Expected.empty();
+        return !isPresent() ? this : predicate.test(value) ? this : Expected.empty();
     }
 
     /**
@@ -135,15 +144,10 @@ public class ExpectedImpl<T> implements Expected<T> {
      * @throws NullPointerException if the mapper is null
      */
     @Override
-    public <U> Expected<U> map(Function<? super T, ? extends U> mapper) {
+    public <U> Expected<U> map(final Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        if (!isPresent())
-            return Expected.empty();
-        else {
-            return Expected.ofNullable(mapper.apply(value));
-        }
+        return !isPresent() ? Expected.empty() : Expected.ofNullable(mapper.apply(this.value));
     }
-
 
     /**
      * Return the value if present.  If not present return {@code other}.
@@ -153,7 +157,7 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public T orElse(T other) {
-        return value != null ? value : other;
+        return this.value != null ? this.value : other;
     }
 
     /**
@@ -170,17 +174,15 @@ public class ExpectedImpl<T> implements Expected<T> {
      * otherwise {@code false}
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
-
         if (!(other instanceof Expected)) {
             return false;
         }
-
-        ExpectedImpl<?> otherValue = (ExpectedImpl<?>) other;
-        return Objects.equals(value, otherValue.value);
+        final ExpectedImpl<?> otherValue = (ExpectedImpl<?>) other;
+        return Objects.equals(this.value, otherValue.value);
     }
 
     /**
@@ -188,8 +190,8 @@ public class ExpectedImpl<T> implements Expected<T> {
      * The other value is equal if Object.equals(value, other) returns true.
      */
     @Override
-    public boolean equalsValue(Object other) {
-        return Objects.equals(value, other);
+    public boolean equalsValue(final Object other) {
+        return Objects.equals(this.value, other);
     }
 
     /**
@@ -200,7 +202,7 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(value);
+        return Objects.hashCode(this.value);
     }
 
     /**
@@ -212,6 +214,6 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public String toString() {
-        return "Expected{" + "value=" + value + '}';
+        return "Expected{" + "value=" + this.value + '}';
     }
 }

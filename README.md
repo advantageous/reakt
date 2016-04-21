@@ -43,8 +43,7 @@ compile 'io.advantageous.reakt:reakt:2.5.0.RELEASE'
 ```java
   Promise<Employee> promise = promise()
                 .then(e -> saveEmployee(e))
-                .catchError(error -> 
-                     logger.error("Unable to lookup employee", error));
+                .catchError(error -> logger.error("Unable to lookup employee", error));
 
   employeeService.lookupEmployee(33, promise);
 ```
@@ -57,8 +56,7 @@ Or you can handle it in one line.
 
   employeeService.lookupEmployee(33, 
         promise().then(e -> saveEmployee(e))
-                 .catchError(error -> logger.error(
-                                           "Unable to lookup ", error))
+                 .catchError(error -> logger.error("Unable to lookup ", error))
         );
 ```
 
@@ -70,9 +68,7 @@ with Callbacks directly.
 ```java
         employeeService.lookupEmployee(33, result -> {
             result.then(e -> saveEmployee(e))
-                  .catchError(error -> {
-                    logger.error("Unable to lookup", error);
-            });
+                  .catchError(error -> logger.error("Unable to lookup", error));
         });
 ```
 

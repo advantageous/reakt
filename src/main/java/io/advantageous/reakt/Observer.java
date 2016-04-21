@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt;
 
 
@@ -6,6 +24,7 @@ package io.advantageous.reakt;
  * This class represents traditional Subscriber/Observer and how to integrate with them.
  *
  * @param <T> the type of item the Observer expects to observe
+ * @author Rick Hightower
  * @see <a href="http://reactivex.io/documentation/observable.html">ReactiveX documentation: Observable</a>
  */
 public interface Observer<T> {
@@ -63,7 +82,7 @@ public interface Observer<T> {
      *
      * @param e the exception encountered by the Observable
      */
-    void onError(Throwable e);
+    void onError(final Throwable e);
 
     /**
      * Provides the Observer with a new item to observe.
@@ -76,7 +95,6 @@ public interface Observer<T> {
      *
      * @param t the item emitted by the Observable
      */
-    void onNext(T t);
+    void onNext(final T t);
 
 }
-

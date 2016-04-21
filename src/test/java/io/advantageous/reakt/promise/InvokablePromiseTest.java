@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt.promise;
 
 import org.junit.After;
@@ -10,7 +28,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.advantageous.reakt.promise.Promises.*;
+import static io.advantageous.reakt.promise.Promises.invokablePromise;
 import static org.junit.Assert.*;
 
 public class InvokablePromiseTest {
@@ -95,7 +113,7 @@ public class InvokablePromiseTest {
         assertNotNull("There were  errors from async", errorRef.get());
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testServiceWithReturnPromiseSuccessInvokeTwice() {
         final Promise<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
                 .catchError(this::handleError);
@@ -192,7 +210,7 @@ public class InvokablePromiseTest {
                     e.printStackTrace();
                 }
                 while (true) {
-                    if (stop.get())break;
+                    if (stop.get()) break;
                     Runnable runnable = runnables.poll();
                     while (runnable != null) {
                         runnable.run();

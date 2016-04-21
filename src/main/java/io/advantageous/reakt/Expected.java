@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright (c) 2016. Rick Hightower, Geoff Chandler
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package io.advantageous.reakt;
 
 import io.advantageous.reakt.impl.ExpectedImpl;
@@ -7,7 +25,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 
 /**
  * Same concept as Optional in Java JDK and Option in Scala.
@@ -25,6 +42,9 @@ import java.util.function.Predicate;
  * {@code get()} will return the value.
  * <p>
  * This is heavily modeled after {@link java.util.Optional} optional.
+ *
+ * @author Rick Hightower
+ * @author Geoff Chandler
  */
 public interface Expected<T> {
     /**
@@ -41,7 +61,7 @@ public interface Expected<T> {
      */
     static <T> Expected<T> empty() {
         @SuppressWarnings("unchecked")
-        Expected<T> t = EMPTY;
+        final Expected<T> t = EMPTY;
         return t;
     }
 
@@ -79,10 +99,9 @@ public interface Expected<T> {
      * @return an {@code ExpectedImpl} with a present value if the specified value
      * is not empty, otherwise an empty {@code Optional}
      */
-    static <T> Expected<T> ofOptional(Optional<T> value) {
+    static <T> Expected<T> ofOptional(final Optional<T> value) {
         return !value.isPresent() ? empty() : of(value.get());
     }
-
 
     /**
      * If a value is present in this {@code Expected}, returns the value,
@@ -94,7 +113,6 @@ public interface Expected<T> {
      */
     T get();
 
-
     /**
      * Return {@code true} if there is a value present, otherwise {@code false}.
      *
@@ -102,14 +120,12 @@ public interface Expected<T> {
      */
     boolean isPresent();
 
-
     /**
      * Return {@code true} if there is not a value present, otherwise {@code false}.
      *
      * @return {@code true} if there is not a value present, otherwise {@code false}
      */
     boolean isEmpty();
-
 
     /**
      * If a value is present, invoke the consumer with the value.
@@ -121,7 +137,6 @@ public interface Expected<T> {
      */
     Expected<T> ifPresent(Consumer<? super T> consumer);
 
-
     /**
      * If a value is not present, invoke the runnable.
      *
@@ -129,7 +144,6 @@ public interface Expected<T> {
      * @return this, fluent API
      */
     Expected<T> ifEmpty(Runnable runnable);
-
 
     /**
      * If a value is present, and the value matches the given predicate,
@@ -144,7 +158,6 @@ public interface Expected<T> {
      */
     Expected<T> filter(Predicate<? super T> predicate);
 
-
     /**
      * If a value present, use the mapping function to it,
      * and if the result is present, return an {@code ExpectedImpl} with the result.
@@ -158,7 +171,6 @@ public interface Expected<T> {
      */
     <U> Expected<U> map(Function<? super T, ? extends U> mapper);
 
-
     /**
      * Return the value if present.  If not present return {@code other}.
      *
@@ -166,7 +178,6 @@ public interface Expected<T> {
      * @return the value, if present, or if not present return {@code other}
      */
     T orElse(T other);
-
 
     /**
      * Indicates whether some other object is "equal to" the value.
@@ -176,6 +187,5 @@ public interface Expected<T> {
      * @return true if equal
      */
     boolean equalsValue(Object value);
-
 
 }
