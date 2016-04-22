@@ -20,6 +20,7 @@ package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
+import io.advantageous.reakt.exception.ResultFailedException;
 
 import java.util.function.Consumer;
 
@@ -83,7 +84,13 @@ public class ResultImpl<T> implements Result<T> {
 
     @SuppressWarnings("unchecked")
     public T get() {
-        if (failure()) throw new IllegalStateException(cause());
+        if (failure()) {
+            if (cause() instanceof RuntimeException) {
+                throw (RuntimeException) cause();
+            } else {
+                throw new ResultFailedException(cause());
+            }
+        }
         return (T) this.object;
     }
 

@@ -19,11 +19,14 @@
 package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Result;
+import io.advantageous.reakt.exception.RejectedPromiseException;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.promise.Promises;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -100,5 +103,21 @@ public interface PromiseUtil {
             }
         });
         return mappedPromise;
+    }
+
+
+    static <T> T doGet(AtomicReference<Result<T>> result, Promise<?> promise) {
+
+        if (result.get() == null) {
+            throw new NoSuchElementException("No value present, result not returned.");
+        }
+        if (promise.failure()) {
+            if (promise.cause() instanceof RuntimeException) {
+                throw (RuntimeException) promise.cause();
+            } else {
+                throw new RejectedPromiseException(promise.cause());
+            }
+        }
+        return result.get().get();
     }
 }

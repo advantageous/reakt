@@ -134,7 +134,7 @@ public class InvokablePromiseTest {
         try {
             promise.get();
             fail();
-        } catch (IllegalStateException ex) {
+        } catch (Exception ex) {
 
         }
 

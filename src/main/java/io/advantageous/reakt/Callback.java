@@ -18,6 +18,7 @@
 
 package io.advantageous.reakt;
 
+import io.advantageous.reakt.exception.RejectedPromiseException;
 import io.advantageous.reakt.impl.ResultImpl;
 
 import java.util.function.Consumer;
@@ -76,7 +77,7 @@ public interface Callback<T> extends Consumer<T> {
      * @param errorMessage error message
      */
     default void reject(final String errorMessage) {
-        onResult(new ResultImpl<>(new IllegalStateException(errorMessage)));
+        reject(new RejectedPromiseException(errorMessage));
     }
 
 
@@ -90,7 +91,7 @@ public interface Callback<T> extends Consumer<T> {
      * @param error        exception
      */
     default void reject(final String errorMessage, final Throwable error) {
-        reject(new IllegalStateException(errorMessage, error));
+        reject(new RejectedPromiseException(errorMessage, error));
     }
 
 

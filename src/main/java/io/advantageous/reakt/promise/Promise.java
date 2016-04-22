@@ -66,6 +66,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      */
     Promise<T> then(Consumer<T> consumer);
 
+
     /**
      * Notified of completeness.
      * <p>
@@ -150,6 +151,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     /**
      * Allows you to pass an existing promise as a handler.
+     *
      * @param promise promise
      * @return this, fluent
      */
@@ -160,6 +162,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     /**
      * Allows you to pass an existing promise as a handler.
+     *
      * @param promise promise
      * @return this, fluent
      */

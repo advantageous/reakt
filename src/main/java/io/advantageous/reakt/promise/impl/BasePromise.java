@@ -21,6 +21,7 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
+import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class BasePromise<T> implements Promise<T> {
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Expected<Consumer<T>> thenConsumer = Expected.empty();
     protected Expected<Consumer<Throwable>> catchConsumer = Expected.empty();
-    protected Expected<Consumer<Expected<T>>> thenValueConsumer = Expected.empty();
+    protected Expected<Consumer<Expected<T>>> thenExpectedConsumer = Expected.empty();
     protected Expected<List<Consumer<Promise<T>>>> completeListeners = Expected.empty();
 
     public static <T> Promise<T> provideFinalPromise(Promise<T> promise) {
@@ -43,7 +44,7 @@ public class BasePromise<T> implements Promise<T> {
             BasePromise<T> basePromise = ((BasePromise<T>) promise);
             return new FinalPromise<>(basePromise.thenConsumer,
                     basePromise.catchConsumer,
-                    basePromise.thenValueConsumer,
+                    basePromise.thenExpectedConsumer,
                     basePromise.completeListeners);
         } else {
             throw new IllegalStateException("Operation not supported use FinalPromise directly");
@@ -66,7 +67,7 @@ public class BasePromise<T> implements Promise<T> {
 
     @Override
     public synchronized Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
-        thenValueConsumer = Expected.of(consumer);
+        thenExpectedConsumer = Expected.of(consumer);
         return this;
     }
 
@@ -129,14 +130,7 @@ public class BasePromise<T> implements Promise<T> {
      * @return raw value associated with the result.
      */
     public T get() {
-
-        if (result.get() == null) {
-            throw new NoSuchElementException("No value present, result not returned.");
-        }
-        if (failure()) {
-            throw new IllegalStateException(cause());
-        }
-        return result.get().get();
+        return PromiseUtil.doGet(result, this);
     }
 
     @Override
@@ -155,8 +149,12 @@ public class BasePromise<T> implements Promise<T> {
     protected void doOnResult(Result<T> result) {
         this.result.set(result);
         if (result.success()) {
-            thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
-            thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
+            try {
+                thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
+                thenExpectedConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
+            } catch (Exception ex) {
+                catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(new ThenHandlerException(ex)));
+            }
         } else {
             catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }

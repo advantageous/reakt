@@ -21,6 +21,7 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
+import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
 
 import java.util.List;
@@ -132,28 +133,34 @@ public class FinalPromise<T> implements Promise<T> {
      * @return raw value associated with the result.
      */
     public T get() {
-
-        if (result.get() == null) {
-            throw new NoSuchElementException("No value present, result not returned.");
-        }
-        if (failure()) {
-            throw new IllegalStateException(cause());
-        }
-        return result.get().get();
+        return PromiseUtil.doGet(result, this);
     }
 
     @Override
     public void onResult(Result<T> result) {
-
         this.result.set(result);
+
+        doOnResult(result);
+    }
+
+
+    protected void doOnResult(Result<T> result) {
         if (result.success()) {
-            doThen(result.get());
-            doThenValue(result);
+            handleSuccess(result);
         } else {
-            doFail(result.cause());
+            catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }
         this.completeListeners.ifPresent(runnables ->
                 runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
+    }
+
+    private void handleSuccess(Result<T> result) {
+        try {
+            thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
+            thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
+        } catch (Exception ex) {
+            catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(new ThenHandlerException(ex)));
+        }
     }
 
     protected void doThenValue(final Result<T> result) {
