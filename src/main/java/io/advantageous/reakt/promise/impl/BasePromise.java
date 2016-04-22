@@ -15,7 +15,6 @@
  *  limitations under the License.
  *
  */
-
 package io.advantageous.reakt.promise.impl;
 
 
@@ -35,9 +34,10 @@ public class BasePromise<T> implements Promise<T> {
 
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Expected<Consumer<T>> thenConsumer = Expected.empty();
-    protected Expected<Consumer<Throwable>> catchConsumer = Expected.empty();
     protected Expected<Consumer<Expected<T>>> thenExpectedConsumer = Expected.empty();
+    protected Expected<Consumer<Throwable>> catchConsumer = Expected.empty();
     protected Expected<List<Consumer<Promise<T>>>> completeListeners = Expected.empty();
+    private boolean safe;
 
     public static <T> Promise<T> provideFinalPromise(Promise<T> promise) {
         if (promise instanceof BasePromise) {
@@ -45,10 +45,29 @@ public class BasePromise<T> implements Promise<T> {
             return new FinalPromise<>(basePromise.thenConsumer,
                     basePromise.catchConsumer,
                     basePromise.thenExpectedConsumer,
-                    basePromise.completeListeners);
+                    basePromise.completeListeners, true);
         } else {
             throw new IllegalStateException("Operation not supported use FinalPromise directly");
         }
+    }
+
+    @Override
+    public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+        safe = true;
+        thenExpectedConsumer = Expected.of(consumer);
+        return this;
+    }
+
+    @Override
+    public Promise<T> thenSafe(Consumer<T> consumer) {
+        safe = true;
+        thenConsumer = Expected.of(consumer);
+        return this;
+    }
+
+    @Override
+    public boolean supportsSafe() {
+        return true;
     }
 
     public synchronized Promise<T> then(final Consumer<T> consumer) {
@@ -149,15 +168,22 @@ public class BasePromise<T> implements Promise<T> {
     protected void doOnResult(Result<T> result) {
         this.result.set(result);
         if (result.success()) {
-            try {
+            if (!safe) {
                 thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
                 thenExpectedConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
-            } catch (Exception ex) {
-                catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(new ThenHandlerException(ex)));
+            } else {
+                try {
+                    thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
+                    thenExpectedConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
+                } catch (Exception ex) {
+                    catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(
+                            new ThenHandlerException(ex)));
+                }
             }
         } else {
             catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }
+
         this.completeListeners.ifPresent(runnables ->
                 runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
     }

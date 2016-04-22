@@ -170,4 +170,66 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         thenPromise(promise).invoke();
         return this;
     }
+
+
+    /**
+     * If the thenSafeExpect handler throws an exception, this will report it as if it it was caught by catchError.
+     * <p>
+     * This is convenient if you are running your handler with an async lib that is not reporting or catching
+     * exceptions as your code is running on their threads.
+     * <p>
+     * If a result is sent, and there was no error, then handle the result as a value which could be null.
+     * <p>
+     * There is only one thenSafeExpect or thenExpect handler per promise.
+     * Once then is called all other then* handlers are safe.
+     * <p>
+     * Unlike ES6, {@code thenExpect(..)} cannot be chained per se as it does not create a new promise,
+     * but {@code whenComplete(..)}, and {@code }thenMap(...)} can be chained.
+     * <p>
+     * This does not create a new promise.
+     *
+     * @param consumer executed if result has no error.
+     * @return this, fluent API
+     * @throws NullPointerException if result is present and {@code consumer} is
+     *                              null
+     */
+    default Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+        throw new UnsupportedOperationException("Promise provider does not support thenSafeExpect");
+    }
+
+
+    /**
+     * If the {@code then} handler throws an exception, this will report the exception as if it were caught
+     * by {@code catchError}.
+     * <p>
+     * This is convenient if you are running your handler with an async lib that is not reporting or catching
+     * exceptions as your code is running on their threads.
+     * <p>
+     * If a result is sent, and there was no error, then handle the result as a value which could be null.
+     * <p>
+     * There is only one thenSafe or then handler per promise.
+     * Once then is called all other then* handlers are safe.
+     * <p>
+     * Unlike ES6, {@code thenExpect(..)} cannot be chained per se as it does not create a new promise,
+     * but {@code whenComplete(..)}, and {@code }thenMap(...)} can be chained.
+     * <p>
+     * This does not create a new promise.
+     *
+     * @param consumer executed if result has no error.
+     * @return this, fluent API
+     * @throws NullPointerException if result is present and {@code consumer} is
+     *                              null
+     */
+    default Promise<T> thenSafe(Consumer<T> consumer) {
+        throw new UnsupportedOperationException("Promise provider does not support thenSafeExpect");
+    }
+
+    /**
+     * Denotes if the promise provider supports thenSafe and thenSafeExpect.
+     *
+     * @return true if safe operations are supported.
+     */
+    default boolean supportsSafe() {
+        return false;
+    }
 }

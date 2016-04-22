@@ -37,15 +37,18 @@ public class FinalPromise<T> implements Promise<T> {
     protected final Expected<Consumer<T>> thenConsumer;
     protected final Expected<Consumer<Throwable>> catchConsumer;
     protected final Expected<Consumer<Expected<T>>> thenValueConsumer;
+    private final boolean safe;
 
     public FinalPromise(Expected<Consumer<T>> thenConsumer,
                         Expected<Consumer<Throwable>> catchConsumer,
                         Expected<Consumer<Expected<T>>> thenValueConsumer,
-                        Expected<List<Consumer<Promise<T>>>> completeListeners) {
+                        Expected<List<Consumer<Promise<T>>>> completeListeners,
+                        boolean safe) {
         this.thenConsumer = thenConsumer;
         this.catchConsumer = catchConsumer;
         this.thenValueConsumer = thenValueConsumer;
         this.completeListeners = completeListeners;
+        this.safe = safe;
     }
 
 
@@ -57,6 +60,20 @@ public class FinalPromise<T> implements Promise<T> {
         thenConsumer.ifPresent(consumer -> consumer.accept(value));
     }
 
+    @Override
+    public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+        throw new UnsupportedOperationException("then(..) not supported for final promise");
+    }
+
+    @Override
+    public Promise<T> thenSafe(Consumer<T> consumer) {
+        throw new UnsupportedOperationException("thenSafe(..) not supported for final promise");
+    }
+
+    @Override
+    public boolean supportsSafe() {
+        throw new UnsupportedOperationException("supportsSafe(..) not supported for final promise");
+    }
 
     public Promise<T> then(final Consumer<T> consumer) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
@@ -155,11 +172,16 @@ public class FinalPromise<T> implements Promise<T> {
     }
 
     private void handleSuccess(Result<T> result) {
-        try {
+        if (safe) {
+            try {
+                thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
+                thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
+            } catch (Exception ex) {
+                catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(new ThenHandlerException(ex)));
+            }
+        } else {
             thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));
             thenValueConsumer.ifPresent(valueConsumer -> valueConsumer.accept(result.expect()));
-        } catch (Exception ex) {
-            catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(new ThenHandlerException(ex)));
         }
     }
 
