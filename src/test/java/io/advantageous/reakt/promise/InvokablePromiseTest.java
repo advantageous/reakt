@@ -18,6 +18,7 @@
 
 package io.advantageous.reakt.promise;
 
+import io.advantageous.reakt.Expected;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,6 +101,46 @@ public class InvokablePromiseTest {
         assertEquals("The result is the expected result form async", successResult, returnValue.get());
     }
 
+    @Test
+    public void testAsyncServiceWithInvokeWithPromise() {
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(empURI).invokeWithPromise(promise);
+
+        final Expected<URI> expect = promise.expect();
+
+        assertFalse(expect.isEmpty());
+
+        assertNotNull("We have a return from async", returnValue.get());
+        assertNull("There were no errors form async", errorRef.get());
+        assertEquals("The result is the expected result form async", successResult, returnValue.get());
+    }
+
+
+    @Test
+    public void testAsyncServiceWithInvokePromiseFail() {
+
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(null).invokeWithPromise(promise);
+
+
+        try {
+            promise.get();
+            fail();
+        } catch (IllegalStateException ex) {
+
+        }
+
+        assertNull("We do not have a return from async", returnValue.get());
+        assertNotNull("There were  errors from async", errorRef.get());
+    }
 
     @Test
     public void testAsyncServiceWithReturnPromiseFail() {

@@ -147,4 +147,24 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         throw new UnsupportedOperationException("This is not an invokable promise.");
     }
 
+
+    /**
+     * Allows you to pass an existing promise as a handler.
+     * @param promise promise
+     * @return this, fluent
+     */
+    default Promise<T> thenPromise(Promise<T> promise) {
+        this.catchError(promise::reject).then(promise::resolve);
+        return this;
+    }
+
+    /**
+     * Allows you to pass an existing promise as a handler.
+     * @param promise promise
+     * @return this, fluent
+     */
+    default Promise<T> invokeWithPromise(Promise<T> promise) {
+        thenPromise(promise).invoke();
+        return this;
+    }
 }
