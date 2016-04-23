@@ -20,6 +20,7 @@ package io.advantageous.reakt.promise;
 
 import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.Expected;
+import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 import io.advantageous.reakt.promise.impl.BlockingPromise;
 import org.junit.Test;
@@ -29,11 +30,187 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
 public class PromiseTest {
+
+    @Test
+    public void test() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Expected[] value = new Expected[1];
+
+        Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
+                .thenExpect(employeeValue -> value[0] = employeeValue);
+
+
+        testSuccessWithPromise(testService, employee, value, promise);
+    }
+
+    @Test
+    public void testSafe() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Expected[] value = new Expected[1];
+
+        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(e -> employee[0] = e)
+                .thenSafeExpect(employeeValue -> value[0] = employeeValue);
+
+
+        testSuccessWithPromise(testService, employee, value, promise);
+    }
+
+    @Test
+    public void testSafeFinal() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Expected[] value = new Expected[1];
+
+        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(e -> employee[0] = e)
+                .thenSafeExpect(employeeValue -> value[0] = employeeValue).freeze();
+
+
+        testSuccessWithPromise(testService, employee, value, promise);
+    }
+
+
+    @Test
+    public void promiseSafeMethods() throws Exception {
+        Promise<String> promise = new Promise<String>() {
+            @Override
+            public Promise<String> then(Consumer<String> consumer) {
+                return null;
+            }
+
+            @Override
+            public Promise<String> whenComplete(Consumer<Promise<String>> doneListener) {
+                return null;
+            }
+
+            @Override
+            public Promise<String> thenExpect(Consumer<Expected<String>> consumer) {
+                return null;
+            }
+
+            @Override
+            public <U> Promise<U> thenMap(Function<? super String, ? extends U> mapper) {
+                return null;
+            }
+
+            @Override
+            public Promise<String> catchError(Consumer<Throwable> consumer) {
+                return null;
+            }
+
+            @Override
+            public boolean success() {
+                return false;
+            }
+
+            @Override
+            public boolean complete() {
+                return false;
+            }
+
+            @Override
+            public boolean failure() {
+                return false;
+            }
+
+            @Override
+            public Throwable cause() {
+                return null;
+            }
+
+            @Override
+            public Expected<String> expect() {
+                return null;
+            }
+
+            @Override
+            public String get() {
+                return null;
+            }
+
+            @Override
+            public String orElse(String other) {
+                return null;
+            }
+
+            @Override
+            public void onResult(Result<String> result) {
+
+            }
+        };
+
+        assertFalse(promise.supportsSafe());
+
+        try {
+            promise.thenSafe(s -> {
+            });
+            fail();
+        }catch (Exception ex) {
+
+        }
+
+
+        try {
+            promise.thenSafeExpect(s -> {
+            });
+            fail();
+        }catch (Exception ex) {
+
+        }
+    }
+
+    @Test
+    public void testSafeHandlerThrows() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Expected[] value = new Expected[1];
+
+        boolean[] error = new boolean[1];
+
+        Promise<Employee> promise = Promises.<Employee>promise()
+                .thenSafe(e -> {
+                    employee[0] = e;
+                    throw new IllegalStateException("handler blew chunks");
+                })
+                .thenSafeExpect(employeeValue -> value[0] = employeeValue)
+                .catchError(throwable -> error[0] = true);
+
+
+        testErrorWithPromise(testService, employee, error, promise);
+    }
+
+
+    @Test
+    public void testSafeHandlerFinalThrows() throws Exception {
+
+        TestService testService = new TestService();
+        Employee[] employee = new Employee[1];
+        Expected[] value = new Expected[1];
+
+        boolean[] error = new boolean[1];
+
+        Promise<Employee> promise = Promises.<Employee>promise()
+                .thenSafe(e -> {
+                    employee[0] = e;
+                    throw new IllegalStateException("handler blew chunks");
+                })
+                .thenSafeExpect(employeeValue -> value[0] = employeeValue)
+                .catchError(throwable -> error[0] = true).freeze();
+
+
+        testErrorWithPromise(testService, employee, error, promise);
+    }
 
 
     @Test(expected = UnsupportedOperationException.class)
@@ -283,20 +460,6 @@ public class PromiseTest {
         assertTrue(promise.complete());
         assertTrue(promise.failure());
 
-    }
-
-    @Test
-    public void test() throws Exception {
-
-        TestService testService = new TestService();
-        Employee[] employee = new Employee[1];
-        Expected[] value = new Expected[1];
-
-        Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenExpect(employeeValue -> value[0] = employeeValue);
-
-
-        testSuccessWithPromise(testService, employee, value, promise);
     }
 
 
