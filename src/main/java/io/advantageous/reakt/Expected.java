@@ -103,6 +103,22 @@ public interface Expected<T> {
         return !value.isPresent() ? empty() : of(value.get());
     }
 
+
+    /**
+     * If a value is not present (null), invoke the runnable.
+     *
+     * @return returns true if value is null
+     */
+    boolean isAbsent() ;
+
+    /**
+     * If a value is not present (null), invoke the runnable.
+     *
+     * @param runnable executed if a value is not present
+     *                 @return self, fluent
+     */
+    Expected<T> ifAbsent(final Runnable runnable) ;
+
     /**
      * If a value is present in this {@code Expected}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
@@ -121,11 +137,29 @@ public interface Expected<T> {
     boolean isPresent();
 
     /**
-     * Return {@code true} if there is not a value present, otherwise {@code false}.
      *
-     * @return {@code true} if there is not a value present, otherwise {@code false}
+     * If a value is not present or present and empty (empty check only works with
+     * collection, string, charSequence size/length 0).
+     * return true.
+     *
+     * If you just want a null check, use {@code isAbsent}.
+     *
+     * @return {@code true} if there is not a value present or present and empty,
+     * otherwise {@code false}
      */
     boolean isEmpty();
+
+
+    /**
+     * If a value is not present or present and empty (collection, string, charSequence size/length 0),
+     * invoke the runnable. See for more details {@link Expected#isAbsent()}.
+     *
+     * If you just want a null check, use {@code ifAbsent}.
+     *
+     * @param runnable executed if a value is not present.
+     * @return this, fluent API
+     */
+    Expected<T> ifEmpty(Runnable runnable);
 
     /**
      * If a value is present, invoke the consumer with the value.
@@ -137,13 +171,6 @@ public interface Expected<T> {
      */
     Expected<T> ifPresent(Consumer<? super T> consumer);
 
-    /**
-     * If a value is not present, invoke the runnable.
-     *
-     * @param runnable executed if a value is not present
-     * @return this, fluent API
-     */
-    Expected<T> ifEmpty(Runnable runnable);
 
     /**
      * If a value is present, and the value matches the given predicate,

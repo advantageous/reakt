@@ -20,6 +20,8 @@ package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Expected;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -81,6 +83,17 @@ public class ExpectedImpl<T> implements Expected<T> {
         return this.value != null;
     }
 
+
+    /**
+     * Return {@code true} if there is not a value present, otherwise {@code false}.
+     *
+     * @return {@code true} if there is not a value present, otherwise {@code false}
+     */
+    @Override
+    public boolean isAbsent() {
+        return this.value == null;
+    }
+
     /**
      * Return {@code true} if there is not a value present, otherwise {@code false}.
      *
@@ -88,7 +101,24 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public boolean isEmpty() {
-        return this.value == null;
+        if (this.value == null)  {
+            return true;
+        } else if (value instanceof Collection) {
+            final Collection c = ((Collection) value);
+            if (c.size() == 0) {
+                return true;
+            }
+        } else if (value instanceof CharSequence) {
+            final CharSequence cs = ((CharSequence) value);
+            if (cs.length() == 0) {
+                return true;
+            }
+        } else if (value.getClass().isArray()) {
+            if (Array.getLength(value) == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -105,15 +135,31 @@ public class ExpectedImpl<T> implements Expected<T> {
     }
 
     /**
-     * If a value is not present, invoke the runnable.
+     * If a value is not present or present but empty, invoke the runnable.
      *
      * @param runnable executed if a value is not present
      */
     @Override
     public Expected<T> ifEmpty(final Runnable runnable) {
-        if (this.value == null) runnable.run();
+        if (isEmpty()) {
+            runnable.run();
+        }
         return this;
     }
+
+    /**
+     * If a value is not present (null), invoke the runnable.
+     *
+     * @param runnable executed if a value is not present
+     */
+    @Override
+    public Expected<T> ifAbsent(final Runnable runnable) {
+        if (isAbsent()) {
+            runnable.run();
+        }
+        return this;
+    }
+
 
     /**
      * If a value is present, and the value matches the given predicate,
