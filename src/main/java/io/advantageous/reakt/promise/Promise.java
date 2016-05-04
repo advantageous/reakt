@@ -160,6 +160,18 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         return this;
     }
 
+
+    /**
+     * Allows you to pass an existing callback as a handler.
+     *
+     * @param callback callback
+     * @return this, fluent
+     */
+    default Promise<T> thenCallback(Callback<T> callback) {
+        this.catchError(callback::reject).then(callback::resolve);
+        return this;
+    }
+
     /**
      * Allows you to pass an existing promise as a handler.
      *
