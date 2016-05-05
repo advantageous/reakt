@@ -101,7 +101,7 @@ public class ExpectedImpl<T> implements Expected<T> {
      */
     @Override
     public boolean isEmpty() {
-        if (this.value == null)  {
+        if (this.value == null) {
             return true;
         } else if (value instanceof Collection) {
             final Collection c = ((Collection) value);
@@ -142,6 +142,18 @@ public class ExpectedImpl<T> implements Expected<T> {
     @Override
     public Expected<T> ifEmpty(final Runnable runnable) {
         if (isEmpty()) {
+            runnable.run();
+        }
+        return this;
+    }
+
+    /**
+     * If a value is not empty.
+     *
+     * @param runnable executed if a value is not present
+     */
+    public Expected<T> ifNotEmpty(final Runnable runnable) {
+        if (!isEmpty()) {
             runnable.run();
         }
         return this;

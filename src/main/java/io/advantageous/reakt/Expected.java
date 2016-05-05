@@ -109,15 +109,15 @@ public interface Expected<T> {
      *
      * @return returns true if value is null
      */
-    boolean isAbsent() ;
+    boolean isAbsent();
 
     /**
      * If a value is not present (null), invoke the runnable.
      *
      * @param runnable executed if a value is not present
-     *                 @return self, fluent
+     * @return self, fluent
      */
-    Expected<T> ifAbsent(final Runnable runnable) ;
+    Expected<T> ifAbsent(final Runnable runnable);
 
     /**
      * If a value is present in this {@code Expected}, returns the value,
@@ -136,12 +136,21 @@ public interface Expected<T> {
      */
     boolean isPresent();
 
+
     /**
+     * If a value is not empty. See {@link Expected#ifEmpty(Runnable)}, and {@link Expected#isEmpty()}
+     * for more details.
      *
+     * @param runnable executed if a value is not present
+     * @return fluent, this
+     */
+    Expected<T> ifNotEmpty(final Runnable runnable);
+
+    /**
      * If a value is not present or present and empty (empty check only works with
      * collection, string, charSequence size/length 0).
      * return true.
-     *
+     * <p>
      * If you just want a null check, use {@code isAbsent}.
      *
      * @return {@code true} if there is not a value present or present and empty,
@@ -153,7 +162,7 @@ public interface Expected<T> {
     /**
      * If a value is not present or present and empty (collection, string, charSequence size/length 0),
      * invoke the runnable. See for more details {@link Expected#isAbsent()}.
-     *
+     * <p>
      * If you just want a null check, use {@code ifAbsent}.
      *
      * @param runnable executed if a value is not present.

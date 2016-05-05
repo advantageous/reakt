@@ -66,6 +66,24 @@ public class PromiseTest {
     }
 
     @Test
+    public void testSafeFail() throws Exception {
+
+        TestService testService = new TestService();
+        AtomicReference<Throwable> error = new AtomicReference<>();
+
+        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(new Consumer<Employee>() {
+            @Override
+            public void accept(Employee employee) {
+                throw new IllegalStateException("BOOM.. handler failed");
+            }
+        }).catchError(error::set);
+
+        testService.simple(promise);
+        assertNotNull(error.get());
+
+    }
+
+    @Test
     public void testSafeFinal() throws Exception {
 
         TestService testService = new TestService();

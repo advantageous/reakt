@@ -143,6 +143,28 @@ public class InvokablePromiseTest {
     }
 
     @Test
+    public void testAsyncServiceWithInvokePromiseFail2() {
+
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(null).thenCallback(promise).invoke();
+
+
+        try {
+            promise.get();
+            fail();
+        } catch (Exception ex) {
+
+        }
+
+        assertNull("We do not have a return from async", returnValue.get());
+        assertNotNull("There were  errors from async", errorRef.get());
+    }
+
+    @Test
     public void testAsyncServiceWithReturnPromiseFail() {
 
 

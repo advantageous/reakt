@@ -20,6 +20,8 @@ package io.advantageous.reakt;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class ResultTest {
@@ -46,7 +48,7 @@ public class ResultTest {
 
     @Test
     public void testFail() {
-        final Result<Employee> rick = Result.error(new IllegalStateException("Rick"));
+        final Result<Employee> rick = Result.error(new IOException("Rick"));
         Employee[] employee = new Employee[1];
         rick.then(e -> employee[0] = e);
         assertNull(employee[0]);
