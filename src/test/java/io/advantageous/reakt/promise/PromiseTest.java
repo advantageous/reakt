@@ -23,6 +23,7 @@ import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 import io.advantageous.reakt.promise.impl.BlockingPromise;
+import io.advantageous.reakt.reactor.Reactor;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -164,6 +165,11 @@ public class PromiseTest {
             @Override
             public void onResult(Result<String> result) {
 
+            }
+
+            @Override
+            public Promise<String> invokeWithReactor(Reactor reactor) {
+                return null;
             }
         };
 

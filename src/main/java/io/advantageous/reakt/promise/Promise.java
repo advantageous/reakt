@@ -23,6 +23,7 @@ import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
+import io.advantageous.reakt.reactor.Reactor;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -156,7 +157,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      * @return this, fluent
      */
     default Promise<T> thenPromise(Promise<T> promise) {
-        this.catchError(promise::reject).then(promise::resolve);
+        thenCallback(promise);
         return this;
     }
 
@@ -183,6 +184,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         return this;
     }
 
+    Promise<T> invokeWithReactor(Reactor reactor);
 
     /**
      * If the thenSafeExpect handler throws an exception, this will report it as if it it was caught by catchError.

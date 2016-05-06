@@ -22,6 +22,7 @@ import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.reactor.Reactor;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -93,6 +94,21 @@ public class BasePromise<T> implements Promise<T> {
     @Override
     public Promise<T> catchError(Consumer<Throwable> consumer) {
         catchConsumer = Expected.of(consumer);
+        return this;
+    }
+
+    @Override
+    public Promise<T> invokeWithReactor(Reactor reactor) {
+        final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
+        reactorPromise.thenConsumer = this.thenConsumer;
+        reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
+        reactorPromise.catchConsumer = this.catchConsumer;
+
+        completeListeners.ifPresent(consumers ->
+                consumers.forEach((Consumer<Consumer<Promise<T>>>) reactorPromise::whenComplete));
+
+        this.invokeWithPromise(reactorPromise);
+
         return this;
     }
 

@@ -23,6 +23,7 @@ import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.reactor.Reactor;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -94,6 +95,12 @@ public class FinalPromise<T> implements Promise<T> {
     @Override
     public Promise<T> catchError(Consumer<Throwable> consumer) {
         throw new UnsupportedOperationException("catchError(..) not supported for final promise");
+    }
+
+    @Override
+    public Promise<T> invokeWithReactor(Reactor reactor) {
+
+        throw new UnsupportedOperationException("invokeWithReactor(..) not supported for final promise");
     }
 
     @Override
