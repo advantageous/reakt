@@ -100,15 +100,18 @@ public class BasePromise<T> implements Promise<T> {
     @Override
     public Promise<T> invokeWithReactor(Reactor reactor) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
+        reactorPromise.catchConsumer = this.catchConsumer;
         reactorPromise.thenConsumer = this.thenConsumer;
         reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
-        reactorPromise.catchConsumer = this.catchConsumer;
+        this.thenExpectedConsumer = Expected.empty();
+        this.thenConsumer = Expected.empty();
+        this.catchConsumer = Expected.empty();
 
         completeListeners.ifPresent(consumers ->
                 consumers.forEach((Consumer<Consumer<Promise<T>>>) reactorPromise::whenComplete));
 
-        this.invokeWithPromise(reactorPromise);
-
+        this.thenPromise(reactorPromise);
+        this.invoke();
         return this;
     }
 

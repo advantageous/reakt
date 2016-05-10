@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -50,10 +51,10 @@ public class ExpectedImplTest {
     @Test
     public void ifNotEmpty() throws Exception {
         final Expected<Object> expected = Expected.ofNullable(null);
-        expected.ifNotEmpty(Assert::fail);
+        expected.ifNotEmpty((it)->fail());
 
         final Expected<Object> expected2 = Expected.ofNullable(Collections.emptyList());
-        expected2.ifNotEmpty(Assert::fail);
+        expected2.ifNotEmpty((it)->fail());
 
     }
 

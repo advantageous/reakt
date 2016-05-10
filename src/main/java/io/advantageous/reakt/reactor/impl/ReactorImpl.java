@@ -212,8 +212,7 @@ public class ReactorImpl implements Reactor {
         ReplayPromise poll = promisesQueue.poll();
 
         while (poll != null) {
-            poll.check(timeSource.getTime());
-            if (!poll.complete()) {
+            if (!poll.check(timeSource.getTime())) {
                 notCompletedPromises.add(poll);
             }
             poll = promisesQueue.poll();

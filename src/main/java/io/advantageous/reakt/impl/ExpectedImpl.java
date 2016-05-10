@@ -150,12 +150,10 @@ public class ExpectedImpl<T> implements Expected<T> {
     /**
      * If a value is not empty.
      *
-     * @param runnable executed if a value is not present
+     * @param consumer executed if a value is not present
      */
-    public Expected<T> ifNotEmpty(final Runnable runnable) {
-        if (!isEmpty()) {
-            runnable.run();
-        }
+    public Expected<T> ifNotEmpty(final Consumer<? super T> consumer) {
+        if (!isEmpty()) consumer.accept(this.value);
         return this;
     }
 

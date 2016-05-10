@@ -141,10 +141,10 @@ public interface Expected<T> {
      * If a value is not empty. See {@link Expected#ifEmpty(Runnable)}, and {@link Expected#isEmpty()}
      * for more details.
      *
-     * @param runnable executed if a value is not present
+     * @param consumer executed if a value is not present
      * @return fluent, this
      */
-    Expected<T> ifNotEmpty(final Runnable runnable);
+    Expected<T> ifNotEmpty(Consumer<? super T> consumer);
 
     /**
      * If a value is not present or present and empty (empty check only works with
