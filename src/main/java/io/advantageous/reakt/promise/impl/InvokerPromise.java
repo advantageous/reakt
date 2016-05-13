@@ -32,12 +32,13 @@ public class InvokerPromise<T> extends BasePromise<T> {
     }
 
     @Override
-    public void invoke() {
+    public Promise<T> invoke() {
         if (invoked) {
             throw new IllegalStateException("Promise can only be invoked once");
         }
         invoked = true;
         consumer.accept(this);
+        return this;
     }
 
     @Override

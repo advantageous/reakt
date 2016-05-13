@@ -77,6 +77,19 @@ public interface Expected<T> {
         return new ExpectedImpl<>(value);
     }
 
+
+    /**
+     * Returns an {@code ExpectedImpl} using the specified present value, which must not be null.
+     *
+     * @param <T>   the class of the value
+     * @param value the value to be present. Must be non-null
+     * @return an {@code ExpectedImpl} with the value present
+     * @throws NullPointerException if value is null
+     */
+    static <T> Expected<T> expected(T value) {
+        return new ExpectedImpl<>(value);
+    }
+
     /**
      * Returns an {@code ExpectedImpl} describing the specified value, if non-null,
      * otherwise returns an empty {@code ExpectedImpl}.
@@ -89,6 +102,20 @@ public interface Expected<T> {
     static <T> Expected<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
+
+    /**
+     * Returns an {@code ExpectedImpl} describing the specified value, if non-null,
+     * otherwise returns an empty {@code ExpectedImpl}.
+     *
+     * @param <T>   the class of the value
+     * @param value the possibly non-existent value
+     * @return an {@code ExpectedImpl} with a present value if the specified value
+     * is non-null, otherwise an empty {@code Optional}
+     */
+    static <T> Expected<T> expectedNullable(T value) {
+        return value == null ? empty() : of(value);
+    }
+
 
     /**
      * Returns an {@code ExpectedImpl} describing the specified value, if non-null,

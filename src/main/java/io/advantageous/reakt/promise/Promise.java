@@ -144,8 +144,10 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      *           .invoke();
      * </code>
      * </pre>
+     *
+     * @return this, fluent
      */
-    default void invoke() {
+    default Promise<T> invoke() {
         throw new UnsupportedOperationException("This is not an invokable promise.");
     }
 

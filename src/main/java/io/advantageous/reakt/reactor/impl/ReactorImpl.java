@@ -37,13 +37,16 @@ public class ReactorImpl implements Reactor {
     private final BlockingQueue<ReplayPromise> promisesQueue = new LinkedTransferQueue<>();
     private final BlockingQueue<Runnable> deferRuns = new LinkedTransferQueue<>();
     private final List<ReplayPromise> notCompletedPromises = new ArrayList<>();
-    private List<FireOnceTask> fireOnceAfterTasks = new ArrayList<>(1);
+
+    private BlockingQueue<FireOnceTask> fireOnceAfterTaskQueue = new LinkedTransferQueue<>();
+    private BlockingQueue<RepeatingTask> repeatingTaskQueue = new LinkedTransferQueue<>();
+
+
+    private List<FireOnceTask> fireOnceAfterTaskList = new ArrayList<>(1);
+    private List<RepeatingTask> repeatingTaskList = new ArrayList<>(1);
+
     private long currentTime;
 
-    /**
-     * Keeps list of repeating tasks.
-     */
-    private List<RepeatingTask> repeatingTasks = new ArrayList<>(1);
 
     public ReactorImpl(final Duration defaultTimeout,
                        final TimeSource timeSource) {
@@ -112,12 +115,12 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public void addRepeatingTask(final Duration interval, final Runnable runnable) {
-        repeatingTasks.add(new RepeatingTask(runnable, interval.toMillis()));
+        repeatingTaskQueue.add(new RepeatingTask(runnable, interval.toMillis()));
     }
 
     @Override
     public void runTaskAfter(Duration afterInterval, Runnable runnable) {
-        fireOnceAfterTasks.add(new FireOnceTask(runnable, afterInterval.toMillis()));
+        fireOnceAfterTaskQueue.add(new FireOnceTask(runnable, afterInterval.toMillis()));
     }
 
     @Override
@@ -127,11 +130,25 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public void process() {
+        copyTaskQueues();
         currentTime = timeSource.getTime();
         processReplayPromises();
         processDeferRuns();
         processRepeatingTasks();
         processFireOnceTasks();
+    }
+
+    private void copyTaskQueues() {
+        copyQueueToList(fireOnceAfterTaskList, fireOnceAfterTaskQueue);
+        copyQueueToList(repeatingTaskList, repeatingTaskQueue);
+    }
+
+    private <T> void copyQueueToList(List<T> destinaion, Queue<T> source) {
+        T item = source.poll();
+        while (item != null) {
+            destinaion.add(item);
+            item = source.poll();
+        }
     }
 
     @Override
@@ -229,7 +246,7 @@ public class ReactorImpl implements Reactor {
     public void processRepeatingTasks() {
 
         /* Run repeating tasks if needed. */
-        repeatingTasks.forEach(repeatingTask -> {
+        repeatingTaskList.forEach(repeatingTask -> {
             if (currentTime - repeatingTask.lastTimeInvoked > repeatingTask.repeatEveryMS) {
                 repeatingTask.lastTimeInvoked = currentTime;
                 repeatingTask.task.run();
@@ -238,11 +255,14 @@ public class ReactorImpl implements Reactor {
     }
 
     public void processFireOnceTasks() {
-        final List<FireOnceTask> fireOnceTasks = fireOnceAfterTasks.stream()
+        if (fireOnceAfterTaskList.size()==0) {
+            return;
+        }
+        final List<FireOnceTask> fireOnceTasks = fireOnceAfterTaskList.stream()
                 .filter(fireOnceTask -> currentTime - fireOnceTask.created > fireOnceTask.fireAfterMS)
                 .collect(Collectors.toList());
         fireOnceTasks.forEach(fireOnceTask -> fireOnceTask.task.run());
-        fireOnceAfterTasks.removeAll(fireOnceTasks);
+        fireOnceAfterTaskList.removeAll(fireOnceTasks);
     }
 
     /**
