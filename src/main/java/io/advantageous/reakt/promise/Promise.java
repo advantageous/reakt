@@ -25,6 +25,7 @@ import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
 import io.advantageous.reakt.reactor.Reactor;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -247,5 +248,29 @@ public interface Promise<T> extends Callback<T>, Result<T> {
      */
     default boolean supportsSafe() {
         return false;
+    }
+
+    /**
+     * Used for testing and legacy integration.
+     * This turns an async promise into a blocking promise.
+     * @return blocking promise
+     */
+    default Promise<T> invokeAsBlockingPromise() {
+        Promise<T> blockingPromise = Promises.blockingPromise();
+        this.invokeWithPromise(blockingPromise);
+        return blockingPromise;
+    }
+
+
+    /**
+     * Used for testing and legacy integration.
+     * This turns an async promise into a blocking promise.
+     * @param duration duration
+     * @return blocking promise
+     */
+    default Promise<T> invokeAsBlockingPromise(Duration duration) {
+        Promise<T> blockingPromise = Promises.blockingPromise(duration);
+        this.invokeWithPromise(blockingPromise);
+        return blockingPromise;
     }
 }
