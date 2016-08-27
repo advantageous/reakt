@@ -19,15 +19,20 @@
 package io.advantageous.reakt.reactor.impl;
 
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.Promises;
 import io.advantageous.reakt.promise.ReplayPromise;
 import io.advantageous.reakt.reactor.Reactor;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 import static io.advantageous.reakt.reactor.Reactor.reactor;
 import static org.junit.Assert.*;
@@ -134,13 +139,13 @@ public class ReactorImplTest {
 
     @Test
     public void testAll() {
-        AtomicBoolean thenCalled = new AtomicBoolean();
+        AtomicInteger thenCalled = new AtomicInteger();
         Promise<String> promise1 = reactor.promise();
         Promise<String> promise2 = reactor.promise();
 
         final Promise<Void> promise = reactor.all(promise1, promise2);
 
-        promise.then(s -> thenCalled.set(true));
+        promise.then(s -> thenCalled.incrementAndGet());
 
         assertFalse(promise.complete());
         reactor.process();
@@ -158,10 +163,149 @@ public class ReactorImplTest {
         assertTrue(promise.success());
 
         /** Now we see the event. */
-        assertTrue(thenCalled.get());
+        assertEquals(1, thenCalled.get());
 
     }
 
+
+    @Test
+    public void testAll2() throws InterruptedException {
+        final AtomicInteger thenCalled = new AtomicInteger();
+        final Promise<String> promise1 = Promises.promise();
+        final Promise<String> promise2 = Promises.promise();
+
+        final Promise<Void> promise = reactor.all(promise1, promise2).catchError(Throwable::printStackTrace);
+
+        promise.then(s -> thenCalled.incrementAndGet());
+
+        assertFalse(promise.complete());
+        reactor.process();
+        assertFalse(promise.complete());
+
+        process();
+        new Thread(() -> {
+            promise1.resolve("DONE");
+
+        }).start();
+
+        new Thread(() -> {
+            promise2.resolve("DONE");
+
+        }).start();
+
+
+        for (int index =0; index < 100; index++) {
+            Thread.sleep(50);
+            if (promise.complete()) break;
+        }
+        /** You can see the results but the events wont fire until reactor plays the replay promises. */
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+        /** Now we see the event. */
+        assertEquals(1, thenCalled.get());
+
+    }
+
+
+    @Test
+    public void testAllList2() throws InterruptedException {
+        final AtomicInteger thenCalled = new AtomicInteger();
+        final List<Promise<String>> promiseList = new ArrayList<>();
+
+        for (int index =0; index < 100; index++) {
+            promiseList.add(Promises.promiseString());
+        }
+
+        final Promise<Void> promise = reactor.all(promiseList).catchError(Throwable::printStackTrace);
+
+        promise.then(s -> thenCalled.incrementAndGet());
+
+        assertFalse(promise.complete());
+        reactor.process();
+        assertFalse(promise.complete());
+
+        process();
+
+        for (Promise<String> stringPromise : promiseList) {
+            new Thread(() -> {
+                stringPromise.resolve("DONE");
+            }).start();
+        }
+
+
+
+        for (int index =0; index < 100; index++) {
+            Thread.sleep(50);
+            if (promise.complete()) break;
+        }
+        /** You can see the results but the events wont fire until reactor plays the replay promises. */
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+        /** Now we see the event. */
+        assertEquals(1, thenCalled.get());
+
+    }
+
+
+    public Promise<String> invokeMe() {
+        return Promises.invokablePromise(stringPromise ->
+                new Thread(() -> {
+                    stringPromise.reply("DONE");
+                }).start());
+    }
+
+    @Test
+    public void testAllListInvokeable() throws InterruptedException {
+        final AtomicInteger thenCalled = new AtomicInteger();
+        final List<Promise<String>> promiseList = new ArrayList<>();
+
+        for (int index =0; index < 100; index++) {
+            promiseList.add(invokeMe());
+        }
+
+        final Promise<Void> promise = reactor.all(promiseList);
+
+        promise.then(s -> {
+            thenCalled.incrementAndGet();
+        }).catchError(Throwable::printStackTrace);
+
+        assertFalse(promise.complete());
+        reactor.process();
+        assertFalse(promise.complete());
+
+        process();
+
+        promiseList.stream().forEach(Promise::invoke);
+
+        for (int index =0; index < 1000; index++) {
+            Thread.sleep(50);
+            if (promise.complete()) break;
+        }
+        /** You can see the results but the events wont fire until reactor plays the replay promises. */
+        assertTrue(promise.complete());
+        assertTrue(promise.success());
+
+        Thread.sleep(50);
+
+        /** Now we see the event. */
+        assertEquals(1, thenCalled.get());
+
+    }
+
+    private void process() {
+        new Thread(() -> {
+            for (int index = 0; index < 1000000; index++) {
+                reactor.process(); //play it
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     @Test
     public void testAllList() {
