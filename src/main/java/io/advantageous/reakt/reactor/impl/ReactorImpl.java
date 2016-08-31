@@ -262,8 +262,6 @@ public class ReactorImpl implements Reactor {
             poll.replay();
             poll = replyPromiseQueue.poll();
         }
-        replyPromiseQueue.addAll(notCompletedPromises);
-
     }
 
 
