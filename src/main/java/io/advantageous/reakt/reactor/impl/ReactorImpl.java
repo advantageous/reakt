@@ -240,32 +240,30 @@ public class ReactorImpl implements Reactor {
         notCompletedPromises.clear();
         ReplayPromise currentPromise = inputPromiseQueue.poll();
 
-        while (currentPromise != null) {
-
-            //If it not complete and it has not timed out then add it to the list.
-            if (!currentPromise.complete() && !currentPromise.isTimeout(timeSource.getTime())) {
-                notCompletedPromises.add(currentPromise);
+        try {
+            while (currentPromise != null) {
+                currentPromise.checkTimeout(timeSource.getTime());
+                if (!currentPromise.complete()) {
+                    notCompletedPromises.add(currentPromise);
+                }
+                currentPromise = inputPromiseQueue.poll();
             }
-            currentPromise = inputPromiseQueue.poll();
+            inputPromiseQueue.addAll(notCompletedPromises);
+        } finally {
+            notCompletedPromises.clear();
         }
-        inputPromiseQueue.addAll(notCompletedPromises);
-        notCompletedPromises.clear();
-
     }
 
     private void processAsyncPromisesReturns() {
 
-        try {
-            ReplayPromise poll = replyPromiseQueue.poll();
+        ReplayPromise poll = replyPromiseQueue.poll();
 
-            while (poll != null) {
-                poll.replay();
-                poll = replyPromiseQueue.poll();
-            }
-            replyPromiseQueue.addAll(notCompletedPromises);
-        } finally {
-            notCompletedPromises.clear();
+        while (poll != null) {
+            poll.replay();
+            poll = replyPromiseQueue.poll();
         }
+        replyPromiseQueue.addAll(notCompletedPromises);
+
     }
 
 
@@ -287,7 +285,7 @@ public class ReactorImpl implements Reactor {
     }
 
     public void processFireOnceTasks() {
-        if (fireOnceAfterTaskList.size()==0) {
+        if (fireOnceAfterTaskList.size() == 0) {
             return;
         }
         final List<FireOnceTask> fireOnceTasks = fireOnceAfterTaskList.stream()

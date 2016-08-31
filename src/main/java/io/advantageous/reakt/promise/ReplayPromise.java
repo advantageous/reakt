@@ -30,11 +30,11 @@ public interface ReplayPromise<T> extends Promise<T> {
 
     /**
      * Return true if timed out.
-     *
+     * If this has timed out, it will be marked completed.
      * @param time current time
      * @return true if done
      */
-    boolean isTimeout(long time);
+    boolean checkTimeout(long time);
 
     /**
      * @param handler handle timeout.

@@ -51,7 +51,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     }
 
     @Override
-    public boolean isTimeout(final long time) {
+    public boolean checkTimeout(final long time) {
 
         if (!complete()) {
             if ((time - startTime) > timeoutDuration.toMillis()) {
