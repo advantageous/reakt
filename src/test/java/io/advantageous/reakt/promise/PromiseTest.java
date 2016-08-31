@@ -386,7 +386,7 @@ public class PromiseTest {
 
 
         for (int index = 0; index < 10; index++) {
-            promise.check(System.currentTimeMillis());
+            promise.isTimeout(System.currentTimeMillis());
             if (promise.complete()) break;
             Thread.sleep(10);
 
@@ -420,7 +420,7 @@ public class PromiseTest {
 
 
         for (int index = 0; index < 10; index++) {
-            promise.check(System.currentTimeMillis());
+            promise.isTimeout(System.currentTimeMillis());
             if (promise.complete()) break;
             Thread.sleep(10);
 
@@ -449,7 +449,7 @@ public class PromiseTest {
 
 
         for (int index = 0; index < 10; index++) {
-            promise.check(System.currentTimeMillis());
+            promise.isTimeout(System.currentTimeMillis());
             if (promise.complete()) break;
             Thread.sleep(10);
 
@@ -479,7 +479,7 @@ public class PromiseTest {
 
 
         for (int index = 0; index < 10; index++) {
-            promise.check(System.currentTimeMillis());
+            promise.isTimeout(System.currentTimeMillis());
             if (promise.complete()) break;
             Thread.sleep(10);
 
@@ -672,13 +672,17 @@ public class PromiseTest {
 
         promise.then(employee::set);
         promise.thenExpect(ref::set);
-        promise.afterResultProcessed(replayPromise -> afterCalled.set(true));
+        promise.afterResultProcessed(replayPromise -> {
+
+            promise.replay();
+            afterCalled.set(true);
+        });
 
 
         testService.async(promise);
 
         for (int index = 0; index < 100; index++) {
-            if (promise.check(System.currentTimeMillis())) {
+            if (promise.isTimeout(System.currentTimeMillis())) {
                 break;
             }
             Thread.sleep(1);
@@ -716,7 +720,7 @@ public class PromiseTest {
         testService.asyncTimeout(promise);
 
         for (int index = 0; index < 100; index++) {
-            if (promise.check(System.currentTimeMillis())) {
+            if (promise.isTimeout(System.currentTimeMillis())) {
                 break;
             }
             Thread.sleep(10);
@@ -746,7 +750,7 @@ public class PromiseTest {
         assertNull(ref.get());
         assertTrue(timeoutCalled.get());
 
-        promise.check(System.currentTimeMillis());
+        promise.isTimeout(System.currentTimeMillis());
 
     }
 

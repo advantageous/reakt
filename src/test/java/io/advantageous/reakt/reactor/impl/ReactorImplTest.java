@@ -113,6 +113,32 @@ public class ReactorImplTest {
 
 
     @Test
+    public void normalNullCall() {
+
+
+        final AtomicBoolean errorFound = new AtomicBoolean();
+
+        final AtomicBoolean thenCalled = new AtomicBoolean();
+
+        final Promise<Object> promise = reactor.promise(Duration.ofSeconds(1))
+                .catchError(error -> errorFound.set(true))
+                .then(object -> thenCalled.set(true));
+        reactor.process();
+
+
+        assertTrue(!errorFound.get()); //No errors.
+        assertTrue(!thenCalled.get()); //Then should still not be called
+
+        promise.resolve(null);
+        reactor.process();
+
+
+        assertTrue(!errorFound.get()); //No errors.
+        assertTrue(thenCalled.get()); //Then should be called
+
+    }
+
+    @Test
     public void testRepeatingTask() {
         AtomicLong count = new AtomicLong();
         reactor.addRepeatingTask(Duration.ofSeconds(1), count::incrementAndGet);

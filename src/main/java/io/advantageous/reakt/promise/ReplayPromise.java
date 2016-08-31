@@ -29,13 +29,12 @@ import java.util.function.Consumer;
 public interface ReplayPromise<T> extends Promise<T> {
 
     /**
-     * Return true if done.
-     * Gets called periodically to move data from foreign thread to this one.
+     * Return true if timed out.
      *
      * @param time current time
      * @return true if done
      */
-    boolean check(long time);
+    boolean isTimeout(long time);
 
     /**
      * @param handler handle timeout.
@@ -52,4 +51,8 @@ public interface ReplayPromise<T> extends Promise<T> {
      */
     ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler);
 
+    /**
+     * Replay the promise on another thread.
+     */
+    void replay();
 }

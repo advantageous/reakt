@@ -238,14 +238,15 @@ public class ReactorImpl implements Reactor {
 
     private void processPromiseTimeouts() {
         notCompletedPromises.clear();
-        ReplayPromise poll = inputPromiseQueue.poll();
+        ReplayPromise currentPromise = inputPromiseQueue.poll();
 
-        while (poll != null) {
+        while (currentPromise != null) {
 
-            if (!poll.check(timeSource.getTime())) {
-                notCompletedPromises.add(poll);
+            //If it not complete and it has not timed out then add it to the list.
+            if (!currentPromise.complete() && !currentPromise.isTimeout(timeSource.getTime())) {
+                notCompletedPromises.add(currentPromise);
             }
-            poll = inputPromiseQueue.poll();
+            currentPromise = inputPromiseQueue.poll();
         }
         inputPromiseQueue.addAll(notCompletedPromises);
         notCompletedPromises.clear();
@@ -253,14 +254,12 @@ public class ReactorImpl implements Reactor {
     }
 
     private void processAsyncPromisesReturns() {
-        notCompletedPromises.clear();
+
         try {
             ReplayPromise poll = replyPromiseQueue.poll();
 
             while (poll != null) {
-                if (!poll.check(timeSource.getTime())) {
-                    replyPromiseQueue.add(poll);
-                }
+                poll.replay();
                 poll = replyPromiseQueue.poll();
             }
             replyPromiseQueue.addAll(notCompletedPromises);

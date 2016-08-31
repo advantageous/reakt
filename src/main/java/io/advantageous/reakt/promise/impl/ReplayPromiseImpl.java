@@ -51,23 +51,19 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     }
 
     @Override
-    public boolean check(final long time) {
+    public boolean isTimeout(final long time) {
 
-        if (result.get() == null) {
+        if (!complete()) {
             if ((time - startTime) > timeoutDuration.toMillis()) {
                 handleTimeout(time);
-                handleResultPresent(result.get());
                 return true;
+            } else {
+                return false;
             }
+        } else {
+            return false;
         }
 
-        final Result<T> theResult = result.get();
-        if (theResult != null) {
-            handleResultPresent(theResult);
-            return true;
-        }
-
-        return false;
     }
 
     private void handleResultPresent(Result<T> theResult) {
@@ -80,6 +76,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
                 new TimeoutException(String.format("Operation timed out start time %d timeout " +
                                 "duration ms %d time %d elapsed time %d",
                         startTime, timeoutDuration.toMillis(), time, time - startTime))));
+        replay();
     }
 
     @Override
@@ -92,6 +89,11 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     public synchronized ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler) {
         afterResultProcessedHandler = Expected.of(handler);
         return this;
+    }
+
+    @Override
+    public void replay() {
+        handleResultPresent(result.get());
     }
 
     @Override
