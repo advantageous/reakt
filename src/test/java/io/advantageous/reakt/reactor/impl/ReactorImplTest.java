@@ -69,7 +69,7 @@ public class ReactorImplTest {
         //Force a timeout.
         assertTrue(!errorFound.get()); //No errors yet.
 
-        testTimer.setTime(System.currentTimeMillis() + Duration.ofSeconds(2).toMillis());
+        testTimer.setTime(System.currentTimeMillis() + Duration.ofSeconds(30).toMillis());
         reactor.process();
 
         assertTrue(errorFound.get()); //Now we should have an error

@@ -56,6 +56,8 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
         if (result.get() == null) {
             if ((time - startTime) > timeoutDuration.toMillis()) {
                 handleTimeout(time);
+                handleResultPresent(result.get());
+                return true;
             }
         }
 

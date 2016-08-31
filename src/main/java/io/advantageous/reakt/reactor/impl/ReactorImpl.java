@@ -241,6 +241,7 @@ public class ReactorImpl implements Reactor {
         ReplayPromise poll = inputPromiseQueue.poll();
 
         while (poll != null) {
+
             if (!poll.check(timeSource.getTime())) {
                 notCompletedPromises.add(poll);
             }
@@ -254,15 +255,15 @@ public class ReactorImpl implements Reactor {
     private void processAsyncPromisesReturns() {
         notCompletedPromises.clear();
         try {
-            ReplayPromise poll = inputPromiseQueue.poll();
+            ReplayPromise poll = replyPromiseQueue.poll();
 
             while (poll != null) {
                 if (!poll.check(timeSource.getTime())) {
-                    notCompletedPromises.add(poll);
+                    replyPromiseQueue.add(poll);
                 }
-                poll = inputPromiseQueue.poll();
+                poll = replyPromiseQueue.poll();
             }
-            inputPromiseQueue.addAll(notCompletedPromises);
+            replyPromiseQueue.addAll(notCompletedPromises);
         } finally {
             notCompletedPromises.clear();
         }
