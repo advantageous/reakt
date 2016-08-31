@@ -189,6 +189,9 @@ public interface Promise<T> extends Callback<T>, Result<T> {
 
     Promise<T> invokeWithReactor(Reactor reactor);
 
+
+    Promise<T> invokeWithReactor(Reactor reactor, Duration timeout);
+
     /**
      * If the thenSafeExpect handler throws an exception, this will report it as if it it was caught by catchError.
      * <p>

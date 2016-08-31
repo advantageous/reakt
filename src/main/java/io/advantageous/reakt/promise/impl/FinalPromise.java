@@ -25,6 +25,7 @@ import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.reactor.Reactor;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -99,7 +100,11 @@ public class FinalPromise<T> implements Promise<T> {
 
     @Override
     public Promise<T> invokeWithReactor(Reactor reactor) {
+        throw new UnsupportedOperationException("invokeWithReactor(..) not supported for final promise");
+    }
 
+    @Override
+    public Promise<T> invokeWithReactor(Reactor reactor, Duration timeout) {
         throw new UnsupportedOperationException("invokeWithReactor(..) not supported for final promise");
     }
 

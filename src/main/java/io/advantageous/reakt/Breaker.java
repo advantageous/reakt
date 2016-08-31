@@ -21,6 +21,8 @@ package io.advantageous.reakt;
 import io.advantageous.reakt.impl.BreakerImpl;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 
 /**
@@ -102,7 +104,37 @@ public interface Breaker<T> {
         return new BreakerImpl<>(value, maxErrorsCount);
     }
 
+
     /**
+     * Returns an {@code Breaker} using the specified present value, which must not be null.
+     *
+     * @param <T>            the class of the value
+     * @param value          the value to be present. Must be non-null
+     * @param maxErrorsCount max error count
+     * @param brokenPredicate supplier to determine if connection to service is broken
+     * @return an {@code ExpectedImpl} with the value present
+     * @throws NullPointerException if value is null
+     */
+    static <T> Breaker<T> operational(T value, final int maxErrorsCount, final Predicate<T> brokenPredicate) {
+        return new BreakerImpl<>(value, maxErrorsCount, brokenPredicate);
+    }
+
+
+
+    /**
+     * Returns an {@code Breaker} using the specified present value, which must not be null.
+     *
+     * @param <T>            the class of the value
+     * @param value          the value to be present. Must be non-null
+     * @param brokenPredicate predicate to determine if connection to service is broken
+     * @return an {@code ExpectedImpl} with the value present
+     * @throws NullPointerException if value is null
+     */
+    static <T> Breaker<T> operational(T value, final Predicate<T> brokenPredicate) {
+        return new BreakerImpl<>(value, 0, brokenPredicate);
+    }
+
+    /**x
      * Return {@code true} if the service is broken, otherwise {@code false}.
      *
      * @return {@code true} if the service is broken, otherwise {@code false}

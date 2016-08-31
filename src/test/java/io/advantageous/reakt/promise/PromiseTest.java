@@ -171,6 +171,11 @@ public class PromiseTest {
             public Promise<String> invokeWithReactor(Reactor reactor) {
                 return null;
             }
+
+            @Override
+            public Promise<String> invokeWithReactor(Reactor reactor, Duration timeout) {
+                return null;
+            }
         };
 
         assertFalse(promise.supportsSafe());

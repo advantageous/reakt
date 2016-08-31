@@ -32,7 +32,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     private final Duration timeoutDuration;
     private final long startTime;
-    private Expected<Runnable> timeoutHandler;
+    private Expected<Runnable> timeoutHandler = Expected.empty();
     private Expected<Consumer<ReplayPromise>> afterResultProcessedHandler = Expected.empty();
 
 

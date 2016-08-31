@@ -24,6 +24,7 @@ import io.advantageous.reakt.exception.ThenHandlerException;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.reactor.Reactor;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -98,7 +99,7 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public Promise<T> invokeWithReactor(Reactor reactor) {
+    public Promise<T> invokeWithReactor(final Reactor reactor) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
         reactorPromise.catchConsumer = this.catchConsumer;
         reactorPromise.thenConsumer = this.thenConsumer;
@@ -108,12 +109,30 @@ public class BasePromise<T> implements Promise<T> {
         this.catchConsumer = Expected.empty();
 
         completeListeners.ifPresent(consumers ->
-                consumers.forEach((Consumer<Consumer<Promise<T>>>) reactorPromise::whenComplete));
+                consumers.forEach(reactorPromise::whenComplete));
 
         this.thenPromise(reactorPromise);
         this.invoke();
         return this;
     }
+    @Override
+    public Promise<T> invokeWithReactor(final Reactor reactor, Duration timeout) {
+        final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise(timeout);
+        reactorPromise.catchConsumer = this.catchConsumer;
+        reactorPromise.thenConsumer = this.thenConsumer;
+        reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
+        this.thenExpectedConsumer = Expected.empty();
+        this.thenConsumer = Expected.empty();
+        this.catchConsumer = Expected.empty();
+
+        completeListeners.ifPresent(consumers ->
+                consumers.forEach(reactorPromise::whenComplete));
+
+        this.thenPromise(reactorPromise);
+        this.invoke();
+        return this;
+    }
+
 
     @Override
     public boolean success() {

@@ -77,6 +77,10 @@ public interface Reactor {
      */
     <T> Promise<T> promise();
 
+
+    <T> Promise<T> promise(Duration timeout);
+
+
     /**
      * All promises must complete.
      *

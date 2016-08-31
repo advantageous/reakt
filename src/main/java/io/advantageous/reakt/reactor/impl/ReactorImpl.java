@@ -34,9 +34,11 @@ public class ReactorImpl implements Reactor {
 
     private final Duration defaultTimeout;
     private final TimeSource timeSource;
-    private final BlockingQueue<ReplayPromise> promisesQueue = new LinkedTransferQueue<>();
+    private final BlockingQueue<ReplayPromise> inputPromiseQueue = new LinkedTransferQueue<>();
+    private final BlockingQueue<ReplayPromise> replyPromiseQueue = new LinkedTransferQueue<>();
     private final BlockingQueue<Runnable> deferRuns = new LinkedTransferQueue<>();
     private final List<ReplayPromise> notCompletedPromises = new ArrayList<>();
+
 
     private BlockingQueue<FireOnceTask> fireOnceAfterTaskQueue = new LinkedTransferQueue<>();
     private BlockingQueue<RepeatingTask> repeatingTaskQueue = new LinkedTransferQueue<>();
@@ -51,14 +53,24 @@ public class ReactorImpl implements Reactor {
     public ReactorImpl(final Duration defaultTimeout,
                        final TimeSource timeSource) {
         this.defaultTimeout = defaultTimeout;
+        final Duration checkPromiseTimeoutInterval = defaultTimeout.dividedBy(10);
         this.timeSource = timeSource;
+        this.addRepeatingTask(checkPromiseTimeoutInterval, this::processPromiseTimeouts);
     }
 
     @Override
     public <T> Promise<T> promise() {
-        final ReplayPromise<T> promise = Promises.<T>replayPromise(defaultTimeout, timeSource.getTime());
+        final ReplayPromise<T> promise = Promises.replayPromise(defaultTimeout, timeSource.getTime());
         return addPromiseToProcessingQueue(promise);
     }
+
+
+    @Override
+    public <T> Promise<T> promise(final Duration timeout) {
+        final ReplayPromise<T> promise = Promises.replayPromise(timeout, timeSource.getTime());
+        return addPromiseToProcessingQueue(promise);
+    }
+
 
     @Override
     public Promise<Void> all(Promise<?>... promises) {
@@ -132,10 +144,10 @@ public class ReactorImpl implements Reactor {
     public void process() {
         copyTaskQueues();
         currentTime = timeSource.getTime();
-        processReplayPromises();
         processDeferRuns();
         processRepeatingTasks();
         processFireOnceTasks();
+        processAsyncPromisesReturns();
     }
 
     private void copyTaskQueues() {
@@ -224,22 +236,42 @@ public class ReactorImpl implements Reactor {
         }
     }
 
-    private void processReplayPromises() {
+    private void processPromiseTimeouts() {
         notCompletedPromises.clear();
-        ReplayPromise poll = promisesQueue.poll();
+        ReplayPromise poll = inputPromiseQueue.poll();
 
         while (poll != null) {
             if (!poll.check(timeSource.getTime())) {
                 notCompletedPromises.add(poll);
             }
-            poll = promisesQueue.poll();
+            poll = inputPromiseQueue.poll();
         }
-        promisesQueue.addAll(notCompletedPromises);
+        inputPromiseQueue.addAll(notCompletedPromises);
         notCompletedPromises.clear();
+
     }
 
+    private void processAsyncPromisesReturns() {
+        notCompletedPromises.clear();
+        try {
+            ReplayPromise poll = inputPromiseQueue.poll();
+
+            while (poll != null) {
+                if (!poll.check(timeSource.getTime())) {
+                    notCompletedPromises.add(poll);
+                }
+                poll = inputPromiseQueue.poll();
+            }
+            inputPromiseQueue.addAll(notCompletedPromises);
+        } finally {
+            notCompletedPromises.clear();
+        }
+    }
+
+
     private <T> Promise<T> addPromiseToProcessingQueue(ReplayPromise<T> promise) {
-        promise.afterResultProcessed(promisesQueue::add);
+        inputPromiseQueue.add(promise);
+        promise.afterResultProcessed(replyPromiseQueue::add);
         return promise;
     }
 

@@ -53,6 +53,66 @@ public class ReactorImplTest {
     }
 
     @Test
+    public void testTimeout() {
+
+
+        final AtomicBoolean errorFound = new AtomicBoolean();
+
+        final AtomicBoolean thenCalled = new AtomicBoolean();
+
+        final Promise<Object> promise = reactor.promise(Duration.ofSeconds(1))
+                .catchError(error -> errorFound.set(true))
+                .then(object -> thenCalled.set(true));
+        reactor.process();
+
+
+        //Force a timeout.
+        assertTrue(!errorFound.get()); //No errors yet.
+
+        testTimer.setTime(System.currentTimeMillis() + Duration.ofSeconds(2).toMillis());
+        reactor.process();
+
+        assertTrue(errorFound.get()); //Now we should have an error
+
+        assertTrue(!thenCalled.get()); //Then should not be called
+
+
+        promise.resolve(new Object());
+        reactor.process();
+
+        assertTrue(!thenCalled.get()); //Then should still not be called
+
+    }
+
+
+    @Test
+    public void normalCall() {
+
+
+        final AtomicBoolean errorFound = new AtomicBoolean();
+
+        final AtomicBoolean thenCalled = new AtomicBoolean();
+
+        final Promise<Object> promise = reactor.promise(Duration.ofSeconds(1))
+                .catchError(error -> errorFound.set(true))
+                .then(object -> thenCalled.set(true));
+        reactor.process();
+
+
+        assertTrue(!errorFound.get()); //No errors.
+        assertTrue(!thenCalled.get()); //Then should still not be called
+
+        promise.resolve(new Object());
+        reactor.process();
+
+
+        assertTrue(!errorFound.get()); //No errors.
+        assertTrue(thenCalled.get()); //Then should be called
+
+    }
+
+
+    @Test
     public void testRepeatingTask() {
         AtomicLong count = new AtomicLong();
         reactor.addRepeatingTask(Duration.ofSeconds(1), count::incrementAndGet);

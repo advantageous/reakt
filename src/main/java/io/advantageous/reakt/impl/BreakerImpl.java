@@ -19,10 +19,12 @@
 package io.advantageous.reakt.impl;
 
 import io.advantageous.reakt.Breaker;
+import io.advantageous.reakt.Expected;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Circuit breaker.
@@ -41,25 +43,38 @@ public class BreakerImpl<T> implements Breaker<T> {
      */
     private final AtomicLong errors = new AtomicLong();
     private final int maxErrorCount;
+    private final Expected<Predicate<T>> brokenPredicate;
 
     public BreakerImpl() {
         this.maxErrorCount = 0;
         this.service = null;
+        this.brokenPredicate = Expected.empty();
     }
 
     public BreakerImpl(final T value) {
         this.maxErrorCount = 0;
         this.service = Objects.requireNonNull(value);
+        this.brokenPredicate = Expected.empty();
     }
 
     public BreakerImpl(final T value, final int maxErrorCount) {
         this.service = Objects.requireNonNull(value);
         this.maxErrorCount = maxErrorCount;
+        this.brokenPredicate = Expected.empty();
     }
+
+    public BreakerImpl(final T value, final int maxErrorCount, final Predicate<T> brokenPredicate) {
+        this.service = Objects.requireNonNull(value);
+        this.maxErrorCount = maxErrorCount;
+        this.brokenPredicate = Expected.of(brokenPredicate);
+    }
+
 
     @Override
     public boolean isOperational() {
-        return this.service != null && this.maxErrorCount == 0 || errorCount() < this.maxErrorCount;
+            return (this.service != null) &&
+                    (this.maxErrorCount == 0 || errorCount() < this.maxErrorCount) &&
+                    (this.brokenPredicate.isEmpty() || !this.brokenPredicate.get().test(service));
     }
 
     @Override
@@ -87,7 +102,7 @@ public class BreakerImpl<T> implements Breaker<T> {
 
     @Override
     public Breaker<T> cleanup(final Consumer<? super T> consumer) {
-        if (isBroken() && this.service != null) consumer.accept(this.service);
+        if (this.service != null) consumer.accept(this.service);
         return this;
     }
 
