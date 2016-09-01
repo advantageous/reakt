@@ -180,7 +180,7 @@ public class FinalPromise<T> implements Promise<T> {
             catchConsumer.ifPresent(catchConsumer -> catchConsumer.accept(result.cause()));
         }
         this.completeListeners.ifPresent(runnables ->
-                runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
+                runnables.forEach(promiseConsumer -> promiseConsumer.accept(this)));
     }
 
     private void handleSuccess(Result<T> result) {
