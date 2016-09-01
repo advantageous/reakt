@@ -17,7 +17,7 @@
  */
 
 group 'io.advantageous.reakt'
-version '3.0.4'
+version '3.0.4.RELEASE'
 
 apply plugin: 'java'
 apply plugin: 'maven'
