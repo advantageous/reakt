@@ -42,24 +42,27 @@ public interface PromiseUtil {
      */
     static <T> void all(Promise<T> parent, Promise<T>[] childPromises) {
         final AtomicInteger count = new AtomicInteger(childPromises.length);
-        final AtomicBoolean failed = new AtomicBoolean();
+        final AtomicBoolean done = new AtomicBoolean();
 
         final Consumer<Promise<T>> consumer = (childPromise) -> {
 
-            if (failed.get()) {
+            if (done.get()) {
                 return;
             }
 
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
-                parent.reject(childPromise.cause());
-                count.set(-1);
-                failed.set(true);
+                if (done.compareAndSet(false, true)) {
+                    parent.reject(childPromise.cause());
+                    count.set(-1);
+                }
             } else {
                 /** If the count is 0, then we are done. */
                 int currentCount = count.decrementAndGet();
                 if (currentCount == 0 && !parent.complete()) {
-                    parent.onResult(Result.result(null));
+                    if (done.compareAndSet(false, true)) {
+                        parent.onResult(Result.result(null));
+                    }
                 }
             }
         };
