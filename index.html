@@ -24,7 +24,7 @@
 <h1>
 <a id="reactive-interfaces-for-java-promise-stream-callback-async-results" class="anchor" href="#reactive-interfaces-for-java-promise-stream-callback-async-results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Reactive interfaces for Java, Promise, Stream, Callback, Async Results</h1>
 
-<p>Reakt is <strong><em>Reactive Java</em></strong> and provides reactive interfaces for Java which include: </p>
+<p>Reakt is reactive interfaces for Java which includes: </p>
 
 <ul>
 <li>
@@ -42,7 +42,7 @@
 <p>The emphasis is on defining interfaces that enable lambda expressions, 
 and fluent APIs for asynchronous programming for Java.</p>
 
-<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. <a href="http://advantageous.github.io/elekt/">Elekt</a> uses <strong><em>Reakt</em></strong> for its reactive leadership election.</p>
+<p>Note: This mostly just provides the interfaces not the implementations. There are some starter implementations but the idea is that anyone can implement this. It is all about interfaces. There will be adapters for Vertx, RxJava, Reactive Streams, etc. There is support for <strong><em>Guava Async</em></strong> (used by Cassandra) and the <strong><em>QBit</em></strong> microservices lib. <a href="http://advantageous.github.io/elekt/">Elekt</a> uses Reakt for its reactive leadership election.</p>
 
 <h2>
 <a id="have-a-question" class="anchor" href="#have-a-question" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Have a question?</h2>
@@ -55,27 +55,25 @@ and fluent APIs for asynchronous programming for Java.</p>
 <h4>
 <a id="using-from-maven" class="anchor" href="#using-from-maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from maven</h4>
 
-<p>Reakt, Reactive Java Lib that provide Streams and Promises, is published in the <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.advantageous.reakt%22">maven public repo</a>.</p>
+<p>Reakt is published in the <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.advantageous.reakt%22">maven public repo</a>.</p>
 
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
     &lt;<span class="pl-ent">groupId</span>&gt;io.advantageous.reakt&lt;/<span class="pl-ent">groupId</span>&gt;
     &lt;<span class="pl-ent">artifactId</span>&gt;reakt&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">version</span>&gt;2.6.0.RELEASE&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;3.0.4.RELEASE&lt;/<span class="pl-ent">version</span>&gt;
 &lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
 <h4>
-<a id="using-reakt-reactive-java-lib-for-streams-and-promises-from-gradle" class="anchor" href="#using-reakt-reactive-java-lib-for-streams-and-promises-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Reakt, Reactive Java Lib for Streams and Promises from gradle</h4>
+<a id="using-from-gradle" class="anchor" href="#using-from-gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using from gradle</h4>
 
-<div class="highlight highlight-source-java"><pre>compile <span class="pl-s"><span class="pl-pds">'</span>io.advantageous.reakt:reakt:2.6.0.RELEASE<span class="pl-pds">'</span></span></pre></div>
+<div class="highlight highlight-text-xml"><pre>compile 'io.advantageous.reakt:reakt:3.0.4.RELEASE'</pre></div>
 
 <h4>
 <a id="fluent-promise-api" class="anchor" href="#fluent-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Promise API</h4>
 
-<div class="highlight highlight-source-java"><pre>
-  <span class="pl-k">Promise&lt;<span class="pl-smi">Employee</span>&gt;</span> promise <span class="pl-k">=</span> promise()
+<div class="highlight highlight-source-java"><pre>  <span class="pl-k">Promise&lt;<span class="pl-smi">Employee</span>&gt;</span> promise <span class="pl-k">=</span> promise()
                 .then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
-                .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> 
-                     logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup employee<span class="pl-pds">"</span></span>, error));
+                .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup employee<span class="pl-pds">"</span></span>, error));
 
   employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, promise);</pre></div>
 
@@ -88,20 +86,8 @@ and fluent APIs for asynchronous programming for Java.</p>
 
   employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, 
         promise()<span class="pl-k">.</span>then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
-                 .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(
-                                           <span class="pl-s"><span class="pl-pds">"</span>Unable to lookup <span class="pl-pds">"</span></span>, error))
+                 .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup <span class="pl-pds">"</span></span>, error))
         );</pre></div>
-
-<p>Also you can use invokable promises</p>
-
-<h4>
-<a id="fluent-invokable-promise-api" class="anchor" href="#fluent-invokable-promise-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fluent Invokable Promise API</h4>
-
-<div class="highlight highlight-source-java"><pre>        employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-s"><span class="pl-pds">"</span>123<span class="pl-pds">"</span></span>)
-               .then((employee)<span class="pl-k">-</span><span class="pl-k">&gt;</span> {<span class="pl-c1">...</span>})<span class="pl-k">.</span>catchError(<span class="pl-c1">...</span>)<span class="pl-k">.</span>invoke();</pre></div>
-
-<p>Check out <a href="https://github.com/advantageous/reakt/wiki/Invokable-Promise">invokable promises</a>, they bring a nice
-fluent level of cool to Reactive Java. QBit 1.4 uses invokable promises in its remote client proxies and local service proxies. It is a very productive and fluent way to do async, reactive programming.</p>
 
 <p>Promises are both a callback and a Result; however, you can work
 with Callbacks directly. </p>
@@ -111,9 +97,7 @@ with Callbacks directly. </p>
 
 <div class="highlight highlight-source-java"><pre>        employeeService<span class="pl-k">.</span>lookupEmployee(<span class="pl-c1">33</span>, result <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
             result<span class="pl-k">.</span>then(e <span class="pl-k">-</span><span class="pl-k">&gt;</span> saveEmployee(e))
-                  .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
-                    logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup<span class="pl-pds">"</span></span>, error);
-            });
+                  .catchError(error <span class="pl-k">-</span><span class="pl-k">&gt;</span> logger<span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>Unable to lookup<span class="pl-pds">"</span></span>, error));
         });</pre></div>
 
 <p>In both of these examples, lookupEmployee would look like:</p>
@@ -234,29 +218,41 @@ for more details.</p>
 <p>See our wiki for more details on <a href="https://github.com/advantageous/reakt/wiki">Reakt</a>.</p>
 
 <h2>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="further-reading" class="anchor" href="#further-reading" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further reading</h2>
 
-<p>Java Promises</p>
+<p><a href="http://www.mammatustech.com/microservices-architecture">What is Microservices Architecture?</a></p>
 
-<ul>
-<li><a href="https://github.com/advantageous/reakt/wiki/Promise">Promise</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Promise.then*-and-catchError">Promise then*() and catchError()</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Promise.thenMap">Promise thenMap()</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Promises.all">Promise all()</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Promises.any">Promise any()</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/BlockingPromise">Blocking Promise</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Invokable-Promise">Invokable Promise</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/ReplayPromise">Reactor Replay Promises</a></li>
-</ul>
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki">QBit Java Micorservices lib tutorials</a></p>
 
-<p>Reactor, Stream, Results</p>
+<p>The Java microservice lib. QBit is a reactive programming lib for building microservices - JSON, HTTP, WebSocket, and REST. QBit uses reactive programming to build elastic REST, and WebSockets based cloud friendly, web services. SOA evolved for mobile and cloud. ServiceDiscovery, Health, reactive StatService, events, Java idiomatic reactive programming for Microservices.</p>
 
-<ul>
-<li><a href="https://github.com/advantageous/reakt/wiki/Reactor">Reactor</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Stream">Stream</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/Result">Result</a></li>
-<li><a href="https://github.com/advantageous/reakt/wiki/StreamResult">StreamResult</a></li>
-</ul>
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki">Find more tutorial on QBit</a>.</p>
+
+<p><a href="http://rick-hightower.blogspot.com/2015/03/reactive-programming-service-discovery.html">Reactive Programming</a>, <a href="http://rick-hightower.blogspot.com/2015/03/java-microservices-architecture.html">Java Microservices</a>, <a href="http://www.linkedin.com/in/rickhigh">Rick Hightower</a></p>
+
+<p><a href="http://www.mammatustech.com/">High-speed microservices consulting firm and authors of QBit with lots of experience with Vertx - Mammatus Technology</a></p>
+
+<p><a href="http://www.aboutobjects.com/">Highly recommended consulting and training firm who specializes in microservices architecture and mobile development that are already very familiar with QBit and Vertx as well as iOS and Android - About Objects</a></p>
+
+<p><a href="http://www.mammatustech.com/java-microservices-architecture">Java Microservices Architecture</a></p>
+
+<p><a href="http://www.mammatustech.com/Microservice-Service-Discovery-with-Consul">Microservice Service Discovery with Consul</a></p>
+
+<p><a href="http://www.mammatustech.com/consul-service-discovery-and-health-for-microservices-architecture-tutorial">Microservices Service Discovery Tutorial with Consul</a></p>
+
+<p><a href="http://www.mammatustech.com/reactive-microservices">Reactive Microservices</a></p>
+
+<p><a href="http://www.mammatustech.com/high-speed-microservices">High Speed Microservices</a></p>
+
+<p><a href="http://www.mammatustech.com/java-microservices-consulting">Java Microservices Consulting</a></p>
+
+<p><a href="http://www.mammatustech.com/java-reactive-microservice-training">Microservices Training</a></p>
+
+<p><a href="https://github.com/MammatusTech/qbit-microservices-examples/wiki/Reactor-tutorial--%7C-reactively-handling-async-calls-with-QBit-Reactive-Microservices">Reactive Microservices Tutorial, using the Reactor</a></p>
+
+<p><a href="http://restlet.com/blog/2015/09/04/this-week-in-api-land-20/">QBit is mentioned in the Restlet blog</a></p>
+
+<p><a href="https://www.jetbrains.com/idea/">All code is written using JetBrains Idea - the best IDE ever!</a></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/advantageous/reakt">Reakt Reactive Java</a> is maintained by <a href="https://github.com/advantageous">advantageous</a>.</span>
