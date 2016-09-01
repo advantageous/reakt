@@ -119,7 +119,7 @@ public interface PromiseUtil {
 
     static <T> T doGet(AtomicReference<Result<T>> result, Promise<?> promise) {
 
-        if (result.get() == null) {
+        if (!promise.complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (promise.failure()) {

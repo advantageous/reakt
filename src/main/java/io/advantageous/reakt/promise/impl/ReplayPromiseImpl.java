@@ -26,6 +26,7 @@ import io.advantageous.reakt.promise.ReplayPromise;
 
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromise<T> {
@@ -34,6 +35,8 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     private final long startTime;
     private Expected<Runnable> timeoutHandler = Expected.empty();
     private Expected<Consumer<ReplayPromise>> afterResultProcessedHandler = Expected.empty();
+    private final AtomicBoolean replayed = new AtomicBoolean();
+
 
 
     public ReplayPromiseImpl(final Duration timeout, final long startTime) {
@@ -45,8 +48,10 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     @Override
     public void onResult(final Result<T> result) {
 
-        this.result.compareAndSet(null, result);
-        afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
+        //Ensure this is only handled one time.
+        if (this.result.compareAndSet(null, result)) {
+            afterResultProcessedHandler.ifPresent(replayPromiseConsumer -> replayPromiseConsumer.accept(this));
+        }
 
     }
 
@@ -91,9 +96,12 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
         return this;
     }
 
+
     @Override
     public void replay() {
-        handleResultPresent(result.get());
+        if (replayed.compareAndSet(false, true)) {
+            handleResultPresent(result.get());
+        }
     }
 
     @Override

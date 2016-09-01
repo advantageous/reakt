@@ -21,6 +21,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.ThenHandlerException;
+import io.advantageous.reakt.impl.ResultImpl;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.reactor.Reactor;
 
@@ -33,6 +34,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BasePromise<T> implements Promise<T> {
+
+
 
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Expected<Consumer<T>> thenConsumer = Expected.empty();
@@ -136,7 +139,7 @@ public class BasePromise<T> implements Promise<T> {
 
     @Override
     public boolean success() {
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         return result.get().success();
@@ -150,7 +153,7 @@ public class BasePromise<T> implements Promise<T> {
     @Override
     public boolean failure() {
 
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         return result.get().failure();
@@ -159,7 +162,7 @@ public class BasePromise<T> implements Promise<T> {
     @Override
     public Throwable cause() {
 
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         return result.get().cause();
@@ -171,7 +174,7 @@ public class BasePromise<T> implements Promise<T> {
      * @return value associated with a successful result.
      */
     public Expected<T> expect() {
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (failure()) {
@@ -199,12 +202,15 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public void onResult(Result<T> result) {
-        doOnResult(result);
+    public void onResult(final Result<T> result) {
+        if (this.result.compareAndSet(null, result)) {
+            doOnResult(result);
+        }
     }
 
-    protected void doOnResult(Result<T> result) {
-        this.result.set(result);
+    protected void doOnResult(final Result<T> result) {
+
+
         if (result.success()) {
             if (!safe) {
                 thenConsumer.ifPresent(consumer -> consumer.accept(result.get()));

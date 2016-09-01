@@ -124,7 +124,7 @@ public class FinalPromise<T> implements Promise<T> {
     @Override
     public boolean failure() {
 
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         return result.get().failure();
@@ -133,7 +133,7 @@ public class FinalPromise<T> implements Promise<T> {
     @Override
     public Throwable cause() {
 
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         return result.get().cause();
@@ -146,7 +146,7 @@ public class FinalPromise<T> implements Promise<T> {
      * @return value associated with a successful result.
      */
     public Expected<T> expect() {
-        if (result.get() == null) {
+        if (!complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
         }
         if (failure()) {
@@ -167,9 +167,9 @@ public class FinalPromise<T> implements Promise<T> {
 
     @Override
     public void onResult(Result<T> result) {
-        this.result.set(result);
-
-        doOnResult(result);
+        if (this.result.compareAndSet(null, result)) {
+            doOnResult(result);
+        }
     }
 
 
