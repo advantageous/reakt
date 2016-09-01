@@ -30,13 +30,13 @@ Reakt is published in the [maven public repo](http://search.maven.org/#search%7C
 <dependency>
     <groupId>io.advantageous.reakt</groupId>
     <artifactId>reakt</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.4.RELEASE</version>
 </dependency>
 ```
 
 #### Using from gradle
 ```xml
-compile 'io.advantageous.reakt:reakt:3.0.4'
+compile 'io.advantageous.reakt:reakt:3.0.4.RELEASE'
 ```
 
 #### Fluent Promise API
