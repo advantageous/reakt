@@ -18,10 +18,37 @@
 
 package io.advantageous.reakt.promise.impl;
 
+import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.promise.Promise;
 
-public class AnyPromise extends BasePromise<Void> implements Promise<Void> {
+public class AnyPromise extends BasePromise<Void> implements Promise<Void>, Invokable {
+
+    private final Promise<?>[] promises;
+    private boolean invoked;
+
     public AnyPromise(Promise<?>... promises) {
+        this.promises = promises;
         PromiseUtil.any(this, (Promise[]) promises);
+    }
+
+
+    @Override
+    public Promise<Void> invoke() {
+        if (invoked) {
+            throw new IllegalStateException("Promise can only be invoked once");
+        }
+        invoked = true;
+        for (Promise<?> promise : promises) {
+            if (!promise.isInvokable()) {
+                throw new IllegalStateException("AnyPromise can only be invoked if all children are invokeable");
+            }
+            promise.invoke();
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isInvokable() {
+        return true;
     }
 }

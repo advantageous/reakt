@@ -18,11 +18,12 @@
 
 package io.advantageous.reakt.promise.impl;
 
+import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.promise.Promise;
 
 import java.util.function.Consumer;
 
-public class InvokerPromise<T> extends BasePromise<T> {
+public class InvokerPromise<T> extends BasePromise<T> implements Invokable {
 
     private final Consumer<Promise<T>> consumer;
     private boolean invoked;

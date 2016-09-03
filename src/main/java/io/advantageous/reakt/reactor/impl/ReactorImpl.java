@@ -18,8 +18,10 @@
 
 package io.advantageous.reakt.reactor.impl;
 
+import io.advantageous.reakt.Callback;
+import io.advantageous.reakt.Expected;
+import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
-import io.advantageous.reakt.promise.Promises;
 import io.advantageous.reakt.promise.ReplayPromise;
 import io.advantageous.reakt.reactor.Reactor;
 import io.advantageous.reakt.reactor.TimeSource;
@@ -28,7 +30,11 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static io.advantageous.reakt.promise.Promises.*;
 
 public class ReactorImpl implements Reactor {
 
@@ -60,14 +66,14 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<T> promise() {
-        final ReplayPromise<T> promise = Promises.replayPromise(defaultTimeout, timeSource.getTime());
+        final ReplayPromise<T> promise = replayPromise(defaultTimeout, timeSource.getTime());
         return addPromiseToProcessingQueue(promise);
     }
 
 
     @Override
     public <T> Promise<T> promise(final Duration timeout) {
-        final ReplayPromise<T> promise = Promises.replayPromise(timeout, timeSource.getTime());
+        final ReplayPromise<T> promise = replayPromise(timeout, timeSource.getTime());
         return addPromiseToProcessingQueue(promise);
     }
 
@@ -81,9 +87,10 @@ public class ReactorImpl implements Reactor {
     public Promise<Void> all(final Duration timeout,
                              final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
-                Promises.allReplay(timeout, timeSource.getTime(), promises)
+                wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
     }
+
 
     @Override
     public <T> Promise<Void> all(List<Promise<T>> promises) {
@@ -94,7 +101,7 @@ public class ReactorImpl implements Reactor {
     public <T> Promise<Void> all(final Duration timeout,
                                  final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
-                Promises.allReplay(timeout, timeSource.getTime(), promises)
+                wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
     }
 
@@ -108,7 +115,7 @@ public class ReactorImpl implements Reactor {
     public Promise<Void> any(final Duration timeout,
                              final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
-                Promises.anyReplay(timeout, timeSource.getTime(), promises)
+                wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
     }
 
@@ -121,7 +128,7 @@ public class ReactorImpl implements Reactor {
     public <T> Promise<Void> any(final Duration timeout,
                                  final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
-                Promises.anyReplay(timeout, timeSource.getTime(), promises)
+                wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
     }
 
@@ -165,66 +172,66 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<String> promiseString() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseString(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseString(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Integer> promiseInt() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseInt(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseInt(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Long> promiseLong() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseLong(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseLong(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Double> promiseDouble() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseDouble(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseDouble(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Float> promiseFloat() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseFloat(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseFloat(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Void> promiseNotify() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseNotify(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseNotify(defaultTimeout, currentTime));
     }
 
     @Override
     public Promise<Boolean> promiseBoolean() {
-        return addPromiseToProcessingQueue(Promises.replayPromiseBoolean(defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromiseBoolean(defaultTimeout, currentTime));
     }
 
     @Override
     public <T> Promise<T> promise(Class<T> cls) {
-        return addPromiseToProcessingQueue(Promises.replayPromise(cls, defaultTimeout, currentTime));
+        return addPromiseToProcessingQueue(replayPromise(cls, defaultTimeout, currentTime));
     }
 
     @Override
     public <T> Promise<List<T>> promiseList(Class<T> componentType) {
-        return addPromiseToProcessingQueue(Promises.replayPromiseList(componentType,
+        return addPromiseToProcessingQueue(replayPromiseList(componentType,
                 defaultTimeout, currentTime));
     }
 
     @Override
     public <T> Promise<Collection<T>> promiseCollection(Class<T> componentType) {
-        return addPromiseToProcessingQueue(Promises.replayPromiseCollection(componentType,
+        return addPromiseToProcessingQueue(replayPromiseCollection(componentType,
                 defaultTimeout, currentTime));
     }
 
     @Override
     public <K, V> Promise<Map<K, V>> promiseMap(Class<K> keyType, Class<V> valueType) {
 
-        return addPromiseToProcessingQueue(Promises.replayPromiseMap(keyType, valueType,
+        return addPromiseToProcessingQueue(replayPromiseMap(keyType, valueType,
                 defaultTimeout, currentTime));
     }
 
     @Override
     public <T> Promise<Set<T>> promiseSet(Class<T> componentType) {
-        return addPromiseToProcessingQueue(Promises.replayPromiseSet(componentType,
+        return addPromiseToProcessingQueue(replayPromiseSet(componentType,
                 defaultTimeout, currentTime));
     }
 
@@ -293,6 +300,229 @@ public class ReactorImpl implements Reactor {
         fireOnceAfterTaskList.removeAll(fireOnceTasks);
     }
 
+    private <T> ReplayPromise<T> wrapAllOrAnyAndMakeInvokeable(ReplayPromise<T> complexPromise) {
+        return new ReplayPromise<T>() {
+
+
+            @Override
+            public Promise<T> invoke() {
+                complexPromise.invokeWithReactor(ReactorImpl.this);
+                return this;
+            }
+
+            @Override
+            public boolean checkTimeout(long time) {
+                return complexPromise.checkTimeout(time);
+            }
+
+            @Override
+            public ReplayPromise<T> onTimeout(Runnable handler) {
+                complexPromise.onTimeout(handler);
+                return this;
+            }
+
+            @Override
+            public ReplayPromise<T> afterResultProcessed(Consumer<ReplayPromise> handler) {
+                complexPromise.afterResultProcessed(handler);
+                return this;
+            }
+
+            @Override
+            public void replay() {
+                complexPromise.replay();
+            }
+
+            @Override
+            public Promise<T> then(Consumer<T> consumer) {
+                complexPromise.then(consumer);
+                return this;
+            }
+
+            @Override
+            public Promise<T> whenComplete(Consumer<Promise<T>> doneListener) {
+                complexPromise.whenComplete(doneListener);
+                return this;
+            }
+
+            @Override
+            public Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
+                complexPromise.thenExpect(consumer);
+                return this;
+            }
+
+            @Override
+            public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+                return complexPromise.thenMap(mapper);
+            }
+
+            @Override
+            public Promise<T> catchError(Consumer<Throwable> consumer) {
+                complexPromise.catchError(consumer);
+                return this;
+            }
+
+            @Override
+            public Promise<T> invokeWithReactor(Reactor reactor) {
+                complexPromise.invokeWithReactor(reactor);
+                return this;
+            }
+
+            @Override
+            public Promise<T> invokeWithReactor(Reactor reactor, Duration timeout) {
+                complexPromise.invokeWithReactor(reactor, timeout);
+                return this;
+            }
+
+            @Override
+            public void onResult(Result<T> result) {
+                complexPromise.onResult(result);
+            }
+
+            @Override
+            public boolean success() {
+                return complexPromise.success();
+            }
+
+            @Override
+            public boolean complete() {
+                return complexPromise.complete();
+            }
+
+            @Override
+            public boolean failure() {
+                return complexPromise.failure();
+            }
+
+            @Override
+            public Throwable cause() {
+                return complexPromise.cause();
+            }
+
+            @Override
+            public Expected<T> expect() {
+                return complexPromise.expect();
+            }
+
+            @Override
+            public T get() {
+                return complexPromise.get();
+            }
+
+            @Override
+            public T orElse(T other) {
+                return complexPromise.orElse(other);
+            }
+
+            @Override
+            public Promise<T> freeze() {
+                return complexPromise.freeze();
+            }
+
+            @Override
+            public boolean isInvokable() {
+                return complexPromise.isInvokable();
+            }
+
+            @Override
+            public Promise<T> thenPromise(Promise<T> promise) {
+                complexPromise.thenPromise(promise);
+                return this;
+
+            }
+
+            @Override
+            public Promise<T> thenCallback(Callback<T> callback) {
+                return complexPromise.thenCallback(callback);
+            }
+
+            @Override
+            public Promise<T> invokeWithPromise(Promise<T> promise) {
+                complexPromise.invokeWithPromise(promise);
+                return this;
+
+            }
+
+            @Override
+            public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+                complexPromise.thenSafeExpect(consumer);
+                return this;
+
+            }
+
+            @Override
+            public Promise<T> thenSafe(Consumer<T> consumer) {
+                complexPromise.thenSafe(consumer);
+                return this;
+
+            }
+
+            @Override
+            public boolean supportsSafe() {
+                return complexPromise.supportsSafe();
+            }
+
+            @Override
+            public Promise<T> invokeAsBlockingPromise() {
+                return complexPromise.invokeAsBlockingPromise();
+            }
+
+            @Override
+            public Promise<T> invokeAsBlockingPromise(Duration duration) {
+                return complexPromise.invokeAsBlockingPromise(duration);
+            }
+
+            @Override
+            public void reject(Throwable error) {
+                complexPromise.reject(error);
+            }
+
+            @Override
+            public void reject(String errorMessage) {
+                complexPromise.reject(errorMessage);
+            }
+
+            @Override
+            public void reject(String errorMessage, Throwable error) {
+                complexPromise.reject(errorMessage, error);
+            }
+
+            @Override
+            public void reply(T result) {
+                complexPromise.reply(result);
+            }
+
+            @Override
+            public void replyDone() {
+                complexPromise.replyDone();
+            }
+
+            @Override
+            public void resolve() {
+                complexPromise.resolve();
+            }
+
+            @Override
+            public void resolve(T result) {
+                complexPromise.resolve(result);
+            }
+
+            @Override
+            public void accept(T t) {
+                complexPromise.accept(t);
+            }
+
+            @Override
+            public Consumer<Throwable> errorConsumer() {
+                return complexPromise.errorConsumer();
+            }
+
+            @Override
+            public Consumer<T> consumer() {
+                return complexPromise.consumer();
+            }
+        };
+    }
+
     /**
      * A repeating task.
      */
@@ -322,5 +552,4 @@ public class ReactorImpl implements Reactor {
             this.fireAfterMS = fireAfterMS;
         }
     }
-
 }
