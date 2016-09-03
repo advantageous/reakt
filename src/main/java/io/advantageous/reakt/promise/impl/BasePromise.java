@@ -104,35 +104,16 @@ public class BasePromise<T> implements Promise<T> {
     @Override
     public Promise<T> invokeWithReactor(final Reactor reactor) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
-        reactorPromise.catchConsumer = this.catchConsumer;
-        reactorPromise.thenConsumer = this.thenConsumer;
-        reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
-        this.thenExpectedConsumer = Expected.empty();
-        this.thenConsumer = Expected.empty();
-        this.catchConsumer = Expected.empty();
-
-        completeListeners.ifPresent(consumers ->
-                consumers.forEach(reactorPromise::whenComplete));
-
-        this.thenPromise(reactorPromise);
-        this.invoke();
+        copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
     }
+
+
+
     @Override
     public Promise<T> invokeWithReactor(final Reactor reactor, Duration timeout) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise(timeout);
-        reactorPromise.catchConsumer = this.catchConsumer;
-        reactorPromise.thenConsumer = this.thenConsumer;
-        reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
-        this.thenExpectedConsumer = Expected.empty();
-        this.thenConsumer = Expected.empty();
-        this.catchConsumer = Expected.empty();
-
-        completeListeners.ifPresent(consumers ->
-                consumers.forEach(reactorPromise::whenComplete));
-
-        this.thenPromise(reactorPromise);
-        this.invoke();
+        copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
     }
 
@@ -229,7 +210,7 @@ public class BasePromise<T> implements Promise<T> {
         }
 
         this.completeListeners.ifPresent(runnables ->
-                runnables.forEach((Consumer<Consumer<Promise<T>>>) promiseConsumer -> promiseConsumer.accept(this)));
+                runnables.forEach(promiseConsumer -> promiseConsumer.accept(this)));
     }
 
 
@@ -238,4 +219,20 @@ public class BasePromise<T> implements Promise<T> {
         return PromiseUtil.mapPromise(this, mapper);
     }
 
+    private void copyPromiseFieldsToReactorPromise(BasePromise<T> reactorPromise) {
+        reactorPromise.catchConsumer = this.catchConsumer;
+        reactorPromise.thenConsumer = this.thenConsumer;
+        reactorPromise.thenExpectedConsumer = this.thenExpectedConsumer;
+        reactorPromise.safe = this.safe;
+        this.thenExpectedConsumer = Expected.empty();
+        this.thenConsumer = Expected.empty();
+        this.catchConsumer = Expected.empty();
+
+
+        completeListeners.ifPresent(consumers ->
+                consumers.forEach(reactorPromise::whenComplete));
+
+        this.thenPromise(reactorPromise);
+        this.invoke();
+    }
 }
