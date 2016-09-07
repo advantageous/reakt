@@ -18,7 +18,10 @@
 
 package io.advantageous.reakt.reactor;
 
+import io.advantageous.reakt.CallbackHandle;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandle;
+import io.advantageous.reakt.promise.impl.InvokerPromise;
 import io.advantageous.reakt.reactor.impl.ReactorImpl;
 
 import java.time.Duration;
@@ -26,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Ensures that tasks, repeating tasks and callbacks run in the callers thread.
@@ -286,5 +290,6 @@ public interface Reactor {
      */
     @SuppressWarnings("unused")
     <T> Promise<Set<T>> promiseSet(final Class<T> componentType);
+
 
 }

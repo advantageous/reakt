@@ -18,6 +18,7 @@
 
 package io.advantageous.reakt.promise;
 
+import io.advantageous.reakt.CallbackHandle;
 import io.advantageous.reakt.promise.impl.*;
 
 import java.time.Duration;
@@ -984,7 +985,21 @@ public interface Promises {
      * @param promiseConsumer promise consumer so you can call reject or resolve on the service side
      * @return new promise
      */
+    @SuppressWarnings("all")
     static <T> Promise<T> invokablePromise(Consumer<Promise<T>> promiseConsumer) {
+        return new InvokerPromise<>((Consumer<CallbackHandle<T>>) (Object) promiseConsumer);
+    }
+
+    /**
+     * Create an invokable promise handle.
+     * After you create a promise handle you register its then(...) and catchError(...) and then you use it to
+     * handle a callback.
+     *
+     * @param <T>             type of result
+     * @param promiseConsumer promise consumer so you can call reject or resolve on the service side
+     * @return new promise
+     */
+    static <T> PromiseHandle<T> deferCall(Consumer<CallbackHandle<T>> promiseConsumer) {
         return new InvokerPromise<>(promiseConsumer);
     }
 }
