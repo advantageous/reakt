@@ -18,6 +18,7 @@
 
 package io.advantageous.reakt.promise.impl;
 
+import io.advantageous.reakt.CallbackHandle;
 import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.promise.Promise;
 
@@ -25,10 +26,10 @@ import java.util.function.Consumer;
 
 public class InvokerPromise<T> extends BasePromise<T> implements Invokable {
 
-    private final Consumer<Promise<T>> consumer;
+    private final Consumer<CallbackHandle<T>> consumer;
     private boolean invoked;
 
-    public InvokerPromise(Consumer<Promise<T>> consumer) {
+    public InvokerPromise(Consumer<CallbackHandle<T>> consumer) {
         this.consumer = consumer;
     }
 

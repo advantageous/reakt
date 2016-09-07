@@ -29,6 +29,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static io.advantageous.reakt.promise.Promises.deferCall;
 import static io.advantageous.reakt.promise.Promises.invokablePromise;
 import static org.junit.Assert.*;
 
@@ -77,12 +78,33 @@ public class InvokablePromiseTest {
         assertEquals("The result is the expected result", successResult, returnValue.get());
     }
 
+    @Test
+    public void testServiceWithReturnPromiseSuccess2() {
+        serviceDiscovery.lookupService2(empURI).then(this::handleSuccess)
+                .catchError(this::handleError).invoke();
+        await();
+        assertNotNull("We have a return", returnValue.get());
+        assertNull("There were no errors", errorRef.get());
+        assertEquals("The result is the expected result", successResult, returnValue.get());
+    }
 
     @Test
     public void testServiceWithReturnPromiseFail() {
 
 
         serviceDiscovery.lookupService(null).then(this::handleSuccess)
+                .catchError(this::handleError).invoke();
+
+        await();
+        assertNull("We do not have a return", returnValue.get());
+        assertNotNull("There were  errors", errorRef.get());
+    }
+
+    @Test
+    public void testServiceWithReturnPromiseFail2() {
+
+
+        serviceDiscovery.lookupService2(null).then(this::handleSuccess)
                 .catchError(this::handleError).invoke();
 
         await();
@@ -207,11 +229,16 @@ public class InvokablePromiseTest {
     interface ServiceDiscovery {
         Promise<URI> lookupService(URI uri);
 
+
+        PromiseHandle<URI> lookupService2(URI uri);
+
         default void shutdown() {
         }
 
         default void start() {
         }
+
+
     }
 
     class ServiceDiscoveryImpl implements ServiceDiscovery {
@@ -224,6 +251,18 @@ public class InvokablePromiseTest {
                     promise.reject("URI was null");
                 } else {
                     promise.resolve(successResult);
+                }
+            });
+        }
+
+        @Override
+        public PromiseHandle<URI> lookupService2(URI uri) {
+            return deferCall(callbackHandle -> {
+
+                if (uri == null) {
+                    callbackHandle.reject("URI was null");
+                } else {
+                    callbackHandle.resolve(successResult);
                 }
             });
         }
@@ -256,6 +295,19 @@ public class InvokablePromiseTest {
                 });
             });
         }
+
+        public PromiseHandle<URI> lookupService2(URI uri) {
+            return invokablePromise(promise -> {
+                runnables.offer(() -> {
+                    if (uri == null) {
+                        promise.reject("URI was null");
+                    } else {
+                        promise.resolve(URI.create("http://localhost:8080/employeeService/"));
+                    }
+                });
+            });
+        }
+
 
         @Override
         public void shutdown() {

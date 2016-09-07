@@ -43,7 +43,7 @@ import java.util.function.Function;
  * @author Rick Hightower
  * @author Geoff Chandler
  */
-public interface Promise<T> extends Callback<T>, Result<T> {
+public interface Promise<T> extends Callback<T>, Result<T>, PromiseHandle<T> {
 
     /**
      * Creates an immutable promise.
@@ -187,9 +187,22 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         return this;
     }
 
+    /**
+     * Use this to run the promise in replay mode on a reactor.
+     * Allows a promise to be invoked with a reactor
+     * @param reactor reactor to use
+     * @return new Promise that wraps the promise. New promise is associated with the reactor.
+     */
     Promise<T> invokeWithReactor(Reactor reactor);
 
 
+    /**
+     * Use this to run the promise in replay mode on a reactor.
+     * Allows a promise to be invoked with a reactor
+     * @param reactor reactor to use
+     * @param timeout if the promise does not return in the allotted time, the reactor will time it out.
+     * @return new Promise that wraps the promise. New promise is associated with the reactor.
+     */
     Promise<T> invokeWithReactor(Reactor reactor, Duration timeout);
 
     /**
@@ -268,7 +281,7 @@ public interface Promise<T> extends Callback<T>, Result<T> {
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise.
-     * @param duration duration
+     * @param duration duration to wait for call
      * @return blocking promise
      */
     default Promise<T> invokeAsBlockingPromise(Duration duration) {
@@ -276,4 +289,26 @@ public interface Promise<T> extends Callback<T>, Result<T> {
         this.invokeWithPromise(blockingPromise);
         return blockingPromise;
     }
+
+
+    /**
+     * Used for testing and legacy integration.
+     * This turns an async promise into a blocking promise and then does a get operations.
+     * @param duration duration to wait for call
+     * @return result of call, blocks until return comes back.
+     */
+    default T blockingGet(Duration duration) {
+        return invokeAsBlockingPromise(duration).get();
+    }
+
+    /**
+     * Used for testing and legacy integration.
+     * This turns an async promise into a blocking promise and then does a get operations.
+     * @return result of call, blocks until return comes back.
+     */
+    default T blockingGet() {
+        return invokeAsBlockingPromise().get();
+    }
+
+
 }

@@ -41,7 +41,7 @@ import static io.advantageous.reakt.Result.doneResult;
  * @author Rick Hightower
  * @author Geoff Chandler
  */
-public interface Callback<T> extends Consumer<T> {
+public interface Callback<T> extends Consumer<T>, CallbackHandle<T> {
 
     /**
      * (Client view)

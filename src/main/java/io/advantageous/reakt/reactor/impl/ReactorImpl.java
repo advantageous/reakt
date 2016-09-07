@@ -19,10 +19,13 @@
 package io.advantageous.reakt.reactor.impl;
 
 import io.advantageous.reakt.Callback;
+import io.advantageous.reakt.CallbackHandle;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandle;
 import io.advantageous.reakt.promise.ReplayPromise;
+import io.advantageous.reakt.promise.impl.InvokerPromise;
 import io.advantageous.reakt.reactor.Reactor;
 import io.advantageous.reakt.reactor.TimeSource;
 
