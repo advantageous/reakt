@@ -41,19 +41,16 @@ compile 'io.advantageous.reakt:reakt:3.0.4.RELEASE'
 
 #### Fluent Promise API
 ```java
-  Promise<Employee> promise = promise()
+  employeeService.lookupEmployee(33, promise)
                 .then(e -> saveEmployee(e))
-                .catchError(error -> logger.error("Unable to lookup employee", error));
-
-  employeeService.lookupEmployee(33, promise);
+                .catchError(error -> logger.error("Unable to lookup employee", error))
+                .invoke();
 ```
 
 Or you can handle it in one line. 
 
 #### Fluent Promise API example 2
 ```java
-
-
   employeeService.lookupEmployee(33, 
         promise().then(e -> saveEmployee(e))
                  .catchError(error -> logger.error("Unable to lookup ", error))
