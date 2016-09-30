@@ -1,7 +1,6 @@
 package io.advantageous.reakt;
 
 
-
 /**
  * Simplified interface to a callback, hiding a callbacks hierarchy and dual roles.
  * This is the service view of a callback.
@@ -17,7 +16,7 @@ public interface Callback<T> {
      *
      * @param error error
      */
-    void reject(final Throwable error) ;
+    void reject(final Throwable error);
 
 
     /**
@@ -40,8 +39,7 @@ public interface Callback<T> {
      * @param errorMessage error message
      * @param error        exception
      */
-    void reject(final String errorMessage, final Throwable error) ;
-
+    void reject(final String errorMessage, final Throwable error);
 
 
     /**

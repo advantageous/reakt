@@ -34,7 +34,7 @@ import java.util.function.Function;
  * A promise is like a non-blocking {@code Future}({@link java.util.concurrent.Future}).
  * You get notified of changes instead of having to call {@code get}.
  * <p>
- * A promise is both a {@code CallbackHandler} ({@link CallbackHandler}),
+ * A promise handler is both a {@code CallbackHandler} ({@link CallbackHandler}),
  * and a {@code Result} {@link io.advantageous.reakt.Result}.
  * </p>
  * <p>
@@ -51,7 +51,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      *
      * @return final promise
      */
-    default PromiseHandler<T> freeze() {
+    default Promise<T> freeze() {
         return BasePromise.provideFinalPromise(this);
     }
 
@@ -149,7 +149,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      *
      * @return this, fluent
      */
-    default PromiseHandler<T> invoke() {
+    default void invoke() {
         throw new UnsupportedOperationException("This is not an invokable promise.");
     }
 
@@ -161,7 +161,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      * @return this, fluent
      */
     default PromiseHandler<T> thenPromise(Promise<T> promise) {
-        thenCallback((CallbackHandler)promise);
+        thenCallback((CallbackHandler) promise);
         return this;
     }
 
@@ -183,14 +183,14 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      * @param promise promise
      * @return this, fluent
      */
-    default PromiseHandler<T> invokeWithPromise(PromiseHandler<T> promise) {
+    default void invokeWithPromise(PromiseHandler<T> promise) {
         thenPromise(promise).invoke();
-        return this;
     }
 
     /**
      * Use this to run the promise in replay mode on a reactor.
      * Allows a promise to be invoked with a reactor
+     *
      * @param reactor reactor to use
      * @return new PromiseHandler that wraps the promise. New promise is associated with the reactor.
      */
@@ -200,6 +200,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     /**
      * Use this to run the promise in replay mode on a reactor.
      * Allows a promise to be invoked with a reactor
+     *
      * @param reactor reactor to use
      * @param timeout if the promise does not return in the allotted time, the reactor will time it out.
      * @return new PromiseHandler that wraps the promise. New promise is associated with the reactor.
@@ -270,10 +271,11 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise.
+     *
      * @return blocking promise
      */
     default PromiseHandler<T> invokeAsBlockingPromise() {
-        PromiseHandler<T> blockingPromise = (PromiseHandler<T>)Promises.blockingPromise();
+        PromiseHandler<T> blockingPromise = (PromiseHandler<T>) Promises.blockingPromise();
         this.invokeWithPromise(blockingPromise);
         return blockingPromise;
     }
@@ -282,6 +284,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise.
+     *
      * @param duration duration to wait for call
      * @return blocking promise
      */
@@ -295,6 +298,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise and then does a get operations.
+     *
      * @param duration duration to wait for call
      * @return result of call, blocks until return comes back.
      */
@@ -305,6 +309,7 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise and then does a get operations.
+     *
      * @return result of call, blocks until return comes back.
      */
     default T blockingGet() {

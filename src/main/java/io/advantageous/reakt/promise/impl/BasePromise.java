@@ -35,7 +35,6 @@ import java.util.function.Function;
 public class BasePromise<T> implements PromiseHandler<T> {
 
 
-
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected Expected<Consumer<T>> thenConsumer = Expected.empty();
     protected Expected<Consumer<Expected<T>>> thenExpectedConsumer = Expected.empty();
@@ -102,16 +101,15 @@ public class BasePromise<T> implements PromiseHandler<T> {
 
     @Override
     public PromiseHandler<T> invokeWithReactor(final Reactor reactor) {
-        final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
+        final BasePromise<T> reactorPromise = (BasePromise<T>) reactor.promise();
         copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
     }
 
 
-
     @Override
     public PromiseHandler<T> invokeWithReactor(final Reactor reactor, Duration timeout) {
-        final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise(timeout);
+        final BasePromise<T> reactorPromise = (BasePromise<T>) reactor.promise(timeout);
         copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
     }

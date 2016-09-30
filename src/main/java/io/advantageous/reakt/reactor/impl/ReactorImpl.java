@@ -86,7 +86,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> all(final Duration timeout,
-                                    final Promise<?>... promises) {
+                             final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
@@ -100,7 +100,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> all(final Duration timeout,
-                                        final List<Promise<T>> promises) {
+                                 final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
@@ -114,7 +114,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> any(final Duration timeout,
-                                    final Promise<?>... promises) {
+                             final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
@@ -127,7 +127,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> any(final Duration timeout,
-                                        final List<Promise<T>> promises) {
+                                 final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
@@ -306,9 +306,8 @@ public class ReactorImpl implements Reactor {
 
 
             @Override
-            public PromiseHandler<T> invoke() {
+            public void invoke() {
                 complexPromise.invokeWithReactor(ReactorImpl.this);
-                return this;
             }
 
             @Override
@@ -415,7 +414,7 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public PromiseHandler<T> freeze() {
+            public Promise<T> freeze() {
                 return complexPromise.freeze();
             }
 
@@ -437,10 +436,8 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public PromiseHandler<T> invokeWithPromise(PromiseHandler<T> promise) {
+            public void invokeWithPromise(PromiseHandler<T> promise) {
                 complexPromise.invokeWithPromise(promise);
-                return this;
-
             }
 
             @Override
@@ -485,11 +482,6 @@ public class ReactorImpl implements Reactor {
             @Override
             public void reject(String errorMessage, Throwable error) {
                 complexPromise.reject(errorMessage, error);
-            }
-
-            @Override
-            public void replyDone() {
-                complexPromise.replyDone();
             }
 
             @Override

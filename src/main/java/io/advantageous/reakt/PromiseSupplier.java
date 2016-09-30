@@ -24,13 +24,13 @@ import java.util.function.Supplier;
 
 /**
  * Represents an async supplier of results.
- *
+ * <p>
  * Use this instead of the AsyncSupplier.
  *
  * @param <T> the type of results supplied by this supplier
  * @author Rick Hightower
  * @author Geoff Chandler
  */
-public interface PromiseSupplier<T> extends Supplier<PromiseHandler<T>>{
+public interface PromiseSupplier<T> extends Supplier<PromiseHandler<T>> {
 
 }

@@ -1,19 +1,13 @@
 package io.advantageous.reakt.promise;
 
-import io.advantageous.reakt.CallbackHandler;
 import io.advantageous.reakt.Expected;
 
 import java.time.Duration;
 import java.util.function.Consumer;
 
 /**
-
  * A promise is like a non-blocking {@code Future}({@link java.util.concurrent.Future}).
  * You get notified of changes instead of having to call {@code get}.
- * <p>
- * A promise is both a {@code CallbackHandler} ({@link CallbackHandler}),
- * and a {@code Result} {@link io.advantageous.reakt.Result}.
- * </p>
  * <p>
  * A promise is a sort of deferred value.
  *
@@ -82,7 +76,7 @@ public interface Promise<T> {
      *
      * @return this, fluent
      */
-    Promise<T> invoke();
+    void invoke();
 
     /**
      * If the thenSafeExpect handler throws an exception, this will report it as if it it was caught by catchError.
@@ -136,6 +130,7 @@ public interface Promise<T> {
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise and then does a get operations.
+     *
      * @param duration duration to wait for call
      * @return result of call, blocks until return comes back.
      */
@@ -144,15 +139,18 @@ public interface Promise<T> {
     /**
      * Used for testing and legacy integration.
      * This turns an async promise into a blocking promise and then does a get operations.
+     *
      * @return result of call, blocks until return comes back.
      */
     T blockingGet();
 
     /**
-     * If backed by a PromiseHandler then this will return that promise, otherwise throws an Class Cast exception.
+     * If backed by a PromiseHandler then this will return that promise,
+     * otherwise throws a Class Cast exception.
+     *
      * @return promise that backs this handle
      */
-    default PromiseHandler<T> asPromiseHandler() {
+    default PromiseHandler<T> asHandler() {
         return (PromiseHandler<T>) this;
     }
 

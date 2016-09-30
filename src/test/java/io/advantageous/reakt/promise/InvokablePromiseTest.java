@@ -123,68 +123,70 @@ public class InvokablePromiseTest {
         assertEquals("The result is the expected result form async", successResult, returnValue.get());
     }
 
-//    @Test
-//    public void testAsyncServiceWithInvokeWithPromise() {
-//
-//        Promise<URI> promise = Promises.blockingPromise();
-//        promise.then(this::handleSuccess)
-//                .catchError(this::handleError);
-//
-//        asyncServiceDiscovery.lookupService(empURI).invokeWithPromise(promise);
-//
-//        final Expected<URI> expect = promise.asPromiseHandler().expect();
-//
-//        assertFalse(expect.isEmpty());
-//
-//        assertNotNull("We have a return from async", returnValue.get());
-//        assertNull("There were no errors form async", errorRef.get());
-//        assertEquals("The result is the expected result form async", successResult, returnValue.get());
-//    }
+    @Test
+    public void testAsyncServiceWithInvokeWithPromise() {
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(empURI).asHandler()
+                .invokeWithPromise(promise.asHandler());
+
+        final Expected<URI> expect = promise.asHandler().expect();
+
+        assertFalse(expect.isEmpty());
+
+        assertNotNull("We have a return from async", returnValue.get());
+        assertNull("There were no errors form async", errorRef.get());
+        assertEquals("The result is the expected result form async", successResult, returnValue.get());
+    }
 
 
-//    @Test
-//    public void testAsyncServiceWithInvokePromiseFail() {
-//
-//
-//        PromiseHandler<URI> promise = Promises.blockingPromise();
-//        promise.then(this::handleSuccess)
-//                .catchError(this::handleError);
-//
-//        asyncServiceDiscovery.lookupService(null).invokeWithPromise(promise);
-//
-//
-//        try {
-//            promise.get();
-//            fail();
-//        } catch (Exception ex) {
-//
-//        }
-//
-//        assertNull("We do not have a return from async", returnValue.get());
-//        assertNotNull("There were  errors from async", errorRef.get());
-//    }
+    @Test
+    public void testAsyncServiceWithInvokePromiseFail() {
 
-//    @Test
-//    public void testAsyncServiceWithInvokePromiseFail2() {
-//
-//
-//        PromiseHandler<URI> promise = Promises.blockingPromise();
-//        promise.then(this::handleSuccess)
-//                .catchError(this::handleError);
-//
-//        asyncServiceDiscovery.lookupService(null).thenCallback(promise).invoke();
-//
-//
-//        try {
-//            promise.get();
-//            fail();
-//        } catch (Exception ex) {
-//
-//        }
-//
-//        assertNull("We do not have a return from async", returnValue.get());
-//        assertNotNull("There were  errors from async", errorRef.get());
-//    }
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(null).asHandler()
+                .invokeWithPromise(promise.asHandler());
+
+
+        try {
+            promise.asHandler().get();
+            fail();
+        } catch (Exception ex) {
+
+        }
+
+        assertNull("We do not have a return from async", returnValue.get());
+        assertNotNull("There were  errors from async", errorRef.get());
+    }
+
+    @Test
+    public void testAsyncServiceWithInvokePromiseFail2() {
+
+
+        Promise<URI> promise = Promises.blockingPromise();
+        promise.then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        asyncServiceDiscovery.lookupService(null).asHandler().thenCallback(promise.asHandler()).invoke();
+
+
+        try {
+            promise.asHandler().get();
+            fail();
+        } catch (Exception ex) {
+
+        }
+
+        assertNull("We do not have a return from async", returnValue.get());
+        assertNotNull("There were  errors from async", errorRef.get());
+    }
 
     @Test
     public void testAsyncServiceWithReturnPromiseFail() {
@@ -198,21 +200,21 @@ public class InvokablePromiseTest {
         assertNotNull("There were  errors from async", errorRef.get());
     }
 
-//    @Test(expected = IllegalStateException.class)
-//    public void testServiceWithReturnPromiseSuccessInvokeTwice() {
-//        final PromiseHandler<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
-//                .catchError(this::handleError);
-//        promise.invoke();
-//        promise.invoke();
-//    }
-//
-//    @Test
-//    public void testIsInvokable() {
-//        final PromiseHandler<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
-//                .catchError(this::handleError);
-//
-//        assertTrue("Is this an invokable promise", promise.isInvokable());
-//    }
+    @Test(expected = IllegalStateException.class)
+    public void testServiceWithReturnPromiseSuccessInvokeTwice() {
+        final Promise<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
+                .catchError(this::handleError);
+        promise.invoke();
+        promise.invoke();
+    }
+
+    @Test
+    public void testIsInvokable() {
+        final Promise<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
+                .catchError(this::handleError);
+
+        assertTrue("Is this an invokable promise", promise.asHandler().isInvokable());
+    }
 
 
     private void handleError(Throwable error) {
@@ -288,7 +290,7 @@ public class InvokablePromiseTest {
             return invokablePromise(promise -> {
                 runnables.offer(() -> {
                     if (uri == null) {
-                        promise.reject("URI was null");
+                        promise.reject("URI was null lookupService");
                     } else {
                         promise.resolve(URI.create("http://localhost:8080/employeeService/"));
                     }
@@ -300,7 +302,7 @@ public class InvokablePromiseTest {
             return invokablePromise(promise -> {
                 runnables.offer(() -> {
                     if (uri == null) {
-                        promise.reject("URI was null");
+                        promise.reject("URI was null lookupService2");
                     } else {
                         promise.resolve(URI.create("http://localhost:8080/employeeService/"));
                     }

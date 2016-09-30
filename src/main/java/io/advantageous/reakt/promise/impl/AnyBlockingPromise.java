@@ -23,6 +23,6 @@ import io.advantageous.reakt.promise.PromiseHandler;
 
 public class AnyBlockingPromise extends BlockingPromise<Void> implements PromiseHandler<Void> {
     public AnyBlockingPromise(Promise<?>... promises) {
-        PromiseUtil.any(this, (PromiseHandler[]) promises);
+        PromiseUtil.any(this, (Promise[]) promises);
     }
 }

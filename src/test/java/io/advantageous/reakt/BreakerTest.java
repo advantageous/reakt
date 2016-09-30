@@ -22,8 +22,6 @@ import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -64,12 +62,11 @@ public class BreakerTest {
     }
 
 
-
     @Test
     public void testSupplierOkThenBroken() {
         final AtomicInteger service = new AtomicInteger();
 
-        final Breaker<AtomicInteger> breaker = Breaker.operational(service, theService -> !(theService.get()==0));
+        final Breaker<AtomicInteger> breaker = Breaker.operational(service, theService -> !(theService.get() == 0));
         assertTrue(breaker.isOk());
 
         service.incrementAndGet();
@@ -77,7 +74,6 @@ public class BreakerTest {
         assertTrue(breaker.isBroken());
 
     }
-
 
 
     @Test

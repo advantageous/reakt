@@ -30,23 +30,22 @@ public class AllBlockingPromise extends BlockingPromise<Void> implements Promise
 
     public AllBlockingPromise(final Promise<?>... promises) {
         this.promises = promises;
-        PromiseUtil.all(this, (PromiseHandler[]) promises);
+        PromiseUtil.all(this, (Promise[]) promises);
     }
 
 
     @Override
-    public PromiseHandler<Void> invoke() {
+    public void invoke() {
         if (invoked) {
             throw new IllegalStateException("PromiseHandler can only be invoked once");
         }
         invoked = true;
         for (Promise<?> promise : promises) {
-            if (!promise.asPromiseHandler().isInvokable()) {
+            if (!promise.asHandler().isInvokable()) {
                 throw new IllegalStateException("AllBlockingPromise can only be invoked if all children are invokeable");
             }
             promise.invoke();
         }
-        return this;
     }
 
     @Override

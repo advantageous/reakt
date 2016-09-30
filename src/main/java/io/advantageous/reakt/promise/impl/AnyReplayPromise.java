@@ -33,7 +33,7 @@ public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements Promise
     public AnyReplayPromise(final Duration timeout, final long startTime, Promise<?>... promises) {
         super(timeout, startTime);
         this.promises = promises;
-        PromiseUtil.any(this, (PromiseHandler[]) promises);
+        PromiseUtil.any(this, (Promise[]) promises);
     }
 
 
@@ -44,7 +44,7 @@ public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements Promise
         }
         invoked = true;
         for (Promise<?> promise : promises) {
-            if (!promise.asPromiseHandler().isInvokable()) {
+            if (!promise.asHandler().isInvokable()) {
                 throw new IllegalStateException("AnyReplayPromise can only be invoked if all children are invokeable");
             }
             promise.invoke();

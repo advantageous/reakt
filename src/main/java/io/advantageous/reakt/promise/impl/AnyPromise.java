@@ -29,23 +29,22 @@ public class AnyPromise extends BasePromise<Void> implements PromiseHandler<Void
 
     public AnyPromise(Promise<?>... promises) {
         this.promises = promises;
-        PromiseUtil.any((Promise)this, (Promise<Void>[]) promises);
+        PromiseUtil.any((Promise) this, (Promise<Void>[]) promises);
     }
 
 
     @Override
-    public PromiseHandler<Void> invoke() {
+    public void invoke() {
         if (invoked) {
             throw new IllegalStateException("PromiseHandler can only be invoked once");
         }
         invoked = true;
         for (Promise<?> promise : promises) {
-            if (!promise.asPromiseHandler().isInvokable()) {
+            if (!promise.asHandler().isInvokable()) {
                 throw new IllegalStateException("AnyPromise can only be invoked if all children are invokeable");
             }
             promise.invoke();
         }
-        return this;
     }
 
     @Override

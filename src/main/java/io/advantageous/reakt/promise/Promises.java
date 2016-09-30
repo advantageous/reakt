@@ -85,8 +85,8 @@ public interface Promises {
      * @param <T>      types of promise
      * @return return containing promise
      */
-    static <T> Promise<Void> any(final List<PromiseHandler<T>> promises) {
-        return any(promises.toArray(new PromiseHandler[promises.size()]));
+    static <T> Promise<Void> any(final List<Promise<T>> promises) {
+        return any(promises.toArray(new Promise[promises.size()]));
     }
 
 
@@ -161,7 +161,7 @@ public interface Promises {
     static <T> ReplayPromise<Void> allReplay(final Duration timeout,
                                              final long time,
                                              final List<Promise<T>> promises) {
-        return allReplay(timeout, time, promises.toArray(new PromiseHandler[promises.size()]));
+        return allReplay(timeout, time, promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -214,7 +214,7 @@ public interface Promises {
      */
     static <T> ReplayPromise<Void> anyReplay(final Duration timeout, long time,
                                              final List<Promise<T>> promises) {
-        return new AnyReplayPromise(timeout, time, promises.toArray(new PromiseHandler[promises.size()]));
+        return new AnyReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
     }
 
     /**
@@ -786,8 +786,8 @@ public interface Promises {
      */
     @SuppressWarnings("unused")
     static <K, V> Promise<Map<K, V>> blockingPromiseMap(final Class<K> keyType,
-                                                               final Class<V> valueType,
-                                                               final Duration duration) {
+                                                        final Class<V> valueType,
+                                                        final Duration duration) {
         return new BlockingPromise<>(duration);
     }
 
@@ -956,7 +956,7 @@ public interface Promises {
      */
     @SuppressWarnings("unused")
     static <K, V> Promise<Map<K, V>> blockingPromiseMap(final Class<K> keyType,
-                                                               final Class<V> valueType) {
+                                                        final Class<V> valueType) {
         return new BlockingPromise<>();
     }
 
@@ -981,11 +981,10 @@ public interface Promises {
      * After you create a promise you register its then(...) and catchError(...) and then you use it to
      * handle a callback.
      *
-     * @param <T>             type of result
-     * @param promiseConsumer promise consumer so you can call reject or resolve on the service side
+     * @param <T>              type of result
+     * @param callbackConsumer promise consumer so you can call reject or resolve on the service side
      * @return new promise
      */
-    @SuppressWarnings("all")
     static <T> Promise<T> invokablePromise(Consumer<Callback<T>> callbackConsumer) {
         return new InvokerPromise<>(callbackConsumer);
     }
@@ -995,7 +994,7 @@ public interface Promises {
      * After you create a promise handle you register its then(...) and catchError(...) and then you use it to
      * handle a callback.
      *
-     * @param <T>             type of result
+     * @param <T>              type of result
      * @param callbackConsumer promise consumer so you can call reject or resolve on the service side
      * @return new promise
      */

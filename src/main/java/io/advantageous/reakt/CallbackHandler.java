@@ -94,24 +94,12 @@ public interface CallbackHandler<T> extends Consumer<T>, Callback<T> {
         reject(new RejectedPromiseException(errorMessage, error));
     }
 
-
-
-
-    /**
-     * Reply that you are done.
-     * You can only use this for CallbackHandler of type Void only.
-     */
-    @SuppressWarnings("all")
-    default void replyDone() {
-        onResult((Result<T>) doneResult());
-    }
-
     /**
      * Calls replayDone, for VOID callback only. ES6 promise style.
      */
     @SuppressWarnings("unused")
     default void resolve() {
-        replyDone();
+        onResult((Result<T>) doneResult());
     }
 
     /**

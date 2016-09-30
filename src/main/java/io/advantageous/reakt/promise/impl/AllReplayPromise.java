@@ -45,7 +45,7 @@ public class AllReplayPromise extends ReplayPromiseImpl<Void> implements Promise
         }
         invoked = true;
         for (Promise<?> promise : promises) {
-            if (!promise.asPromiseHandler().isInvokable()) {
+            if (!promise.asHandler().isInvokable()) {
                 throw new IllegalStateException("AllReplayPromise can only be invoked if all children are invokeable");
             }
             promise.invoke();

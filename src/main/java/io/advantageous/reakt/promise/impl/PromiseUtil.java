@@ -54,22 +54,22 @@ public interface PromiseUtil {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
                 if (done.compareAndSet(false, true)) {
-                    parent.asPromiseHandler().reject(childPromise.cause());
+                    parent.asHandler().reject(childPromise.cause());
                     count.set(-1);
                 }
             } else {
                 /** If the count is 0, then we are done. */
                 int currentCount = count.decrementAndGet();
-                if (currentCount == 0 && !parent.asPromiseHandler().complete()) {
+                if (currentCount == 0 && !parent.asHandler().complete()) {
                     if (done.compareAndSet(false, true)) {
-                        parent.asPromiseHandler().onResult(Result.result(null));
+                        parent.asHandler().onResult(Result.result(null));
                     }
                 }
             }
         };
         /** Register the listener. */
         for (Promise<T> childPromise : childPromises) {
-            childPromise.asPromiseHandler().whenComplete(consumer);
+            childPromise.asHandler().whenComplete(consumer);
         }
     }
 
@@ -84,30 +84,29 @@ public interface PromiseUtil {
     static <T> void any(Promise<T> parent, Promise<T>[] childPromises) {
 
 
-
         final AtomicBoolean done = new AtomicBoolean();
         final Consumer<PromiseHandler<T>> runnable = (childPromise) -> {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
                 if (done.compareAndSet(false, true)) {
-                    parent.asPromiseHandler().reject(childPromise.cause());
+                    parent.asHandler().reject(childPromise.cause());
                 }
             } else {
                 /** Only fire if the child promise is the first promise
                  * so the parent does not fire multiple times. */
                 if (done.compareAndSet(false, true)) {
-                    parent.asPromiseHandler().reject(childPromise.cause());
+                    parent.asHandler().reject(childPromise.cause());
                 }
             }
 
         };
         for (Promise<T> childPromise : childPromises) {
-            childPromise.asPromiseHandler().whenComplete(runnable);
+            childPromise.asHandler().whenComplete(runnable);
         }
     }
 
     static <T, U> PromiseHandler<U> mapPromise(PromiseHandler<T> thisPromise, Function<? super T, ? extends U> mapper) {
-        final PromiseHandler<U> mappedPromise = (PromiseHandler<U>)Promises.promise();
+        final PromiseHandler<U> mappedPromise = (PromiseHandler<U>) Promises.promise();
         thisPromise.whenComplete(promise -> {
             if (promise.success()) {
                 final U mapped = mapper.apply(promise.get());
