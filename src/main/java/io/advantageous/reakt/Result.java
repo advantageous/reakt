@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public interface Result<T> {
 
     /**
-     * DONE Result for Callback Void.
+     * DONE Result for CallbackHandler Void.
      */
     Result<Void> DONE = new ResultImpl<>(null);
 

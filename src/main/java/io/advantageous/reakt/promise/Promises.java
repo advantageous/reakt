@@ -18,7 +18,7 @@
 
 package io.advantageous.reakt.promise;
 
-import io.advantageous.reakt.CallbackHandle;
+import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.promise.impl.*;
 
 import java.time.Duration;
@@ -85,8 +85,8 @@ public interface Promises {
      * @param <T>      types of promise
      * @return return containing promise
      */
-    static <T> Promise<Void> any(final List<Promise<T>> promises) {
-        return any(promises.toArray(new Promise[promises.size()]));
+    static <T> Promise<Void> any(final List<PromiseHandler<T>> promises) {
+        return any(promises.toArray(new PromiseHandler[promises.size()]));
     }
 
 
@@ -161,7 +161,7 @@ public interface Promises {
     static <T> ReplayPromise<Void> allReplay(final Duration timeout,
                                              final long time,
                                              final List<Promise<T>> promises) {
-        return allReplay(timeout, time, promises.toArray(new Promise[promises.size()]));
+        return allReplay(timeout, time, promises.toArray(new PromiseHandler[promises.size()]));
     }
 
     /**
@@ -214,7 +214,7 @@ public interface Promises {
      */
     static <T> ReplayPromise<Void> anyReplay(final Duration timeout, long time,
                                              final List<Promise<T>> promises) {
-        return new AnyReplayPromise(timeout, time, promises.toArray(new Promise[promises.size()]));
+        return new AnyReplayPromise(timeout, time, promises.toArray(new PromiseHandler[promises.size()]));
     }
 
     /**
@@ -348,7 +348,7 @@ public interface Promises {
     /**
      * Returns a void promise for notify of outcome but no value returned.
      * <p>
-     * Callback replyDone can be used instead of replay on service side.
+     * CallbackHandler replyDone can be used instead of replay on service side.
      *
      * @return void promise
      */
@@ -373,7 +373,7 @@ public interface Promises {
      *
      * @param cls type
      * @param <T> promise of a result of T
-     * @return new Promise of type T
+     * @return new PromiseHandler of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<T> promise(Class<T> cls) {
@@ -387,7 +387,7 @@ public interface Promises {
      *
      * @param componentType component type of list
      * @param <T>           promise a list of type T
-     * @return new Promise for a list of type T
+     * @return new PromiseHandler for a list of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<List<T>> promiseList(Class<T> componentType) {
@@ -400,7 +400,7 @@ public interface Promises {
      *
      * @param componentType component type of collection
      * @param <T>           promise a collection of type T
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Collection<T>> promiseCollection(Class<T> componentType) {
@@ -415,7 +415,7 @@ public interface Promises {
      * @param valueType type of map value
      * @param <K>       promise a map of  key type K
      * @param <V>       promise a map of  value type V
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <K, V> Promise<Map<K, V>> promiseMap(Class<K> keyType, Class<V> valueType) {
@@ -428,7 +428,7 @@ public interface Promises {
      *
      * @param componentType component type of set
      * @param <T>           promise a set of type T
-     * @return new Promise for a set of type T
+     * @return new PromiseHandler for a set of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Set<T>> promiseSet(Class<T> componentType) {
@@ -510,7 +510,7 @@ public interface Promises {
     /**
      * Returns a void promise for notify of outcome but no value returned.
      * <p>
-     * Callback replyDone can be used instead of replay on service side.
+     * CallbackHandler replyDone can be used instead of replay on service side.
      *
      * @param timeout timeout
      * @param time    time
@@ -544,7 +544,7 @@ public interface Promises {
      * @param timeout timeout
      * @param time    time
      * @param <T>     promise of a result of T
-     * @return new Promise of type T
+     * @return new PromiseHandler of type T
      */
     @SuppressWarnings("unused")
     static <T> ReplayPromise<T> replayPromise(Class<T> cls,
@@ -562,7 +562,7 @@ public interface Promises {
      * @param timeout       timeout
      * @param time          time
      * @param <T>           promise a list of type T
-     * @return new Promise for a list of type T
+     * @return new PromiseHandler for a list of type T
      */
     @SuppressWarnings("unused")
     static <T> ReplayPromise<List<T>> replayPromiseList(Class<T> componentType,
@@ -579,7 +579,7 @@ public interface Promises {
      * @param timeout       timeout
      * @param time          time
      * @param <T>           promise a collection of type T
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <T> ReplayPromise<Collection<T>> replayPromiseCollection(Class<T> componentType,
@@ -598,7 +598,7 @@ public interface Promises {
      * @param time      time
      * @param <K>       promise a map of  key type K
      * @param <V>       promise a map of  value type V
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <K, V> ReplayPromise<Map<K, V>> replayPromiseMap(Class<K> keyType, Class<V> valueType,
@@ -615,7 +615,7 @@ public interface Promises {
      * @param timeout       timeout
      * @param time          time
      * @param <T>           promise a set of type T
-     * @return new Promise for a set of type T
+     * @return new PromiseHandler for a set of type T
      */
     @SuppressWarnings("unused")
     static <T> ReplayPromise<Set<T>> replayPromiseSet(Class<T> componentType,
@@ -697,7 +697,7 @@ public interface Promises {
     /**
      * Returns a void promise for notify of outcome but no value returned.
      * <p>
-     * Callback replyDone can be used instead of replay on service side.
+     * CallbackHandler replyDone can be used instead of replay on service side.
      * Create a blocking promise.
      * NOTE BLOCKING PROMISES ARE FOR LEGACY INTEGRATION AND TESTING ONLY!!!
      *
@@ -731,7 +731,7 @@ public interface Promises {
      * @param duration duration of block
      * @param cls      type
      * @param <T>      promise of a result of T
-     * @return new Promise of type T
+     * @return new PromiseHandler of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<T> blockingPromise(Class<T> cls, final Duration duration) {
@@ -748,7 +748,7 @@ public interface Promises {
      * @param duration      duration of block
      * @param componentType component type of list
      * @param <T>           promise a list of type T
-     * @return new Promise for a list of type T
+     * @return new PromiseHandler for a list of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<List<T>> blockingPromiseList(Class<T> componentType, final Duration duration) {
@@ -764,7 +764,7 @@ public interface Promises {
      * @param duration      duration of block
      * @param componentType component type of collection
      * @param <T>           promise a collection of type T
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Collection<T>> blockingPromiseCollection(Class<T> componentType, final Duration duration) {
@@ -782,12 +782,12 @@ public interface Promises {
      * @param valueType type of map value
      * @param <K>       promise a map of  key type K
      * @param <V>       promise a map of  value type V
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <K, V> Promise<Map<K, V>> blockingPromiseMap(final Class<K> keyType,
-                                                        final Class<V> valueType,
-                                                        final Duration duration) {
+                                                               final Class<V> valueType,
+                                                               final Duration duration) {
         return new BlockingPromise<>(duration);
     }
 
@@ -800,7 +800,7 @@ public interface Promises {
      * @param duration      duration of block
      * @param componentType component type of set
      * @param <T>           promise a set of type T
-     * @return new Promise for a set of type T
+     * @return new PromiseHandler for a set of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Set<T>> blockingPromiseSet(Class<T> componentType, final Duration duration) {
@@ -873,7 +873,7 @@ public interface Promises {
     /**
      * Returns a void promise for notify of outcome but no value returned.
      * <p>
-     * Callback replyDone can be used instead of replay on service side.
+     * CallbackHandler replyDone can be used instead of replay on service side.
      * Create a blocking promise.
      * NOTE BLOCKING PROMISES ARE FOR LEGACY INTEGRATION AND TESTING ONLY!!!
      *
@@ -904,7 +904,7 @@ public interface Promises {
      *
      * @param cls type
      * @param <T> promise of a result of T
-     * @return new Promise of type T
+     * @return new PromiseHandler of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<T> blockingPromise(Class<T> cls) {
@@ -920,7 +920,7 @@ public interface Promises {
      *
      * @param componentType component type of list
      * @param <T>           promise a list of type T
-     * @return new Promise for a list of type T
+     * @return new PromiseHandler for a list of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<List<T>> blockingPromiseList(Class<T> componentType) {
@@ -935,7 +935,7 @@ public interface Promises {
      *
      * @param componentType component type of collection
      * @param <T>           promise a collection of type T
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Collection<T>> blockingPromiseCollection(Class<T> componentType) {
@@ -952,11 +952,11 @@ public interface Promises {
      * @param valueType type of map value
      * @param <K>       promise a map of  key type K
      * @param <V>       promise a map of  value type V
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     static <K, V> Promise<Map<K, V>> blockingPromiseMap(final Class<K> keyType,
-                                                        final Class<V> valueType) {
+                                                               final Class<V> valueType) {
         return new BlockingPromise<>();
     }
 
@@ -968,7 +968,7 @@ public interface Promises {
      *
      * @param componentType component type of set
      * @param <T>           promise a set of type T
-     * @return new Promise for a set of type T
+     * @return new PromiseHandler for a set of type T
      */
     @SuppressWarnings("unused")
     static <T> Promise<Set<T>> blockingPromiseSet(Class<T> componentType) {
@@ -986,8 +986,8 @@ public interface Promises {
      * @return new promise
      */
     @SuppressWarnings("all")
-    static <T> Promise<T> invokablePromise(Consumer<Promise<T>> promiseConsumer) {
-        return new InvokerPromise<>((Consumer<CallbackHandle<T>>) (Object) promiseConsumer);
+    static <T> Promise<T> invokablePromise(Consumer<Callback<T>> callbackConsumer) {
+        return new InvokerPromise<>(callbackConsumer);
     }
 
     /**
@@ -996,10 +996,10 @@ public interface Promises {
      * handle a callback.
      *
      * @param <T>             type of result
-     * @param promiseConsumer promise consumer so you can call reject or resolve on the service side
+     * @param callbackConsumer promise consumer so you can call reject or resolve on the service side
      * @return new promise
      */
-    static <T> PromiseHandle<T> deferCall(Consumer<CallbackHandle<T>> promiseConsumer) {
-        return new InvokerPromise<>(promiseConsumer);
+    static <T> Promise<T> deferCall(Consumer<Callback<T>> callbackConsumer) {
+        return new InvokerPromise<>(callbackConsumer);
     }
 }

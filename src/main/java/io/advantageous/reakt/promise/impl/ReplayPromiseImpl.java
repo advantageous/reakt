@@ -21,7 +21,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.impl.ResultImpl;
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.promise.ReplayPromise;
 
 import java.time.Duration;
@@ -105,7 +105,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     }
 
     @Override
-    public Promise<T> freeze() {
+    public PromiseHandler<T> freeze() {
         throw new IllegalStateException("Freeze (freeze()) only makes sense for callback " +
                 "and blocking promises because replay promises are only accessed from one " +
                 "thread so mutability is ok.");

@@ -22,7 +22,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.ThenHandlerException;
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.reactor.Reactor;
 
 import java.time.Duration;
@@ -32,9 +32,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class FinalPromise<T> implements Promise<T> {
+public class FinalPromise<T> implements PromiseHandler<T> {
 
-    protected final Expected<List<Consumer<Promise<T>>>> completeListeners;
+    protected final Expected<List<Consumer<PromiseHandler<T>>>> completeListeners;
     protected final AtomicReference<Result<T>> result = new AtomicReference<>();
     protected final Expected<Consumer<T>> thenConsumer;
     protected final Expected<Consumer<Throwable>> catchConsumer;
@@ -44,7 +44,7 @@ public class FinalPromise<T> implements Promise<T> {
     public FinalPromise(Expected<Consumer<T>> thenConsumer,
                         Expected<Consumer<Throwable>> catchConsumer,
                         Expected<Consumer<Expected<T>>> thenValueConsumer,
-                        Expected<List<Consumer<Promise<T>>>> completeListeners,
+                        Expected<List<Consumer<PromiseHandler<T>>>> completeListeners,
                         boolean safe) {
         this.thenConsumer = thenConsumer;
         this.catchConsumer = catchConsumer;
@@ -63,12 +63,12 @@ public class FinalPromise<T> implements Promise<T> {
     }
 
     @Override
-    public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+    public PromiseHandler<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
     }
 
     @Override
-    public Promise<T> thenSafe(Consumer<T> consumer) {
+    public PromiseHandler<T> thenSafe(Consumer<T> consumer) {
         throw new UnsupportedOperationException("thenSafe(..) not supported for final promise");
     }
 
@@ -77,34 +77,34 @@ public class FinalPromise<T> implements Promise<T> {
         throw new UnsupportedOperationException("supportsSafe(..) not supported for final promise");
     }
 
-    public Promise<T> then(final Consumer<T> consumer) {
+    public PromiseHandler<T> then(final Consumer<T> consumer) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
 
     }
 
     @Override
-    public Promise<T> whenComplete(Consumer<Promise<T>> doneListener) {
+    public PromiseHandler<T> whenComplete(Consumer<PromiseHandler<T>> doneListener) {
         throw new UnsupportedOperationException("whenComplete(..) not supported for final promise");
     }
 
 
     @Override
-    public synchronized Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
+    public synchronized PromiseHandler<T> thenExpect(Consumer<Expected<T>> consumer) {
         throw new UnsupportedOperationException("thenExpect(..) not supported for final promise");
     }
 
     @Override
-    public Promise<T> catchError(Consumer<Throwable> consumer) {
+    public PromiseHandler<T> catchError(Consumer<Throwable> consumer) {
         throw new UnsupportedOperationException("catchError(..) not supported for final promise");
     }
 
     @Override
-    public Promise<T> invokeWithReactor(Reactor reactor) {
+    public PromiseHandler<T> invokeWithReactor(Reactor reactor) {
         throw new UnsupportedOperationException("invokeWithReactor(..) not supported for final promise");
     }
 
     @Override
-    public Promise<T> invokeWithReactor(Reactor reactor, Duration timeout) {
+    public PromiseHandler<T> invokeWithReactor(Reactor reactor, Duration timeout) {
         throw new UnsupportedOperationException("invokeWithReactor(..) not supported for final promise");
     }
 
@@ -202,7 +202,7 @@ public class FinalPromise<T> implements Promise<T> {
     }
 
     @Override
-    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+    public <U> PromiseHandler<U> thenMap(Function<? super T, ? extends U> mapper) {
         throw new UnsupportedOperationException("then(..) not supported for final promise");
     }
 

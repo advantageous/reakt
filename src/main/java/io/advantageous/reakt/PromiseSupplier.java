@@ -18,7 +18,7 @@
 
 package io.advantageous.reakt;
 
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 
 import java.util.function.Supplier;
 
@@ -31,6 +31,6 @@ import java.util.function.Supplier;
  * @author Rick Hightower
  * @author Geoff Chandler
  */
-public interface PromiseSupplier<T> extends Supplier<Promise<T>>{
+public interface PromiseSupplier<T> extends Supplier<PromiseHandler<T>>{
 
 }

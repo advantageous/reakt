@@ -21,8 +21,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.ThenHandlerException;
-import io.advantageous.reakt.impl.ResultImpl;
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.reactor.Reactor;
 
 import java.time.Duration;
@@ -33,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BasePromise<T> implements Promise<T> {
+public class BasePromise<T> implements PromiseHandler<T> {
 
 
 
@@ -41,10 +40,10 @@ public class BasePromise<T> implements Promise<T> {
     protected Expected<Consumer<T>> thenConsumer = Expected.empty();
     protected Expected<Consumer<Expected<T>>> thenExpectedConsumer = Expected.empty();
     protected Expected<Consumer<Throwable>> catchConsumer = Expected.empty();
-    protected Expected<List<Consumer<Promise<T>>>> completeListeners = Expected.empty();
+    protected Expected<List<Consumer<PromiseHandler<T>>>> completeListeners = Expected.empty();
     private boolean safe;
 
-    public static <T> Promise<T> provideFinalPromise(Promise<T> promise) {
+    public static <T> PromiseHandler<T> provideFinalPromise(PromiseHandler<T> promise) {
         if (promise instanceof BasePromise) {
             BasePromise<T> basePromise = ((BasePromise<T>) promise);
             return new FinalPromise<>(basePromise.thenConsumer,
@@ -57,14 +56,14 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+    public PromiseHandler<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
         safe = true;
         thenExpectedConsumer = Expected.of(consumer);
         return this;
     }
 
     @Override
-    public Promise<T> thenSafe(Consumer<T> consumer) {
+    public PromiseHandler<T> thenSafe(Consumer<T> consumer) {
         safe = true;
         thenConsumer = Expected.of(consumer);
         return this;
@@ -75,13 +74,13 @@ public class BasePromise<T> implements Promise<T> {
         return true;
     }
 
-    public synchronized Promise<T> then(final Consumer<T> consumer) {
+    public synchronized PromiseHandler<T> then(final Consumer<T> consumer) {
         thenConsumer = Expected.of(consumer);
         return this;
     }
 
     @Override
-    public Promise<T> whenComplete(final Consumer<Promise<T>> doneListener) {
+    public PromiseHandler<T> whenComplete(final Consumer<PromiseHandler<T>> doneListener) {
         if (completeListeners.isEmpty()) {
             completeListeners = Expected.of(new CopyOnWriteArrayList<>());
         }
@@ -90,19 +89,19 @@ public class BasePromise<T> implements Promise<T> {
     }
 
     @Override
-    public synchronized Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
+    public synchronized PromiseHandler<T> thenExpect(Consumer<Expected<T>> consumer) {
         thenExpectedConsumer = Expected.of(consumer);
         return this;
     }
 
     @Override
-    public Promise<T> catchError(Consumer<Throwable> consumer) {
+    public PromiseHandler<T> catchError(Consumer<Throwable> consumer) {
         catchConsumer = Expected.of(consumer);
         return this;
     }
 
     @Override
-    public Promise<T> invokeWithReactor(final Reactor reactor) {
+    public PromiseHandler<T> invokeWithReactor(final Reactor reactor) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise();
         copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
@@ -111,7 +110,7 @@ public class BasePromise<T> implements Promise<T> {
 
 
     @Override
-    public Promise<T> invokeWithReactor(final Reactor reactor, Duration timeout) {
+    public PromiseHandler<T> invokeWithReactor(final Reactor reactor, Duration timeout) {
         final BasePromise<T> reactorPromise = (BasePromise<T>)reactor.promise(timeout);
         copyPromiseFieldsToReactorPromise(reactorPromise);
         return this;
@@ -215,7 +214,7 @@ public class BasePromise<T> implements Promise<T> {
 
 
     @Override
-    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+    public <U> PromiseHandler<U> thenMap(Function<? super T, ? extends U> mapper) {
         return PromiseUtil.mapPromise(this, mapper);
     }
 

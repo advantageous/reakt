@@ -154,31 +154,31 @@ public class CallbackTest {
 
     public static class TestService {
 
-        public void simple(Callback<Employee> callback) {
+        public void simple(CallbackHandler<Employee> callback) {
 
             callback.resolve(new Employee("Rick"));
         }
 
-        public void simpleNoReturn(Callback<Employee> callback) {
+        public void simpleNoReturn(CallbackHandler<Employee> callback) {
 
             callback.resolve();
         }
 
-        public void simpleConsumer(Callback<Employee> callback) {
+        public void simpleConsumer(CallbackHandler<Employee> callback) {
             callback.consumer().accept(new Employee("Rick"));
         }
 
 
-        public void error(Callback<Employee> callback) {
+        public void error(CallbackHandler<Employee> callback) {
             callback.reject("Error");
         }
 
 
-        public void errorConsumer(Callback<Employee> callback) {
+        public void errorConsumer(CallbackHandler<Employee> callback) {
             callback.errorConsumer().accept(new IllegalStateException("Error"));
         }
 
-        public void exception(Callback<Employee> callback) {
+        public void exception(CallbackHandler<Employee> callback) {
             callback.reject("force exception", new IllegalStateException("Error"));
         }
     }

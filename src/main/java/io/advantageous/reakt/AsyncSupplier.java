@@ -32,6 +32,6 @@ public interface AsyncSupplier<T> {
      *
      * @param callback callback with supplied item as a result.
      */
-    void get(Callback<T> callback);
+    void get(CallbackHandler<T> callback);
 
 }

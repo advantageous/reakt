@@ -18,14 +18,12 @@
 
 package io.advantageous.reakt.reactor.impl;
 
-import io.advantageous.reakt.Callback;
-import io.advantageous.reakt.CallbackHandle;
+import io.advantageous.reakt.CallbackHandler;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.Promise;
-import io.advantageous.reakt.promise.PromiseHandle;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.promise.ReplayPromise;
-import io.advantageous.reakt.promise.impl.InvokerPromise;
 import io.advantageous.reakt.reactor.Reactor;
 import io.advantageous.reakt.reactor.TimeSource;
 
@@ -88,7 +86,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> all(final Duration timeout,
-                             final Promise<?>... promises) {
+                                    final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
@@ -102,7 +100,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> all(final Duration timeout,
-                                 final List<Promise<T>> promises) {
+                                        final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(allReplay(timeout, timeSource.getTime(), promises))
         );
@@ -116,7 +114,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public Promise<Void> any(final Duration timeout,
-                             final Promise<?>... promises) {
+                                    final Promise<?>... promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
@@ -129,7 +127,7 @@ public class ReactorImpl implements Reactor {
 
     @Override
     public <T> Promise<Void> any(final Duration timeout,
-                                 final List<Promise<T>> promises) {
+                                        final List<Promise<T>> promises) {
         return addPromiseToProcessingQueue(
                 wrapAllOrAnyAndMakeInvokeable(anyReplay(timeout, timeSource.getTime(), promises))
         );
@@ -308,7 +306,7 @@ public class ReactorImpl implements Reactor {
 
 
             @Override
-            public Promise<T> invoke() {
+            public PromiseHandler<T> invoke() {
                 complexPromise.invokeWithReactor(ReactorImpl.this);
                 return this;
             }
@@ -336,42 +334,42 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public Promise<T> then(Consumer<T> consumer) {
+            public PromiseHandler<T> then(Consumer<T> consumer) {
                 complexPromise.then(consumer);
                 return this;
             }
 
             @Override
-            public Promise<T> whenComplete(Consumer<Promise<T>> doneListener) {
+            public PromiseHandler<T> whenComplete(Consumer<PromiseHandler<T>> doneListener) {
                 complexPromise.whenComplete(doneListener);
                 return this;
             }
 
             @Override
-            public Promise<T> thenExpect(Consumer<Expected<T>> consumer) {
+            public PromiseHandler<T> thenExpect(Consumer<Expected<T>> consumer) {
                 complexPromise.thenExpect(consumer);
                 return this;
             }
 
             @Override
-            public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
+            public <U> PromiseHandler<U> thenMap(Function<? super T, ? extends U> mapper) {
                 return complexPromise.thenMap(mapper);
             }
 
             @Override
-            public Promise<T> catchError(Consumer<Throwable> consumer) {
+            public PromiseHandler<T> catchError(Consumer<Throwable> consumer) {
                 complexPromise.catchError(consumer);
                 return this;
             }
 
             @Override
-            public Promise<T> invokeWithReactor(Reactor reactor) {
+            public PromiseHandler<T> invokeWithReactor(Reactor reactor) {
                 complexPromise.invokeWithReactor(reactor);
                 return this;
             }
 
             @Override
-            public Promise<T> invokeWithReactor(Reactor reactor, Duration timeout) {
+            public PromiseHandler<T> invokeWithReactor(Reactor reactor, Duration timeout) {
                 complexPromise.invokeWithReactor(reactor, timeout);
                 return this;
             }
@@ -417,7 +415,7 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public Promise<T> freeze() {
+            public PromiseHandler<T> freeze() {
                 return complexPromise.freeze();
             }
 
@@ -427,33 +425,33 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public Promise<T> thenPromise(Promise<T> promise) {
+            public PromiseHandler<T> thenPromise(Promise<T> promise) {
                 complexPromise.thenPromise(promise);
                 return this;
 
             }
 
             @Override
-            public Promise<T> thenCallback(Callback<T> callback) {
+            public PromiseHandler<T> thenCallback(CallbackHandler<T> callback) {
                 return complexPromise.thenCallback(callback);
             }
 
             @Override
-            public Promise<T> invokeWithPromise(Promise<T> promise) {
+            public PromiseHandler<T> invokeWithPromise(PromiseHandler<T> promise) {
                 complexPromise.invokeWithPromise(promise);
                 return this;
 
             }
 
             @Override
-            public Promise<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
+            public PromiseHandler<T> thenSafeExpect(Consumer<Expected<T>> consumer) {
                 complexPromise.thenSafeExpect(consumer);
                 return this;
 
             }
 
             @Override
-            public Promise<T> thenSafe(Consumer<T> consumer) {
+            public PromiseHandler<T> thenSafe(Consumer<T> consumer) {
                 complexPromise.thenSafe(consumer);
                 return this;
 
@@ -465,12 +463,12 @@ public class ReactorImpl implements Reactor {
             }
 
             @Override
-            public Promise<T> invokeAsBlockingPromise() {
+            public PromiseHandler<T> invokeAsBlockingPromise() {
                 return complexPromise.invokeAsBlockingPromise();
             }
 
             @Override
-            public Promise<T> invokeAsBlockingPromise(Duration duration) {
+            public PromiseHandler<T> invokeAsBlockingPromise(Duration duration) {
                 return complexPromise.invokeAsBlockingPromise(duration);
             }
 
@@ -487,11 +485,6 @@ public class ReactorImpl implements Reactor {
             @Override
             public void reject(String errorMessage, Throwable error) {
                 complexPromise.reject(errorMessage, error);
-            }
-
-            @Override
-            public void reply(T result) {
-                complexPromise.reply(result);
             }
 
             @Override

@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * @param <T> T value of the result.
  * @author Rick Hightower
  */
-public interface ReplayPromise<T> extends Promise<T> {
+public interface ReplayPromise<T> extends PromiseHandler<T> {
 
     /**
      * Return true if timed out.

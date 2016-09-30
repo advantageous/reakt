@@ -19,9 +19,10 @@
 package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 
-public class AnyBlockingPromise extends BlockingPromise<Void> implements Promise<Void> {
+public class AnyBlockingPromise extends BlockingPromise<Void> implements PromiseHandler<Void> {
     public AnyBlockingPromise(Promise<?>... promises) {
-        PromiseUtil.any(this, (Promise[]) promises);
+        PromiseUtil.any(this, (PromiseHandler[]) promises);
     }
 }

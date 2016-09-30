@@ -20,7 +20,7 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.promise.Promises;
 
 import java.time.Duration;
@@ -116,14 +116,14 @@ public class BlockingPromise<T> extends BasePromise<T> {
     }
 
     @Override
-    public <U> Promise<U> thenMap(Function<? super T, ? extends U> mapper) {
-        final Promise<U> mappedPromise = Promises.blockingPromise();
+    public <U> PromiseHandler<U> thenMap(Function<? super T, ? extends U> mapper) {
+        final PromiseHandler<U> mappedPromise = (PromiseHandler<U>)Promises.blockingPromise();
         this.whenComplete(p -> {
             final BlockingPromise<T> promise = (BlockingPromise) p;
             if (promise._success()) {
                 final T t = promise.result.get().get();
                 final U mapped = mapper.apply(t);
-                mappedPromise.reply(mapped);
+                mappedPromise.resolve(mapped);
             } else {
                 mappedPromise.reject(promise.cause());
             }

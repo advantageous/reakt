@@ -34,9 +34,9 @@ public interface Observer<T> {
      *
      * @param observer observer that you want to turn into a callback.
      * @param <T>      value of results, which will be a singleton.
-     * @return new Callback
+     * @return new CallbackHandler
      */
-    static <T> Callback<T> callback(final Observer<T> observer) {
+    static <T> CallbackHandler<T> callback(final Observer<T> observer) {
         return result -> {
             if (result.success()) {
                 observer.onNext(result.get());
@@ -87,7 +87,7 @@ public interface Observer<T> {
     /**
      * Provides the Observer with a new item to observe.
      * <p>
-     * The Observable may call this method 0 or more times. In the case of a scalar call {@link Callback#onResult(Result)}
+     * The Observable may call this method 0 or more times. In the case of a scalar call {@link CallbackHandler#onResult(Result)}
      * it will get called once. In the case of {@link Stream#onNext(StreamResult)} the stream will get called many times.
      * <p>
      * The {@code Observable} will not call this method again after it calls either {@link #onCompleted} or

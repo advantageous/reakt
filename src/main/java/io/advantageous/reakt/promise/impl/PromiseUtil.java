@@ -21,6 +21,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.exception.RejectedPromiseException;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.promise.Promises;
 
 import java.util.NoSuchElementException;
@@ -33,7 +34,7 @@ import java.util.function.Function;
 public interface PromiseUtil {
 
     /**
-     * Does the all logic for All*Promise.
+     * Does the all logic for All*PromiseHandler.
      * This promise only fires (comes back) if all of the child promises come back.
      *
      * @param parent        parent
@@ -44,7 +45,7 @@ public interface PromiseUtil {
         final AtomicInteger count = new AtomicInteger(childPromises.length);
         final AtomicBoolean done = new AtomicBoolean();
 
-        final Consumer<Promise<T>> consumer = (childPromise) -> {
+        final Consumer<PromiseHandler<T>> consumer = (childPromise) -> {
 
             if (done.get()) {
                 return;
@@ -53,27 +54,27 @@ public interface PromiseUtil {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
                 if (done.compareAndSet(false, true)) {
-                    parent.reject(childPromise.cause());
+                    parent.asPromiseHandler().reject(childPromise.cause());
                     count.set(-1);
                 }
             } else {
                 /** If the count is 0, then we are done. */
                 int currentCount = count.decrementAndGet();
-                if (currentCount == 0 && !parent.complete()) {
+                if (currentCount == 0 && !parent.asPromiseHandler().complete()) {
                     if (done.compareAndSet(false, true)) {
-                        parent.onResult(Result.result(null));
+                        parent.asPromiseHandler().onResult(Result.result(null));
                     }
                 }
             }
         };
         /** Register the listener. */
         for (Promise<T> childPromise : childPromises) {
-            childPromise.whenComplete(consumer);
+            childPromise.asPromiseHandler().whenComplete(consumer);
         }
     }
 
     /**
-     * Does the any logic for Any*Promise.
+     * Does the any logic for Any*PromiseHandler.
      * If any child comes back, then the parent comes back.
      *
      * @param parent        parent promise
@@ -82,33 +83,35 @@ public interface PromiseUtil {
      */
     static <T> void any(Promise<T> parent, Promise<T>[] childPromises) {
 
+
+
         final AtomicBoolean done = new AtomicBoolean();
-        final Consumer<Promise<T>> runnable = (childPromise) -> {
+        final Consumer<PromiseHandler<T>> runnable = (childPromise) -> {
             /** If any promise fails then stop processing. */
             if (childPromise.failure()) {
                 if (done.compareAndSet(false, true)) {
-                    parent.reject(childPromise.cause());
+                    parent.asPromiseHandler().reject(childPromise.cause());
                 }
             } else {
                 /** Only fire if the child promise is the first promise
                  * so the parent does not fire multiple times. */
                 if (done.compareAndSet(false, true)) {
-                    parent.reject(childPromise.cause());
+                    parent.asPromiseHandler().reject(childPromise.cause());
                 }
             }
 
         };
         for (Promise<T> childPromise : childPromises) {
-            childPromise.whenComplete(runnable);
+            childPromise.asPromiseHandler().whenComplete(runnable);
         }
     }
 
-    static <T, U> Promise<U> mapPromise(Promise<T> thisPromise, Function<? super T, ? extends U> mapper) {
-        final Promise<U> mappedPromise = Promises.promise();
+    static <T, U> PromiseHandler<U> mapPromise(PromiseHandler<T> thisPromise, Function<? super T, ? extends U> mapper) {
+        final PromiseHandler<U> mappedPromise = (PromiseHandler<U>)Promises.promise();
         thisPromise.whenComplete(promise -> {
             if (promise.success()) {
                 final U mapped = mapper.apply(promise.get());
-                mappedPromise.reply(mapped);
+                mappedPromise.resolve(mapped);
             } else {
                 mappedPromise.reject(promise.cause());
             }
@@ -117,7 +120,7 @@ public interface PromiseUtil {
     }
 
 
-    static <T> T doGet(AtomicReference<Result<T>> result, Promise<?> promise) {
+    static <T> T doGet(AtomicReference<Result<T>> result, PromiseHandler<?> promise) {
 
         if (!promise.complete()) {
             throw new NoSuchElementException("No value present, result not returned.");
