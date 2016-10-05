@@ -147,7 +147,6 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      * </code>
      * </pre>
      *
-     * @return this, fluent
      */
     default void invoke() {
         throw new UnsupportedOperationException("This is not an invokable promise.");
@@ -181,7 +180,6 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
      * Allows you to pass an existing promise as a handler.
      *
      * @param promise promise
-     * @return this, fluent
      */
     default void invokeWithPromise(PromiseHandler<T> promise) {
         thenPromise(promise).invoke();

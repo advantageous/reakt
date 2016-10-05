@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * You get notified of changes instead of having to call {@code get}.
  * <p>
  * A promise is a sort of deferred value.
- *
+ * </p>
  * @param <T> value of result.
  * @author Rick Hightower
  * @author Geoff Chandler
@@ -74,7 +74,6 @@ public interface Promise<T> {
      * </code>
      * </pre>
      *
-     * @return this, fluent
      */
     void invoke();
 

@@ -25,14 +25,11 @@ import java.util.function.Consumer;
 
 /**
  * A generic event handler for N results, i.e., a stream of results.
- * <p>
+ *
  * This is a like a type of {@link CallbackHandler} for streaming results.
  * While {@code CallbackHandler} can be considered for scalar results, a
  * {@code Stream} is more appropriate for non-scalar results, i.e., {@code Stream#onNext}
- * will get called many times.
- * <p>
- * which can be thought of as a callback handler.
- * <p>
+ * will get called many times which can be thought of as a callback handler.
  * This is like an async future or promise.
  *
  * @param <T> type of result returned from callback
@@ -43,7 +40,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Client view)
      * A result was returned so handle it.
-     * <p>
      * This is registered from the callers (or event receivers perspective).
      * A client of a service would override {@code onResult}.
      *
@@ -54,7 +50,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Service view)
      * This allows services to send back a last result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -66,8 +61,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Service view)
      * This allows services to send back a next result easily to the client/handler.
-     * <p>
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -80,7 +73,6 @@ public interface Stream<T> extends Callback<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -94,7 +86,6 @@ public interface Stream<T> extends Callback<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result        result value to send.
@@ -109,7 +100,6 @@ public interface Stream<T> extends Callback<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result        result value to send.
@@ -126,12 +116,9 @@ public interface Stream<T> extends Callback<T> {
 
     /**
      * (Service view)
-     * <p>
      * Don't use this method anymore. Going to mark it deprecated.
      * Use reject instead.
-     * <p>
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param error error
@@ -145,7 +132,6 @@ public interface Stream<T> extends Callback<T> {
      * Don't use this method anymore. Going to mark it deprecated.
      * Use reject instead.
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param errorMessage error message
@@ -159,7 +145,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Service view)
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param error error
@@ -171,7 +156,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Service view)
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param errorMessage error message
@@ -185,7 +169,6 @@ public interface Stream<T> extends Callback<T> {
     /**
      * (Service view)
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param errorMessage error message
