@@ -18,10 +18,7 @@
 
 package io.advantageous.reakt.promise;
 
-import io.advantageous.reakt.CallbackHandler;
-import io.advantageous.reakt.Expected;
-import io.advantageous.reakt.Invokable;
-import io.advantageous.reakt.Result;
+import io.advantageous.reakt.*;
 import io.advantageous.reakt.promise.impl.BasePromise;
 import io.advantageous.reakt.reactor.Reactor;
 
@@ -174,6 +171,21 @@ public interface PromiseHandler<T> extends CallbackHandler<T>, Result<T>, Promis
     default PromiseHandler<T> thenCallback(CallbackHandler<T> callback) {
         this.catchError(callback::reject).then(callback::resolve);
         return this;
+    }
+
+    default PromiseHandler<T> thenCallback(Callback<T> callback) {
+        this.catchError(callback::reject).then(callback::resolve);
+        return this;
+    }
+
+
+    /**
+     * Allows you to pass an existing promise as a handler.
+     *
+     * @param promise promise
+     */
+    default void invokeWithPromise(Promise<T> promise) {
+        thenPromise(promise).invoke();
     }
 
     /**
