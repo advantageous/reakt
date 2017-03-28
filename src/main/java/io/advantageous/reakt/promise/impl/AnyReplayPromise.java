@@ -20,11 +20,12 @@ package io.advantageous.reakt.promise.impl;
 
 import io.advantageous.reakt.Invokable;
 import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.reactor.Reactor;
 
 import java.time.Duration;
 
-public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements Promise<Void>, Invokable {
+public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements PromiseHandler<Void>, Invokable {
 
     private final Promise<?>[] promises;
     private boolean invoked;
@@ -37,13 +38,13 @@ public class AnyReplayPromise extends ReplayPromiseImpl<Void> implements Promise
 
 
     @Override
-    public Promise<Void> invokeWithReactor(final Reactor reactor) {
+    public PromiseHandler<Void> invokeWithReactor(final Reactor reactor) {
         if (invoked) {
-            throw new IllegalStateException("Promise can only be invoked once");
+            throw new IllegalStateException("PromiseHandler can only be invoked once");
         }
         invoked = true;
         for (Promise<?> promise : promises) {
-            if (!promise.isInvokable()) {
+            if (!promise.asHandler().isInvokable()) {
                 throw new IllegalStateException("AnyReplayPromise can only be invoked if all children are invokeable");
             }
             promise.invoke();

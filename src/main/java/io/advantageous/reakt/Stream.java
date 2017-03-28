@@ -18,31 +18,28 @@
 
 package io.advantageous.reakt;
 
+import io.advantageous.reakt.exception.RejectedStreamException;
 import io.advantageous.reakt.impl.StreamResultImpl;
 
 import java.util.function.Consumer;
 
 /**
  * A generic event handler for N results, i.e., a stream of results.
- * <p>
- * This is a like a type of {@link Callback} for streaming results.
- * While {@code Callback} can be considered for scalar results, a
+ *
+ * This is a like a type of {@link CallbackHandler} for streaming results.
+ * While {@code CallbackHandler} can be considered for scalar results, a
  * {@code Stream} is more appropriate for non-scalar results, i.e., {@code Stream#onNext}
- * will get called many times.
- * <p>
- * which can be thought of as a callback handler.
- * <p>
+ * will get called many times which can be thought of as a callback handler.
  * This is like an async future or promise.
  *
  * @param <T> type of result returned from callback
  * @author Rick Hightower
  */
-public interface Stream<T> {
+public interface Stream<T> extends Callback<T> {
 
     /**
      * (Client view)
      * A result was returned so handle it.
-     * <p>
      * This is registered from the callers (or event receivers perspective).
      * A client of a service would override {@code onResult}.
      *
@@ -53,7 +50,6 @@ public interface Stream<T> {
     /**
      * (Service view)
      * This allows services to send back a last result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -65,7 +61,6 @@ public interface Stream<T> {
     /**
      * (Service view)
      * This allows services to send back a next result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -78,7 +73,6 @@ public interface Stream<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result result value to send.
@@ -92,7 +86,6 @@ public interface Stream<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result        result value to send.
@@ -107,7 +100,6 @@ public interface Stream<T> {
      * (Service view)
      * This allows services to send back a next result easily to the client/handler
      * and pass done flag to denote completeness.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a result.
      *
      * @param result        result value to send.
@@ -124,8 +116,9 @@ public interface Stream<T> {
 
     /**
      * (Service view)
+     * Don't use this method anymore. Going to mark it deprecated.
+     * Use reject instead.
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param error error
@@ -136,8 +129,9 @@ public interface Stream<T> {
 
     /**
      * (Service view)
+     * Don't use this method anymore. Going to mark it deprecated.
+     * Use reject instead.
      * This allows services to send back a failed result easily to the client/handler.
-     * <p>
      * This is a helper methods for producers (services that produce results) to send a failed result.
      *
      * @param errorMessage error message
@@ -145,5 +139,59 @@ public interface Stream<T> {
     default void fail(final String errorMessage) {
         this.onNext(new StreamResultImpl<>(
                 new IllegalStateException(errorMessage), true, Expected.empty(), Expected.empty()));
+    }
+
+
+    /**
+     * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param error error
+     */
+    default void reject(final Throwable error) {
+        this.onNext(new StreamResultImpl<>(error, true, Expected.empty(), Expected.empty()));
+    }
+
+    /**
+     * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param errorMessage error message
+     */
+    default void reject(final String errorMessage) {
+        this.onNext(new StreamResultImpl<>(
+                new RejectedStreamException(errorMessage), true, Expected.empty(), Expected.empty()));
+    }
+
+
+    /**
+     * (Service view)
+     * This allows services to send back a failed result easily to the client/handler.
+     * This is a helper methods for producers (services that produce results) to send a failed result.
+     *
+     * @param errorMessage error message
+     */
+    default void reject(final String errorMessage, final Throwable error) {
+        this.onNext(new StreamResultImpl<>(
+                new RejectedStreamException(errorMessage, error), true, Expected.empty(), Expected.empty()));
+    }
+
+
+    /**
+     * Calls replayDone, for VOID callback only. ES6 promise style.
+     */
+    default void resolve() {
+        this.onNext(new StreamResultImpl<T>(null, false, Expected.empty(), Expected.empty()));
+    }
+
+    /**
+     * Resolve resolves a promise or replies to a stream.
+     *
+     * @param result makes it more compatible with ES6 style promises
+     */
+    default void resolve(final T result) {
+        reply(result);
     }
 }

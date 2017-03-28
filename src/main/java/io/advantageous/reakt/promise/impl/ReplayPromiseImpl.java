@@ -21,7 +21,7 @@ package io.advantageous.reakt.promise.impl;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.impl.ResultImpl;
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 import io.advantageous.reakt.promise.ReplayPromise;
 
 import java.time.Duration;
@@ -33,10 +33,9 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
 
     private final Duration timeoutDuration;
     private final long startTime;
+    private final AtomicBoolean replayed = new AtomicBoolean();
     private Expected<Runnable> timeoutHandler = Expected.empty();
     private Expected<Consumer<ReplayPromise>> afterResultProcessedHandler = Expected.empty();
-    private final AtomicBoolean replayed = new AtomicBoolean();
-
 
 
     public ReplayPromiseImpl(final Duration timeout, final long startTime) {
@@ -105,7 +104,7 @@ public class ReplayPromiseImpl<T> extends BasePromise<T> implements ReplayPromis
     }
 
     @Override
-    public Promise<T> freeze() {
+    public PromiseHandler<T> freeze() {
         throw new IllegalStateException("Freeze (freeze()) only makes sense for callback " +
                 "and blocking promises because replay promises are only accessed from one " +
                 "thread so mutability is ok.");

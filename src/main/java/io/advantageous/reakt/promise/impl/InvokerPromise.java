@@ -18,29 +18,27 @@
 
 package io.advantageous.reakt.promise.impl;
 
-import io.advantageous.reakt.CallbackHandle;
+import io.advantageous.reakt.Callback;
 import io.advantageous.reakt.Invokable;
-import io.advantageous.reakt.promise.Promise;
 
 import java.util.function.Consumer;
 
 public class InvokerPromise<T> extends BasePromise<T> implements Invokable {
 
-    private final Consumer<CallbackHandle<T>> consumer;
+    private final Consumer<Callback<T>> consumer;
     private boolean invoked;
 
-    public InvokerPromise(Consumer<CallbackHandle<T>> consumer) {
+    public InvokerPromise(Consumer<Callback<T>> consumer) {
         this.consumer = consumer;
     }
 
     @Override
-    public Promise<T> invoke() {
+    public void invoke() {
         if (invoked) {
-            throw new IllegalStateException("Promise can only be invoked once");
+            throw new IllegalStateException("PromiseHandler can only be invoked once");
         }
         invoked = true;
         consumer.accept(this);
-        return this;
     }
 
     @Override

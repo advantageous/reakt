@@ -25,7 +25,8 @@ import java.util.function.Consumer;
 /**
  * The result of an async operation.
  * <p>
- * This was modeled after Vert.x AsyncResult and after the types of results one would deal with in JavaScript.
+ * This was modeled after Vert.x AsyncResult and after the types of
+ * results one would deal with in JavaScript.
  *
  * @param <T> type of value expected in the result.
  * @author Rick Hightower
@@ -34,7 +35,7 @@ import java.util.function.Consumer;
 public interface Result<T> {
 
     /**
-     * DONE Result for Callback Void.
+     * DONE Result for CallbackHandler Void.
      */
     Result<Void> DONE = new ResultImpl<>(null);
 

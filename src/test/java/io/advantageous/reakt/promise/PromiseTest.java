@@ -18,7 +18,7 @@
 
 package io.advantageous.reakt.promise;
 
-import io.advantageous.reakt.Callback;
+import io.advantageous.reakt.CallbackHandler;
 import io.advantageous.reakt.Expected;
 import io.advantageous.reakt.Result;
 import io.advantageous.reakt.promise.impl.BasePromise;
@@ -59,7 +59,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         Expected[] value = new Expected[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(e -> employee[0] = e)
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().asHandler().thenSafe(e -> employee[0] = e)
                 .thenSafeExpect(employeeValue -> value[0] = employeeValue);
 
 
@@ -72,11 +72,8 @@ public class PromiseTest {
         TestService testService = new TestService();
         AtomicReference<Throwable> error = new AtomicReference<>();
 
-        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(new Consumer<Employee>() {
-            @Override
-            public void accept(Employee employee) {
-                throw new IllegalStateException("BOOM.. handler failed");
-            }
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().asHandler().thenSafe(employee -> {
+            throw new IllegalStateException("BOOM.. handler failed");
         }).catchError(error::set);
 
         testService.simple(promise);
@@ -91,8 +88,8 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         Expected[] value = new Expected[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise().thenSafe(e -> employee[0] = e)
-                .thenSafeExpect(employeeValue -> value[0] = employeeValue).freeze();
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().thenSafe(e -> employee[0] = e)
+                .thenSafeExpect(employeeValue -> value[0] = employeeValue).asHandler().freeze().asHandler();
 
 
         testSuccessWithPromise(testService, employee, value, promise);
@@ -101,29 +98,29 @@ public class PromiseTest {
 
     @Test
     public void promiseSafeMethods() throws Exception {
-        Promise<String> promise = new Promise<String>() {
+        PromiseHandler<String> promise = new PromiseHandler<String>() {
             @Override
-            public Promise<String> then(Consumer<String> consumer) {
+            public PromiseHandler<String> then(Consumer<String> consumer) {
                 return null;
             }
 
             @Override
-            public Promise<String> whenComplete(Consumer<Promise<String>> doneListener) {
+            public PromiseHandler<String> whenComplete(Consumer<PromiseHandler<String>> doneListener) {
                 return null;
             }
 
             @Override
-            public Promise<String> thenExpect(Consumer<Expected<String>> consumer) {
+            public PromiseHandler<String> thenExpect(Consumer<Expected<String>> consumer) {
                 return null;
             }
 
             @Override
-            public <U> Promise<U> thenMap(Function<? super String, ? extends U> mapper) {
+            public <U> PromiseHandler<U> thenMap(Function<? super String, ? extends U> mapper) {
                 return null;
             }
 
             @Override
-            public Promise<String> catchError(Consumer<Throwable> consumer) {
+            public PromiseHandler<String> catchError(Consumer<Throwable> consumer) {
                 return null;
             }
 
@@ -168,12 +165,12 @@ public class PromiseTest {
             }
 
             @Override
-            public Promise<String> invokeWithReactor(Reactor reactor) {
+            public PromiseHandler<String> invokeWithReactor(Reactor reactor) {
                 return null;
             }
 
             @Override
-            public Promise<String> invokeWithReactor(Reactor reactor, Duration timeout) {
+            public PromiseHandler<String> invokeWithReactor(Reactor reactor, Duration timeout) {
                 return null;
             }
         };
@@ -184,7 +181,7 @@ public class PromiseTest {
             promise.thenSafe(s -> {
             });
             fail();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
 
         }
 
@@ -193,7 +190,7 @@ public class PromiseTest {
             promise.thenSafeExpect(s -> {
             });
             fail();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
 
         }
     }
@@ -207,7 +204,7 @@ public class PromiseTest {
 
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise()
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().asHandler()
                 .thenSafe(e -> {
                     employee[0] = e;
                     throw new IllegalStateException("handler blew chunks");
@@ -229,13 +226,13 @@ public class PromiseTest {
 
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise()
+        PromiseHandler<Employee> promise = Promises.<Employee>promise()
                 .thenSafe(e -> {
                     employee[0] = e;
                     throw new IllegalStateException("handler blew chunks");
                 })
                 .thenSafeExpect(employeeValue -> value[0] = employeeValue)
-                .catchError(throwable -> error[0] = true).freeze();
+                .catchError(throwable -> error[0] = true).asHandler().freeze().asHandler();
 
 
         testErrorWithPromise(testService, employee, error, promise);
@@ -245,14 +242,14 @@ public class PromiseTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testNotSupportedInvokableInvoke() throws Exception {
 
-        Promise promise = Promises.promise();
+        PromiseHandler promise = Promises.promise().asHandler();
         promise.invoke();
     }
 
 
     @Test
     public void testNotSupportedInvokableIsInvokable() throws Exception {
-        Promise promise = Promises.promise();
+        PromiseHandler promise = Promises.promise().asHandler();
         assertFalse(promise.isInvokable());
     }
 
@@ -266,11 +263,11 @@ public class PromiseTest {
 
         final Promise<Void> promise = Promises.anyBlocking(Arrays.asList(promise1, promise2));
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
-        testService.async(promise2);
+        testService.async(promise2.asHandler());
 
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().success());
 
     }
 
@@ -282,17 +279,17 @@ public class PromiseTest {
         Promise<Employee> promise1 = Promises.promise();
         Promise<Employee> promise2 = Promises.promise();
 
-        final Promise<Void> promise = Promises.allBlocking(Arrays.asList(promise1, promise2));
+        final Promise<Void> promise = Promises.allBlocking(Arrays.asList(promise1, promise2)).asHandler();
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
-        testService.async(promise1);
+        testService.async(promise1.asHandler());
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
-        testService.async(promise2);
+        testService.async(promise2.asHandler());
 
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().success());
 
     }
 
@@ -303,33 +300,33 @@ public class PromiseTest {
         /** Test service. */
         TestService testService = new TestService();
 
-        /* Promise that expects an employee. */
+        /* PromiseHandler that expects an employee. */
         Promise<Employee> promise1 = Promises.promise();
         Promise<Employee> promise2 = Promises.promise();
 
 
-        /* Promise that returns when all employees are returned. */
+        /* PromiseHandler that returns when all employees are returned. */
         final Promise<Void> promise = Promises.all(promise1, promise2);
 
 
         promise.then(nil -> System.out.println("DONE!"));
 
-        assertFalse("Not done yet", promise.complete());
+        assertFalse("Not done yet", promise.asHandler().complete());
 
         /** Call service. */
-        testService.simple(promise1);
+        testService.simple(promise1.asHandler());
 
         /** Still not done because only one service has been called. */
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Ok now second service is called. */
-        testService.simple(promise2);
+        testService.simple(promise2.asHandler());
 
         /** Wait some time. */
         //...
 
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
     }
 
@@ -339,28 +336,28 @@ public class PromiseTest {
         /** Test service. */
         TestService testService = new TestService();
 
-        /* Promise that expects an employee. */
+        /* PromiseHandler that expects an employee. */
         Promise<Employee> promise1 = Promises.promise();
         Promise<Employee> promise2 = Promises.promise();
 
 
-        /* Promise that returns when all employees are returned. */
+        /* PromiseHandler that returns when all employees are returned. */
         final Promise<Void> promise = Promises.any(promise1, promise2);
 
 
         promise.then(nil -> System.out.println("DONE!"));
 
-        assertFalse("Not done yet", promise.complete());
+        assertFalse("Not done yet", promise.asHandler().complete());
 
         /** Call service. */
-        testService.simple(promise2);
+        testService.simple(promise2.asHandler());
 
 
         /** Wait some time. */
         //...
 
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
     }
 
@@ -378,11 +375,11 @@ public class PromiseTest {
 
         assertFalse(promise.complete());
 
-        testService.async(promise1);
+        testService.async(promise1.asHandler());
 
         assertFalse(promise.complete());
 
-        testService.async(promise2);
+        testService.async(promise2.asHandler());
 
 
         for (int index = 0; index < 10; index++) {
@@ -412,11 +409,11 @@ public class PromiseTest {
 
         assertFalse(promise.complete());
 
-        testService.async(promise1);
+        testService.async(promise1.asHandler());
 
         assertFalse(promise.complete());
 
-        testService.asyncError(promise2);
+        testService.asyncError(promise2.asHandler());
 
 
         for (int index = 0; index < 10; index++) {
@@ -445,7 +442,7 @@ public class PromiseTest {
 
         assertFalse(promise.complete());
 
-        testService.async(promise2);
+        testService.async(promise2.asHandler());
 
 
         for (int index = 0; index < 10; index++) {
@@ -475,7 +472,7 @@ public class PromiseTest {
 
         assertFalse(promise.complete());
 
-        testService.asyncError(promise2);
+        testService.asyncError(promise2.asHandler());
 
 
         for (int index = 0; index < 10; index++) {
@@ -498,8 +495,8 @@ public class PromiseTest {
         TestService testService = new TestService();
         Employee[] employee = new Employee[1];
         Expected[] value = new Expected[1];
-        Promise<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
-                .thenExpect(employeeValue -> value[0] = employeeValue).freeze();
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().then(e -> employee[0] = e)
+                .thenExpect(employeeValue -> value[0] = employeeValue).asHandler().freeze().asHandler();
 
 
         testSuccessWithPromise(testService, employee, value, promise);
@@ -507,15 +504,16 @@ public class PromiseTest {
 
     private void testSuccessWithPromise(TestService testService, Employee[] employee, Expected[] value, Promise<Employee> promise) {
 
+        final PromiseHandler<Employee> employeePromiseHandler = promise.asHandler();
 
-        testService.simple(promise);
+        testService.simple(employeePromiseHandler);
 
-        assertNotNull(promise.get());
-        assertNotNull(promise.expect());
+        assertNotNull(employeePromiseHandler.get());
+        assertNotNull(employeePromiseHandler.expect());
         assertNotNull(value[0]);
-        assertTrue(promise.complete());
-        assertFalse(promise.failure());
-        assertTrue(promise.success());
+        assertTrue(employeePromiseHandler.complete());
+        assertFalse(employeePromiseHandler.failure());
+        assertTrue(employeePromiseHandler.success());
         assertNotNull(employee[0]);
     }
 
@@ -534,14 +532,14 @@ public class PromiseTest {
         promise.thenExpect(employeeValue -> value[0] = employeeValue);
 
 
-        testService.async(promise);
+        testService.async(promise.asHandler());
 
-        assertNotNull(promise.get());
-        assertNotNull(promise.expect());
-        assertTrue(promise.complete());
-        assertFalse(promise.failure());
-        assertTrue(promise.success());
-        assertNull(promise.cause());
+        assertNotNull(promise.asHandler().get());
+        assertNotNull(promise.asHandler().expect());
+        assertTrue(promise.asHandler().complete());
+        assertFalse(promise.asHandler().failure());
+        assertTrue(promise.asHandler().success());
+        assertNull(promise.asHandler().cause());
         assertNotNull(employee[0]);
 
         assertNotNull(value[0]);
@@ -559,14 +557,14 @@ public class PromiseTest {
 
         Promise<Employee> employeePromise = Promises.<Employee>blockingPromise();
 
-        Promise<Sheep> sheepPromise = employeePromise
+        PromiseHandler<Sheep> sheepPromise = employeePromise.asHandler()
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
         sheepPromise.thenExpect(employeeValue -> value[0] = employeeValue);
 
 
-        testService.async(employeePromise);
+        testService.async(employeePromise.asHandler());
 
         assertNotNull(sheepPromise.get());
         assertNotNull(sheepPromise.expect());
@@ -589,9 +587,9 @@ public class PromiseTest {
 
         /* Note this is only for legacy integration and testing. */
 
-        Promise<Employee> employeePromise = Promises.<Employee>promise();
+        PromiseHandler<Employee> employeePromise = Promises.<Employee>promise().asHandler();
 
-        Promise<Sheep> sheepPromise = employeePromise
+        PromiseHandler<Sheep> sheepPromise = employeePromise
                 .thenMap(employee1 -> new Sheep(employee1.id));
 
         sheepPromise.then(e -> employee[0] = e);
@@ -622,21 +620,22 @@ public class PromiseTest {
         /* Note this is only for legacy integration and testing. */
         Promise<Employee> promise = Promises.blockingPromise(Duration.ofMillis(1000));
 
+
         promise.then(e -> employee[0] = e);
-        promise.thenExpect(employeeValue -> value[0] = employeeValue)
+        promise.asHandler().thenExpect(employeeValue -> value[0] = employeeValue)
                 .whenComplete((p) -> completedCalled.set(true));
 
 
-        testService.async(promise);
+        testService.async(promise.asHandler());
 
-        assertNotNull(promise.get());
+        assertNotNull(promise.asHandler().get());
 
         assertTrue(completedCalled.get());
-        assertNotNull(promise.expect());
-        assertTrue(promise.complete());
-        assertFalse(promise.failure());
-        assertTrue(promise.success());
-        assertNull(promise.cause());
+        assertNotNull(promise.asHandler().expect());
+        assertTrue(promise.asHandler().complete());
+        assertFalse(promise.asHandler().failure());
+        assertTrue(promise.asHandler().success());
+        assertNull(promise.asHandler().cause());
         assertNotNull(employee[0]);
 
         assertNotNull(value[0]);
@@ -761,9 +760,9 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        final Promise<Employee> promise = Promises.<Employee>promise()
+        final PromiseHandler<Employee> promise = Promises.<Employee>promise()
                 .then(e -> employee[0] = e)
-                .catchError(throwable -> error[0] = true).freeze();
+                .catchError(throwable -> error[0] = true).asHandler().freeze().asHandler();
 
         testErrorWithPromise(testService, employee, error, promise);
     }
@@ -775,15 +774,16 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        final Promise<Employee> promise = Promises.<Employee>promise()
+        final Promise<Employee> promise = Promises.promise();
+        promise
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
 
-        testErrorWithPromise(testService, employee, error, promise);
+        testErrorWithPromise(testService, employee, error, promise.asHandler());
     }
 
-    private void testErrorWithPromise(TestService testService, Employee[] employee, boolean[] error, Promise<Employee> promise) {
+    private void testErrorWithPromise(TestService testService, Employee[] employee, boolean[] error, PromiseHandler<Employee> promise) {
         testService.error(promise);
 
 
@@ -825,7 +825,7 @@ public class PromiseTest {
                 .then(e -> employee[0] = e)
                 .catchError(throwable -> error[0] = true);
 
-        testPrematureAccessWithPromise(promise);
+        testPrematureAccessWithPromise(promise.asHandler());
 
     }
 
@@ -835,7 +835,7 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise().freeze();
+        PromiseHandler<Employee> promise = Promises.<Employee>promise().asHandler().freeze().asHandler();
 
         try {
             promise.then(e -> employee[0] = e);
@@ -882,15 +882,15 @@ public class PromiseTest {
         Employee[] employee = new Employee[1];
         boolean[] error = new boolean[1];
 
-        Promise<Employee> promise = Promises.<Employee>promise()
+        PromiseHandler<Employee> promise = Promises.<Employee>promise()
                 .then(e -> employee[0] = e)
-                .catchError(throwable -> error[0] = true).freeze();
+                .catchError(throwable -> error[0] = true).asHandler().freeze().asHandler();
 
         testPrematureAccessWithPromise(promise);
 
     }
 
-    private void testPrematureAccessWithPromise(Promise<Employee> promise) {
+    private void testPrematureAccessWithPromise(PromiseHandler<Employee> promise) {
         try {
             promise.get();
             fail();
@@ -934,55 +934,55 @@ public class PromiseTest {
     public void utilityMethods() {
         Promise promise;
 
-        promise = Promises.promiseNotify();
+        promise = Promises.promiseNotify().asHandler();
         assertTrue(promise instanceof BasePromise);
         promise = Promises.promise(Employee.class);
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseString();
+        promise = Promises.promiseString().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseBoolean();
+        promise = Promises.promiseBoolean().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseLong();
+        promise = Promises.promiseLong().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseInt();
+        promise = Promises.promiseInt().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseFloat();
+        promise = Promises.promiseFloat().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseDouble();
+        promise = Promises.promiseDouble().asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseList(Employee.class);
+        promise = Promises.promiseList(Employee.class).asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseSet(Employee.class);
+        promise = Promises.promiseSet(Employee.class).asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseCollection(Employee.class);
+        promise = Promises.promiseCollection(Employee.class).asHandler();
         assertTrue(promise instanceof BasePromise);
-        promise = Promises.promiseMap(String.class, Employee.class);
+        promise = Promises.promiseMap(String.class, Employee.class).asHandler();
         assertTrue(promise instanceof BasePromise);
 
 
-        promise = Promises.blockingPromiseNotify();
+        promise = Promises.blockingPromiseNotify().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromise(Employee.class);
+        promise = Promises.blockingPromise(Employee.class).asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseString();
+        promise = Promises.blockingPromiseString().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseBoolean();
+        promise = Promises.blockingPromiseBoolean().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseLong();
+        promise = Promises.blockingPromiseLong().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseInt();
+        promise = Promises.blockingPromiseInt().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseFloat();
+        promise = Promises.blockingPromiseFloat().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseDouble();
+        promise = Promises.blockingPromiseDouble().asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseList(Employee.class);
+        promise = Promises.blockingPromiseList(Employee.class).asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseSet(Employee.class);
+        promise = Promises.blockingPromiseSet(Employee.class).asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseCollection(Employee.class);
+        promise = Promises.blockingPromiseCollection(Employee.class).asHandler();
         assertTrue(promise instanceof BlockingPromise);
-        promise = Promises.blockingPromiseMap(String.class, Employee.class);
+        promise = Promises.blockingPromiseMap(String.class, Employee.class).asHandler();
         assertTrue(promise instanceof BlockingPromise);
 
 
@@ -1079,20 +1079,20 @@ public class PromiseTest {
 
     public static class TestService {
 
-        public void simple(Callback<Employee> callback) {
-            callback.reply(new Employee("Rick"));
+        public void simple(CallbackHandler<Employee> callback) {
+            callback.resolve(new Employee("Rick"));
         }
 
 
-        public void async(final Callback<Employee> callback) {
+        public void async(final CallbackHandler<Employee> callback) {
 
             new Thread(() -> {
-                callback.reply(new Employee("Rick"));
+                callback.resolve(new Employee("Rick"));
             }).start();
         }
 
 
-        public void asyncTimeout(final Callback<Employee> callback) {
+        public void asyncTimeout(final CallbackHandler<Employee> callback) {
 
             new Thread(() -> {
                 try {
@@ -1100,22 +1100,22 @@ public class PromiseTest {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                callback.reply(new Employee("Rick"));
+                callback.resolve(new Employee("Rick"));
             }).start();
         }
 
-        public void asyncError(final Callback<Employee> callback) {
+        public void asyncError(final CallbackHandler<Employee> callback) {
             new Thread(() -> {
                 callback.reject("Rick");
             }).start();
         }
 
 
-        public void error(Callback<Employee> callback) {
+        public void error(CallbackHandler<Employee> callback) {
             callback.reject("Error");
         }
 
-        public void exception(Callback<Employee> callback) {
+        public void exception(CallbackHandler<Employee> callback) {
             callback.reject(new IllegalStateException("Error"));
         }
     }

@@ -18,10 +18,7 @@
 
 package io.advantageous.reakt.reactor;
 
-import io.advantageous.reakt.CallbackHandle;
 import io.advantageous.reakt.promise.Promise;
-import io.advantageous.reakt.promise.PromiseHandle;
-import io.advantageous.reakt.promise.impl.InvokerPromise;
 import io.advantageous.reakt.reactor.impl.ReactorImpl;
 
 import java.time.Duration;
@@ -29,7 +26,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Ensures that tasks, repeating tasks and callbacks run in the callers thread.
@@ -224,7 +220,7 @@ public interface Reactor {
     /**
      * Returns a void promise for notify of outcome but no value returned.
      * <p>
-     * Callback replyDone can be used instead of replay on service side.
+     * CallbackHandler replyDone can be used instead of replay on service side.
      *
      * @return void promise
      */
@@ -243,7 +239,7 @@ public interface Reactor {
      *
      * @param cls type
      * @param <T> promise of a result of T
-     * @return new Promise of type T
+     * @return new PromiseHandler of type T
      */
     @SuppressWarnings("unused")
     <T> Promise<T> promise(final Class<T> cls);
@@ -254,7 +250,7 @@ public interface Reactor {
      *
      * @param componentType component type of list
      * @param <T>           promise a list of type T
-     * @return new Promise for a list of type T
+     * @return new PromiseHandler for a list of type T
      */
     @SuppressWarnings("unused")
     <T> Promise<List<T>> promiseList(final Class<T> componentType);
@@ -264,7 +260,7 @@ public interface Reactor {
      *
      * @param componentType component type of collection
      * @param <T>           promise a collection of type T
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     <T> Promise<Collection<T>> promiseCollection(final Class<T> componentType);
@@ -276,7 +272,7 @@ public interface Reactor {
      * @param valueType type of map value
      * @param <K>       promise a map of  key type K
      * @param <V>       promise a map of  value type V
-     * @return new Promise for a collection of type T
+     * @return new PromiseHandler for a collection of type T
      */
     @SuppressWarnings("unused")
     <K, V> Promise<Map<K, V>> promiseMap(final Class<K> keyType, final Class<V> valueType);
@@ -286,7 +282,7 @@ public interface Reactor {
      *
      * @param componentType component type of set
      * @param <T>           promise a set of type T
-     * @return new Promise for a set of type T
+     * @return new PromiseHandler for a set of type T
      */
     @SuppressWarnings("unused")
     <T> Promise<Set<T>> promiseSet(final Class<T> componentType);

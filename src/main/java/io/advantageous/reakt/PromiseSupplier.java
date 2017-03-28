@@ -18,19 +18,19 @@
 
 package io.advantageous.reakt;
 
-import io.advantageous.reakt.promise.Promise;
+import io.advantageous.reakt.promise.PromiseHandler;
 
 import java.util.function.Supplier;
 
 /**
  * Represents an async supplier of results.
- *
+ * <p>
  * Use this instead of the AsyncSupplier.
  *
  * @param <T> the type of results supplied by this supplier
  * @author Rick Hightower
  * @author Geoff Chandler
  */
-public interface PromiseSupplier<T> extends Supplier<Promise<T>>{
+public interface PromiseSupplier<T> extends Supplier<PromiseHandler<T>> {
 
 }

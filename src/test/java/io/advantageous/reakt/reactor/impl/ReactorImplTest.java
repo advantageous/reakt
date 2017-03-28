@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
 import static io.advantageous.reakt.reactor.Reactor.reactor;
 import static org.junit.Assert.*;
@@ -77,7 +76,7 @@ public class ReactorImplTest {
         assertTrue(!thenCalled.get()); //Then should not be called
 
 
-        promise.resolve(new Object());
+        promise.asHandler().resolve(new Object());
         reactor.process();
 
         assertTrue(!thenCalled.get()); //Then should still not be called
@@ -102,7 +101,7 @@ public class ReactorImplTest {
         assertTrue(!errorFound.get()); //No errors.
         assertTrue(!thenCalled.get()); //Then should still not be called
 
-        promise.resolve(new Object());
+        promise.asHandler().resolve(new Object());
         reactor.process();
 
 
@@ -129,7 +128,7 @@ public class ReactorImplTest {
         assertTrue(!errorFound.get()); //No errors.
         assertTrue(!thenCalled.get()); //Then should still not be called
 
-        promise.resolve(null);
+        promise.asHandler().resolve(null);
         reactor.process();
 
 
@@ -199,17 +198,17 @@ public class ReactorImplTest {
         Promise<String> promise = reactor.promise();
         promise.then(s -> thenCalled.set(true));
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Invoke the callback. */
-        promise.reply("DONE");
+        promise.asHandler().resolve("DONE");
 
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
-        assertEquals("DONE", promise.get());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
+        assertEquals("DONE", promise.asHandler().get());
         /* We don't see the then(..) event yet because it won't fire until we play it. */
         assertFalse(thenCalled.get());
 
@@ -233,20 +232,20 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.incrementAndGet());
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Invoke the callback. */
-        promise1.reply("DONE");
-        promise2.reply("DONE");
+        promise1.asHandler().resolve("DONE");
+        promise2.asHandler().resolve("DONE");
 
 
         reactor.process(); //play it
 
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertEquals(1, thenCalled.get());
@@ -264,29 +263,29 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.incrementAndGet());
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         process();
         new Thread(() -> {
-            promise1.resolve("DONE");
+            promise1.asHandler().resolve("DONE");
 
         }).start();
 
         new Thread(() -> {
-            promise2.resolve("DONE");
+            promise2.asHandler().resolve("DONE");
 
         }).start();
 
 
-        for (int index =0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             Thread.sleep(50);
-            if (promise.complete()) break;
+            if (promise.asHandler().complete()) break;
         }
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertEquals(1, thenCalled.get());
@@ -299,7 +298,7 @@ public class ReactorImplTest {
         final AtomicInteger thenCalled = new AtomicInteger();
         final List<Promise<String>> promiseList = new ArrayList<>();
 
-        for (int index =0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             promiseList.add(Promises.promiseString());
         }
 
@@ -307,27 +306,26 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.incrementAndGet());
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         process();
 
         for (Promise<String> stringPromise : promiseList) {
             new Thread(() -> {
-                stringPromise.resolve("DONE");
+                stringPromise.asHandler().resolve("DONE");
             }).start();
         }
 
 
-
-        for (int index =0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             Thread.sleep(50);
-            if (promise.complete()) break;
+            if (promise.asHandler().complete()) break;
         }
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertEquals(1, thenCalled.get());
@@ -338,7 +336,7 @@ public class ReactorImplTest {
     public Promise<String> invokeMe() {
         return Promises.invokablePromise(stringPromise ->
                 new Thread(() -> {
-                    stringPromise.reply("DONE");
+                    stringPromise.resolve("DONE");
                 }).start());
     }
 
@@ -347,7 +345,7 @@ public class ReactorImplTest {
         final AtomicInteger thenCalled = new AtomicInteger();
         final List<Promise<String>> promiseList = new ArrayList<>();
 
-        for (int index =0; index < 100; index++) {
+        for (int index = 0; index < 100; index++) {
             promiseList.add(invokeMe());
         }
 
@@ -357,21 +355,21 @@ public class ReactorImplTest {
             thenCalled.incrementAndGet();
         }).catchError(Throwable::printStackTrace);
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         process();
 
         promiseList.stream().forEach(Promise::invoke);
 
-        for (int index =0; index < 1000; index++) {
+        for (int index = 0; index < 1000; index++) {
             Thread.sleep(50);
-            if (promise.complete()) break;
+            if (promise.asHandler().complete()) break;
         }
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         Thread.sleep(50);
 
@@ -403,20 +401,20 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.set(true));
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Invoke the callback. */
-        promise1.reply("DONE");
-        promise2.reply("DONE");
+        promise1.asHandler().resolve("DONE");
+        promise2.asHandler().resolve("DONE");
 
 
         reactor.process(); //play it
 
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertTrue(thenCalled.get());
@@ -434,20 +432,20 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.set(true));
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Invoke the callback. */
-        promise1.reply("DONE");
-        promise2.reply("DONE");
+        promise1.asHandler().resolve("DONE");
+        promise2.asHandler().resolve("DONE");
 
 
         reactor.process(); //play it
 
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertTrue(thenCalled.get());
@@ -465,20 +463,20 @@ public class ReactorImplTest {
 
         promise.then(s -> thenCalled.set(true));
 
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
         reactor.process();
-        assertFalse(promise.complete());
+        assertFalse(promise.asHandler().complete());
 
         /** Invoke the callback. */
-        promise1.reply("DONE");
-        promise2.reply("DONE");
+        promise1.asHandler().resolve("DONE");
+        promise2.asHandler().resolve("DONE");
 
 
         reactor.process(); //play it
 
         /** You can see the results but the events wont fire until reactor plays the replay promises. */
-        assertTrue(promise.complete());
-        assertTrue(promise.success());
+        assertTrue(promise.asHandler().complete());
+        assertTrue(promise.asHandler().success());
 
         /** Now we see the event. */
         assertTrue(thenCalled.get());

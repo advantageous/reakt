@@ -72,9 +72,9 @@ public class BreakerImpl<T> implements Breaker<T> {
 
     @Override
     public boolean isOperational() {
-            return (this.service != null) &&
-                    (this.maxErrorCount == 0 || errorCount() < this.maxErrorCount) &&
-                    (this.brokenPredicate.isEmpty() || !this.brokenPredicate.get().test(service));
+        return (this.service != null) &&
+                (this.maxErrorCount == 0 || errorCount() < this.maxErrorCount) &&
+                (this.brokenPredicate.isEmpty() || !this.brokenPredicate.get().test(service));
     }
 
     @Override

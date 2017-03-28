@@ -130,9 +130,10 @@ public class InvokablePromiseTest {
         promise.then(this::handleSuccess)
                 .catchError(this::handleError);
 
-        asyncServiceDiscovery.lookupService(empURI).invokeWithPromise(promise);
+        asyncServiceDiscovery.lookupService(empURI).asHandler()
+                .invokeWithPromise(promise.asHandler());
 
-        final Expected<URI> expect = promise.expect();
+        final Expected<URI> expect = promise.asHandler().expect();
 
         assertFalse(expect.isEmpty());
 
@@ -150,11 +151,12 @@ public class InvokablePromiseTest {
         promise.then(this::handleSuccess)
                 .catchError(this::handleError);
 
-        asyncServiceDiscovery.lookupService(null).invokeWithPromise(promise);
+        asyncServiceDiscovery.lookupService(null).asHandler()
+                .invokeWithPromise(promise.asHandler());
 
 
         try {
-            promise.get();
+            promise.asHandler().get();
             fail();
         } catch (Exception ex) {
 
@@ -172,11 +174,11 @@ public class InvokablePromiseTest {
         promise.then(this::handleSuccess)
                 .catchError(this::handleError);
 
-        asyncServiceDiscovery.lookupService(null).thenCallback(promise).invoke();
+        asyncServiceDiscovery.lookupService(null).asHandler().thenCallback(promise.asHandler()).invoke();
 
 
         try {
-            promise.get();
+            promise.asHandler().get();
             fail();
         } catch (Exception ex) {
 
@@ -211,7 +213,7 @@ public class InvokablePromiseTest {
         final Promise<URI> promise = serviceDiscovery.lookupService(empURI).then(this::handleSuccess)
                 .catchError(this::handleError);
 
-        assertTrue("Is this an invokable promise", promise.isInvokable());
+        assertTrue("Is this an invokable promise", promise.asHandler().isInvokable());
     }
 
 
@@ -230,7 +232,7 @@ public class InvokablePromiseTest {
         Promise<URI> lookupService(URI uri);
 
 
-        PromiseHandle<URI> lookupService2(URI uri);
+        Promise<URI> lookupService2(URI uri);
 
         default void shutdown() {
         }
@@ -256,7 +258,7 @@ public class InvokablePromiseTest {
         }
 
         @Override
-        public PromiseHandle<URI> lookupService2(URI uri) {
+        public Promise<URI> lookupService2(URI uri) {
             return deferCall(callbackHandle -> {
 
                 if (uri == null) {
@@ -288,7 +290,7 @@ public class InvokablePromiseTest {
             return invokablePromise(promise -> {
                 runnables.offer(() -> {
                     if (uri == null) {
-                        promise.reject("URI was null");
+                        promise.reject("URI was null lookupService");
                     } else {
                         promise.resolve(URI.create("http://localhost:8080/employeeService/"));
                     }
@@ -296,11 +298,11 @@ public class InvokablePromiseTest {
             });
         }
 
-        public PromiseHandle<URI> lookupService2(URI uri) {
+        public Promise<URI> lookupService2(URI uri) {
             return invokablePromise(promise -> {
                 runnables.offer(() -> {
                     if (uri == null) {
-                        promise.reject("URI was null");
+                        promise.reject("URI was null lookupService2");
                     } else {
                         promise.resolve(URI.create("http://localhost:8080/employeeService/"));
                     }
