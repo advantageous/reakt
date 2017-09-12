@@ -197,23 +197,20 @@ The Java microservice lib. QBit is a reactive programming lib for building micro
 
 [Java Microservices Architecture](http://www.mammatustech.com/java-microservices-architecture)
 
-[Microservice Service Discovery with Consul] (http://www.mammatustech.com/Microservice-Service-Discovery-with-Consul)
+[Microservice Service Discovery with Consul](http://www.mammatustech.com/Microservice-Service-Discovery-with-Consul)
 
 [Microservices Service Discovery Tutorial with Consul](http://www.mammatustech.com/consul-service-discovery-and-health-for-microservices-architecture-tutorial)
 
-[Reactive Microservices]
-(http://www.mammatustech.com/reactive-microservices)
+[Reactive Microservices](http://www.mammatustech.com/reactive-microservices)
 
-[High Speed Microservices]
-(http://www.mammatustech.com/high-speed-microservices)
+[High Speed Microservices](http://www.mammatustech.com/high-speed-microservices)
 
 [Java Microservices Consulting](http://www.mammatustech.com/java-microservices-consulting)
 
 [Microservices Training](http://www.mammatustech.com/java-reactive-microservice-training)
 
 
-[Reactive Microservices Tutorial, using the Reactor]
-(https://github.com/MammatusTech/qbit-microservices-examples/wiki/Reactor-tutorial--%7C-reactively-handling-async-calls-with-QBit-Reactive-Microservices)
+[Reactive Microservices Tutorial, using the Reactor](https://github.com/MammatusTech/qbit-microservices-examples/wiki/Reactor-tutorial--%7C-reactively-handling-async-calls-with-QBit-Reactive-Microservices)
 
 [QBit is mentioned in the Restlet blog](http://restlet.com/blog/2015/09/04/this-week-in-api-land-20/)
 
